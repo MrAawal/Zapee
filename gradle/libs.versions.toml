@@ -1,0 +1,68 @@
+[versions]
+agp = "8.4.2"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.9.0"
+constraintlayout = "2.1.4"
+
+
+glide = "4.16.0"
+compiler="4.13.0"
+retrofit="2.9.0"
+converter-gson="2.9.0"
+volley="1.2.1"
+tinycart="1.0.1"
+materialsearchbar="0.8.5"
+whynotimagecarousel="2.1.0"
+androidadvancedwebview="v3.2.1"
+roundedimageview="2.3.0"
+gson="2.8.6"
+googleGmsGoogleServices = "4.4.2"
+firebaseAuth = "23.0.0"
+firebaseDatabase = "21.0.0"
+ccp = "X.Y.Z"
+firebaseFirestore = "25.1.0"
+roomRuntime = "2.6.1"
+roomCompiler = "2.6.1"
+swiperefreshlayout = "1.1.0"
+
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+compiler={ group ="com.github.bumptech.glide" ,name = "compiler" ,version.ref = "compiler" }
+retrofit = { group = "com.squareup.retrofit2", name="retrofit",version.ref="retrofit"}
+converter = { group = "com.squareup.retrofit2", name="converter-gson",version.ref="converter-gson"}
+volley={ group ="com.android.volley" ,name = "volley" ,version.ref = "volley" }
+tinycart={ group ="com.github.hishd" ,name = "tinycart" ,version.ref = "tinycart" }
+materialsearchbar={ group ="com.github.mancj" ,name = "materialsearchbar", version.ref = "materialsearchbar" }
+whynotimagecarousel={ group ="org.imaginativeworld.whynotimagecarousel" ,name = "whynotimagecarousel", version.ref = "whynotimagecarousel" }
+androidadvancedwebview = { group = "com.github.delight-im", name="android-advancedwebview",version.ref="androidadvancedwebview"}
+roundedimageview = { group = "com.makeramen", name="roundedimageview",version.ref="roundedimageview"}
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+ccp= { group = "com.hbb20", name = "ccp", version = "2.7.3" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+
+
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+
