@@ -70,6 +70,7 @@ public class CartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity (new Intent (CartActivity.this, CheckoutActivity.class));
+                finish();
             }
         });
 
