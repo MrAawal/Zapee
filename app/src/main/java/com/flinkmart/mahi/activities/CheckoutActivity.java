@@ -141,6 +141,8 @@ public class CheckoutActivity extends AppCompatActivity {
             @Override
             public void onQuantityChanged() {
                 binding.subtotal.setText(String.format("₹ %.2f",cart.getTotalPrice()));
+                binding.total.setText(String.format("₹ %.2f",cart.getTotalPrice()));
+
             }
         });
 
