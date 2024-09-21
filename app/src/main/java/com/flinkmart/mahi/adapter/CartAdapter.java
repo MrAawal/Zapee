@@ -66,8 +66,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.binding.DeleteButton.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View view) {
+                products.remove(position);
                 cart.removeItem (product);
-                Toast.makeText(context, "Item Deleted "+product.getName (), Toast.LENGTH_SHORT).show();
+                notifyItemRemoved (position);
+                cartListener.onQuantityChanged ();
 
             }
         });
