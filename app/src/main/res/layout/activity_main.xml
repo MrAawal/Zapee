@@ -41,7 +41,7 @@
                 android:textSize="16sp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Your Address Not Updated Please Update !">
+                android:text=" ZAPEE">
 
             </TextView>
         </LinearLayout>
@@ -61,20 +61,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/fav">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/categoriesList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:orientation="horizontal" />
-                </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -82,80 +69,39 @@
                     <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                         android:id="@+id/carousel"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="200dp"
                         android:background="@color/fav"
                         app:autoPlay="true"
                         app:showCaption="false"
                         app:showNavigationButtons="false" />
                 </androidx.cardview.widget.CardView>
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/fav">
                 <androidx.recyclerview.widget.RecyclerView
-                    android:padding="4dp"
-                    android:id="@+id/productList"
+                    android:id="@+id/offerList"
+                    android:layout_marginTop="-10dp"
+                    android:layout_margin="1dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-                </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"/>
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/fav">
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/productList1"
+                        android:id="@+id/categoriesList"
+                        android:layout_marginTop="-10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="4dp"
+                        android:layout_margin="1dp"
                         android:orientation="horizontal" />
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/fav">
                 <androidx.recyclerview.widget.RecyclerView
-                    android:padding="4dp"
-                    android:id="@+id/beautyList"
+                    android:id="@+id/offerList2"
+                    android:layout_marginTop="-10dp"
+                    android:layout_margin="1dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@color/fav">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:padding="4dp"
-                    android:id="@+id/groceryList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:background="@color/fav">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/allproductList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:orientation="horizontal" />
-                </androidx.cardview.widget.CardView>
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"/>
 
 
             </LinearLayout>
+
 
         </androidx.core.widget.NestedScrollView>
 

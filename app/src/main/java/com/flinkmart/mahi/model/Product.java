@@ -2,15 +2,14 @@ package com.flinkmart.mahi.model;
 
 
 
+import com.flinkmart.mahi.roomdatabase.OrderProduct;
 import com.hishd.tinycart.model.Item;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-public class Product implements Item, Serializable {
+public class Product extends OrderProduct implements Item, Serializable {
 
-    private String name;
-    private static String image;
-    private String status;
+    private String name, image, status;
     private double price, discount;
     private int stock, id;
     private int quantity;
@@ -33,7 +32,7 @@ public class Product implements Item, Serializable {
         this.name = name;
     }
 
-    public static String getImage() {
+    public String getImage() {
         return image;
     }
 
@@ -49,9 +48,9 @@ public class Product implements Item, Serializable {
         this.status = status;
     }
 
-    public double getPrice() {
-        return price;
-    }
+//    public int getPrice() {
+//        return price;
+//    }
 
     public void setPrice(double price) {
         this.price = price;
@@ -97,8 +96,5 @@ public class Product implements Item, Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public void setQuantity() {
     }
 }

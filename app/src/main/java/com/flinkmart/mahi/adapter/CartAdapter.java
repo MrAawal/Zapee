@@ -62,7 +62,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         holder.binding.name.setText(product.getName());
         holder.binding.price.setText("₹ " + product.getPrice());
-        holder.binding.quantity.setText(product.getQuantity() + " item(s)");
+        holder.binding.txtQty.setText(product.getQuantity() + " item(s)");
         holder.binding.DeleteButton.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View view) {
@@ -71,6 +71,40 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 notifyItemRemoved (position);
                 notifyDataSetChanged();
                 cartListener.onQuantityChanged ();
+
+            }
+        });
+
+        holder.binding.btnAdd.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                int quantity = Integer.parseInt (String.valueOf (product.getQuantity()));
+                quantity++;
+                if(quantity>product.getStock()) {
+                    Toast.makeText(context, "Max stock available: "+ product.getStock(), Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    product.setQuantity(quantity);
+                    holder.binding.txtQty.setText(String.valueOf(quantity));
+                }
+                notifyDataSetChanged();
+                cart.updateItem(product,product.getQuantity());
+                cartListener.onQuantityChanged();
+            }
+        });
+        holder.binding.btnReduce.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+
+                int quantity = product.getQuantity();
+                if(quantity > 1)
+                    quantity--;
+                product.setQuantity(quantity);
+                holder.binding.txtQty.setText(String.valueOf(quantity));
+
+                notifyDataSetChanged();
+                cart.updateItem(product, product.getQuantity());
+                cartListener.onQuantityChanged();
 
             }
         });
@@ -156,4 +190,4 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
 
     }
-    }
+}

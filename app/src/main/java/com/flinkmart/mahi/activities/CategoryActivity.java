@@ -1,27 +1,19 @@
 package com.flinkmart.mahi.activities;
 
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.flinkmart.mahi.adapter.ProductAdapter;
-import com.flinkmart.mahi.adapter.ProductAdapter1;
 import com.flinkmart.mahi.adapter.ProductAdapter4;
 import com.flinkmart.mahi.databinding.ActivityCategoryBinding;
-import com.flinkmart.mahi.model.Product;
-import com.flinkmart.mahi.model.Product1;
 import com.flinkmart.mahi.model.Product4;
 import com.flinkmart.mahi.utils.Constants;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 public class CategoryActivity extends AppCompatActivity {

@@ -1,41 +1,40 @@
 package com.flinkmart.mahi.model;
 
+import com.google.firebase.Timestamp;
+
 public class Order {
-    private int  id;
-    private String buyer,address,status,code,payment_status,total_fees;
+    private String orderNumber,payment,status,totalPrice,customerAddress,customerName,customerNumber,customerStore;
+    private Timestamp orderPlaceDate;
 
-    public Order(int id, String buyer, String address, String status, String code, String payment_status, String total_fees) {
-        this.id = id;
-        this.buyer = buyer;
-        this.address = address;
+    public Order() {
+    }
+
+    public Order(String orderNumber, String payment, String status, String totalPrice, String customerAddress, String customerName, String customerNumber, String customerStore, Timestamp orderPlaceDate) {
+        this.orderNumber = orderNumber;
+        this.payment = payment;
         this.status = status;
-        this.code = code;
-        this.payment_status = payment_status;
-        this.total_fees = total_fees;
+        this.totalPrice = totalPrice;
+        this.customerAddress = customerAddress;
+        this.customerName = customerName;
+        this.customerNumber = customerNumber;
+        this.customerStore = customerStore;
+        this.orderPlaceDate = orderPlaceDate;
     }
 
-    public int getId() {
-        return id;
+    public String getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
-    public String getBuyer() {
-        return buyer;
+    public String getPayment() {
+        return payment;
     }
 
-    public void setBuyer(String buyer) {
-        this.buyer = buyer;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    public void setPayment(String payment) {
+        this.payment = payment;
     }
 
     public String getStatus() {
@@ -46,27 +45,51 @@ public class Order {
         this.status = status;
     }
 
-    public String getCode() {
-        return code;
+    public String getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTotalPrice(String totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public String getPayment_status() {
-        return payment_status;
+    public String getCustomerAddress() {
+        return customerAddress;
     }
 
-    public void setPayment_status(String payment_status) {
-        this.payment_status = payment_status;
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
     }
 
-    public String getTotal_fees() {
-        return total_fees;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setTotal_fees(String total_fees) {
-        this.total_fees = total_fees;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCustomerNumber() {
+        return customerNumber;
+    }
+
+    public void setCustomerNumber(String customerNumber) {
+        this.customerNumber = customerNumber;
+    }
+
+    public String getCustomerStore() {
+        return customerStore;
+    }
+
+    public void setCustomerStore(String customerStore) {
+        this.customerStore = customerStore;
+    }
+
+    public Timestamp getOrderPlaceDate() {
+        return orderPlaceDate;
+    }
+
+    public void setOrderPlaceDate(Timestamp orderPlaceDate) {
+        this.orderPlaceDate = orderPlaceDate;
     }
 }

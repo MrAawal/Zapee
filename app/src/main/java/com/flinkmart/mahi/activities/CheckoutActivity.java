@@ -1,295 +1,194 @@
 package com.flinkmart.mahi.activities;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.room.Room;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.adapter.CartAdapter;
 import com.flinkmart.mahi.databinding.ActivityCheckoutBinding;
-import com.flinkmart.mahi.model.Product;
-import com.flinkmart.mahi.model.UserModel;
-import com.flinkmart.mahi.utils.Constants;
+import com.flinkmart.mahi.model.Branch;
+import com.flinkmart.mahi.model.OrderPlaceModel;
+import com.flinkmart.mahi.model.UserModel1;
+import com.flinkmart.mahi.roomdatabase.AppDatabase;
+import com.flinkmart.mahi.roomdatabase.OrderProduct;
+import com.flinkmart.mahi.roomdatabase.ProductDao;
+import com.flinkmart.mahi.roomdatabase.ProductEntity;
+import com.flinkmart.mahi.roomdatabase.myadapter;
+import com.flinkmart.mahi.roomdatabase.myadapter2;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.hishd.tinycart.model.Cart;
-import com.hishd.tinycart.model.Item;
-import com.hishd.tinycart.util.TinyCartHelper;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.Random;
 
 public class CheckoutActivity extends AppCompatActivity {
 
     ActivityCheckoutBinding binding;
-
-    CartAdapter adapter;
-    ArrayList<Product> products;
     double totalPrice = 0;
     final int del = 30;
     final int gst = 5;
     private  String uid;
     ProgressDialog progressDialog;
-    Cart cart;
-    TextView profileName, profileEmail, profileContact;
-
-    EditText nameInput;
-    EditText addressInput;
-    EditText phoneNumber;
-
     FirebaseAuth auth;
     FirebaseUser user;
-    UserModel userModel;
+    UserModel1 userModel;
+    Branch branch;
+    ArrayList<ProductEntity> product;
+    TextView rate;
+    TextView rateview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCheckoutBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        //Auto fill---------------------------
-        profileName = findViewById(R.id.Name);
-        profileEmail = findViewById(R.id.Email);
-        profileContact = findViewById(R.id.Contact);
-
-        //Field input----------------------------
-        nameInput = findViewById(R.id.nameBox);
-        addressInput=findViewById (R.id.addressBox);
-        phoneNumber=findViewById (R.id.phoneBox);
-
-
         auth=FirebaseAuth.getInstance ();
         user=auth.getCurrentUser();
-
-
-
-
         if(user==null){
             Intent i=new Intent(getApplicationContext(),LoginActivity.class);
             startActivity(i);
-            finish ();
-        }else {
+            finish();
+        }else{
             FirebaseUtil.currentUserDetails ().get ().addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.isSuccessful ())  {
-                        userModel=  task.getResult ().toObject (UserModel.class);
+                        userModel=  task.getResult ().toObject (UserModel1.class);
                         if(userModel!=null){
                             //for manual input---------------------------
-                            nameInput.setText (userModel.getUsername ());
-                            phoneNumber.setText (userModel.getPhone ());
-                            addressInput.setText (userModel.getAddress ());
-
-                            //for profile Auto fill----------------------
-                            profileName.setText (userModel.getUsername ());
-                            profileContact.setText (userModel.getPhone ());
-                            profileEmail.setText (user.getEmail());
+                            binding.nameBox.setText (userModel.getUsername ());
+                            binding.phoneBox.setText (userModel.getPhone ());
+                            binding.addressBox.setText (userModel.getAddress ());
+                            binding.Name.setText (userModel.getUsername ());
+                            binding.Contact.setText (userModel.getPhone ());
+                            binding.Email.setText (userModel.getAddress ());
+                            binding.pinnumber.setText (userModel.getPin());
+                        }else{
+                            Intent intent = new Intent (CheckoutActivity.this, CompleteProfileActivity.class);
+                            startActivity (intent);
                         }
 
                     }
                 }
             });
         }
+        FirebaseUtil.currentUserStore().get ().addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful ())  {
+                    branch=  task.getResult ().toObject (Branch.class);
+                    if(branch!=null){
+                        binding.address.setText ("Your Selected Store : "+branch.getStorename ());
+                    }else{
+                        Intent intent = new Intent (CheckoutActivity.this, CompleteProfileActivity.class);
+                        startActivity (intent);
+                    }
+                }
+            }
+        });
+
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Processing...");
 
-        products = new ArrayList<>();
+        product = new ArrayList<>();
 
-        cart = TinyCartHelper.getCart();
+        rateview=findViewById(R.id.subtotal);
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
 
-        for(Map.Entry<Item, Integer> item : cart.getAllItemsWithQty().entrySet()) {
-            Product product = (Product) item.getKey();
-            int quantity = item.getValue();
-            product.setQuantity(quantity);
-            products.add(product);
-        }
 
-        adapter = new CartAdapter(this, products, new CartAdapter.CartListener() {
-            @Override
-            public void onQuantityChanged() {
-                binding.subtotal.setText(String.format("₹ %.2f",cart.getTotalPrice()));
-                binding.total.setText(String.format("₹ %.2f",cart.getTotalPrice()));
-
-            }
-        });
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, layoutManager.getOrientation());
-        binding.cartList.setLayoutManager(layoutManager);
-        binding.cartList.addItemDecoration(itemDecoration);
+        List<ProductEntity> products=productDao.getallproduct();
+        binding.cartList.setLayoutManager(new LinearLayoutManager (this));
+        myadapter2 adapter=new myadapter2(products,rateview);
         binding.cartList.setAdapter(adapter);
 
-        binding.subtotal.setText(String.format("₹ %.2f",cart.getTotalPrice()));
-        totalPrice = (cart.getTotalPrice().doubleValue() *gst/100+del) + cart.getTotalPrice().doubleValue();
+        int sum=0,i;
+        for(i=0;i< products.size();i++)
+            sum= (int) (sum+(products.get(i).getPrice()*products.get(i).getQnt()));
+
+        binding.subtotal.setText("₹ "+sum);
+        totalPrice = (gst+del+sum);
         uid=FirebaseAuth.getInstance().getUid();
         binding.total.setText("₹ " + totalPrice);
+
 
         binding.checkoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 processOrder();
+
+            }
+        });
+
+
+        binding.imageButton.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent (CheckoutActivity.this, BranchActivity.class);
+                intent.putExtra("pincode", userModel.getPin ());
+                startActivity (intent);
             }
         });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
     }
 
-    void processOrder() {
-        progressDialog.show();
-                RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject productOrder = new JSONObject();
-        JSONObject dataObject = new JSONObject();
+    void processOrder(){
+        String orderNumber= String.valueOf (getRandomNumber (11111,99999));
+        OrderPlaceModel orderPlaceModel=new OrderPlaceModel(orderNumber,uid,userModel.getUsername (),userModel.getPhone (),userModel.getAddress (),branch.getStorename (),String.valueOf (totalPrice),String.valueOf (del),Timestamp.now(),null,null,"Pending","cod");
+        FirebaseFirestore.getInstance ()
+                .collection ("orders")
+                .document (orderNumber)
+                .set (orderPlaceModel);
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+        List<ProductEntity> products=productDao.getallproduct();
+
+        rate=findViewById (R.id.subtotal);
+        binding.cartList.setLayoutManager(new LinearLayoutManager (this));
+        myadapter2 adapter=new myadapter2(products, rate);
+        binding.cartList.setAdapter(adapter);
+
+        for(int i=0;i<products.size();i++){
+            ProductEntity orderProduct = products.get(i);
+            orderProduct.setPid (Integer.parseInt (orderNumber));
+            orderProduct.setUid (uid);
+            FirebaseFirestore.getInstance ( )
+                    .collection ("OrderProduct")
+                    .document ()
+                    .set (orderProduct );
+            Toast.makeText (this, "Order Id "+orderNumber, Toast.LENGTH_SHORT).show ( );
+            Intent intent = new Intent (CheckoutActivity.this, OrdersActivity.class);
+            startActivity (intent);
+
+       }
+    }
 
 
 
-        try {
-            productOrder.put("address",binding.addressBox.getText().toString());
-            productOrder.put("buyer",binding.nameBox.getText().toString());
-            productOrder.put("serial", binding.phoneBox.getText ().toString ());
-
-            productOrder.put("email",FirebaseAuth.getInstance ().getCurrentUser ().getEmail ());
-            productOrder.put("phone",userModel.getPhone());
-            productOrder.put("comment", FirebaseAuth.getInstance ().getCurrentUser ().getUid ());
-            productOrder.put("status", "WAITING");
-
-            productOrder.put("created_at",Calendar.getInstance().getTimeInMillis());
-            productOrder.put("last_update",Calendar.getInstance().getTimeInMillis());
-            productOrder.put("date_ship", Calendar.getInstance().getTimeInMillis());
-
-            productOrder.put("tax",gst);
-            productOrder.put("total_fees",totalPrice);
-
-
-
-            for(Map.Entry<Item,Integer> items : cart.getAllItemsWithQty().entrySet()) {
-                Product products = (Product) items.getKey();
-                int quantity = items.getValue();
-                products.setQuantity(quantity);
-                JSONObject productObj = new JSONObject();
-
-                productOrder.put ("shipping", products.getName());
-                productOrder.put ("shipping_location",products.getName ());
-                productOrder.put ("shipping_rate",products.getId());
-
-            }
-
-            JSONArray product_order_detail = new JSONArray();
-            for(Map.Entry<Item, Integer> item : cart.getAllItemsWithQty().entrySet()) {
-                Product product = (Product) item.getKey();
-                int quantity = item.getValue();
-                product.setQuantity(quantity);
-                JSONObject productObj = new JSONObject();
-
-                productObj.put("amount", quantity);
-                productObj.put("price_item", product.getPrice());
-                productObj.put("product_id", product.getId());
-                productObj.put("product_name", product.getName());
-                product_order_detail.put(productObj);
-            }
-
-            dataObject.put("product_order",productOrder);
-            dataObject.put("product_order_detail",product_order_detail);
-
-            Log.e("err", dataObject.toString());
-
-        } catch (JSONException e) {}
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Constants.POST_ORDER_URL, dataObject, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    if (response.getString("status").equals("success")) {
-                        Toast.makeText(CheckoutActivity.this, "Success order.", Toast.LENGTH_SHORT).show();
-                        String orderNumber = response.getJSONObject("data").getString("code");
-                        new AlertDialog.Builder(CheckoutActivity.this)
-                                .setTitle("Order Successful")
-                                .setCancelable(false)
-                                .setMessage("Your order number is: " + orderNumber)
-                                .setPositiveButton("Pay Now", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent intent = new Intent(CheckoutActivity.this, PaymentActivity.class);
-                                        intent.putExtra("orderCode", orderNumber);
-                                        startActivity(intent);
-                                    }
-                                })
-                                .setNegativeButton ("Cash On Delivery", new DialogInterface.OnClickListener ( ) {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent intent = new Intent(CheckoutActivity.this, OrdersActivity.class);
-                                        startActivity(intent);
-                                    }
-                                })
-
-
-
-
-                                .show();
-                    } else {
-                        new AlertDialog.Builder(CheckoutActivity.this)
-                                .setTitle("Order Failed")
-                                .setMessage("Something went wrong, please try again.")
-                                .setCancelable(false)
-                                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                }).show();
-                        Toast.makeText(CheckoutActivity.this, "Failed order.", Toast.LENGTH_SHORT).show();
-                    }
-                    progressDialog.dismiss();
-                    Log.e("res", response.toString());
-                } catch (Exception e) {}
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Security","secure_code");
-                return headers;
-            }
-        } ;
-
-        queue.add(request);
+    public static int getRandomNumber(int min, int max) {
+        return (new Random ()).nextInt((max - min) + 1) + min;
     }
 
     @Override

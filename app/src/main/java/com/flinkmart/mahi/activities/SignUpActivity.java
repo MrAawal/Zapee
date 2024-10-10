@@ -74,8 +74,8 @@ public class SignUpActivity extends AppCompatActivity {
                 if(user.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
                 }
-                if(pass.isEmpty()){
-                    signupPassword.setError("Password cannot be empty");
+                if(pass.isEmpty() || signupPassword.length ( ) < 6){
+                    signupPassword.setError("Password Should Six Character");
                 }
                 else{
                     auth.createUserWithEmailAndPassword(user,pass)
@@ -84,7 +84,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText (SignUpActivity.this, "User register Succes", Toast.LENGTH_SHORT).show ( );
-                                        Intent i=new Intent(SignUpActivity.this,LoginActivity.class);
+                                        Intent i=new Intent(SignUpActivity.this, CompleteProfileActivity.class);
                                         startActivity(i);
 
 

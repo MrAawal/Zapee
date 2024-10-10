@@ -6,34 +6,32 @@
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/baseline_person_24"
-            android:title="Profile" />
+            android:title="PROFILE" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/order"
-            android:title="My Orders" />
+            android:title="ORDERS" />
 
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/baseline_shopping_cart_24"
-            android:title="View Cart" />
+            android:title="CART" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/baseline_menu_24"
-            android:title="Menu" />
+            android:id="@+id/nav_share"
+            android:icon="@drawable/baseline_lock_reset_24"
+            android:title="PRIVACY POLICY" />
+        <item
+            android:id="@+id/nav_send"
+
+            android:icon="@drawable/baseline_delete_24"
+            android:title="DELETE ACCOUNT"/>
     </group>
 
-    <item android:title="Data Safety">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
+<!--    <item android:title="Data Safety">-->
+<!--        <menu>-->
 
-                android:title="Privacy Policy" />
-            <item
-                android:id="@+id/nav_send"
-
-                android:title="Delete Account" />
-        </menu>
-    </item>
+<!--        </menu>-->
+<!--    </item>-->
 
 
 </menu>

@@ -51,24 +51,24 @@
                 android:paddingBottom="3dp">
 
                 <TextView
+                    android:id="@+id/orderNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Order Id"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+                <TextView
                     android:id="@+id/price"
                     android:layout_width="175dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Amount"
-                    android:textColor="@color/fav"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Order Id"
                     android:textAlignment="viewEnd"
-                    android:textColor="@color/fav"
                     android:textSize="18sp" />
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -80,23 +80,6 @@
                 android:layout_marginBottom="1dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Name"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/buyer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Name"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/black"
-                    android:textSize="15sp" />
 
             </LinearLayout>
             <LinearLayout
@@ -106,27 +89,7 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginRight="1dp"
                 android:layout_marginBottom="1dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Address"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Address"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/black"
-                    android:textSize="15sp" />
-
-            </LinearLayout>
+                android:orientation="horizontal"/>
 
 
             <LinearLayout
@@ -143,8 +106,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="Order Status"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/status"
@@ -173,7 +135,7 @@
                     android:layout_weight="1"
                     android:text="Payment Status"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                  />
 
                 <TextView
                     android:id="@+id/payStatus"

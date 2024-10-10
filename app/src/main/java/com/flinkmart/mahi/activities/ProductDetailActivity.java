@@ -1,11 +1,16 @@
 package com.flinkmart.mahi.activities;
 
+import static com.flinkmart.mahi.activities.CheckoutActivity.getRandomNumber;
+import static java.lang.String.valueOf;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,29 +24,36 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.cart.AppDatabase;
-import com.flinkmart.mahi.cart.ProductDao;
-import com.flinkmart.mahi.cart.ProductEntity;
 import com.flinkmart.mahi.databinding.ActivityProductDetailBinding;
-
+import com.flinkmart.mahi.model.CartModel;
+import com.flinkmart.mahi.model.NewProductModel;
 import com.flinkmart.mahi.model.Product;
-import com.flinkmart.mahi.model.UserModel;
+import com.flinkmart.mahi.model.ProductTiny;
+import com.flinkmart.mahi.roomdatabase.AppDatabase;
+import com.flinkmart.mahi.roomdatabase.ProductDao;
+import com.flinkmart.mahi.roomdatabase.ProductEntity;
 import com.flinkmart.mahi.utils.Constants;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
 import com.hishd.tinycart.model.Cart;
+import com.hishd.tinycart.model.Item;
 import com.hishd.tinycart.util.TinyCartHelper;
-import com.google.firebase.Timestamp;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Random;
+
+
+
+
 
 public class ProductDetailActivity extends AppCompatActivity {
 
     ActivityProductDetailBinding binding;
-    Product currentProduct;
+
+    CartModel currentProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,32 +61,60 @@ public class ProductDetailActivity extends AppCompatActivity {
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+
+        String id = String.valueOf (getRandomNumber (11111,99999));
         String name = getIntent().getStringExtra("name");
         String image = getIntent().getStringExtra("image");
-        int id = getIntent().getIntExtra("id",0);
-        double price = getIntent().getDoubleExtra("price",0);
+        String rate = getIntent().getStringExtra ("price");
+        String qtty = "1";
+
+        String description = getIntent().getStringExtra ("description");
 
         Glide.with(this)
                 .load(image)
                 .into(binding.productImage);
+        binding.price.setText ("₹"+rate);
+        binding.productDescription.setText ("Description : "+description);
+        binding.name.setText (name);
 
-        getProductDetails(id);
+
 
         getSupportActionBar().setTitle(name);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Cart cart = TinyCartHelper.getCart();
-
-
-        binding.addToCartBtn.setOnClickListener(new View.OnClickListener() {
+        binding.cartbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cart.addItem(currentProduct,1);
-                binding.addToCartBtn.setEnabled(false);
-                binding.addToCartBtn.setText("Added in cart");
+                AppDatabase db= Room.databaseBuilder(getApplicationContext(),AppDatabase.class,"cart_db").allowMainThreadQueries().build();
+                ProductDao productDao=db.ProductDao();
+                Boolean check=productDao.is_exist(Integer.parseInt(id));
+                if(check==false)
+                {
+                    int pid=Integer.parseInt(id);
+                    String pname=name;
+                    int price=Integer.parseInt(rate);
+                    int qnt=Integer.parseInt(qtty);
+                    productDao.insertrecord(new ProductEntity (pid,pname,price,qnt,"1"));
+                    binding.cartbtn.setText("You Can  Add Me More ! Come Again");
+                }
+                else
+                {
+                    Toast.makeText (ProductDetailActivity.this, "Product Already added", Toast.LENGTH_SHORT).show ( );
+
+                }
             }
+
         });
+
+    }
+
+
+
+
+    public static int getRandomNumber(int min, int max) {
+        return (new Random ()).nextInt((max - min) + 1) + min;
     }
 
     @Override
@@ -90,50 +130,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    void getProductDetails(int id) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url = Constants.GET_PRODUCT_DETAILS_URL + id;
-
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject object = new JSONObject(response);
-                    if(object.getString("status").equals("success")) {
-                        JSONObject product = object.getJSONObject("product");
-                        String description = product.getString("description");
-                        binding.productDescription.setText(
-                                Html.fromHtml(description)
-                        );
-
-                        currentProduct = new Product(
-
-                                product.getString("name"),
-                                Constants.PRODUCTS_IMAGE_URL + product.getString("image"),
-                                product.getString("status"),
-                                product.getDouble("price"),
-                                product.getDouble("price_discount"),
-                                product.getInt("stock"),
-                                product.getInt("id")
-                        );
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        queue.add(request);
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         finish();

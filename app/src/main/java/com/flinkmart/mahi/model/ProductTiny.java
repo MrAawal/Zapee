@@ -1,20 +1,17 @@
 package com.flinkmart.mahi.model;
-
-
-
 import com.hishd.tinycart.model.Item;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Product2 implements Item, Serializable {
+public class ProductTiny implements Item, Serializable {
 
     private String name, image, status;
     private double price, discount;
     private int stock, id;
     private int quantity;
 
-    public Product2(String name, String image, String status, double price, double discount, int stock, int id) {
+    public ProductTiny(String name, String image, String status, double price, double discount, int stock, int id) {
         this.name = name;
         this.image = image;
         this.status = status;

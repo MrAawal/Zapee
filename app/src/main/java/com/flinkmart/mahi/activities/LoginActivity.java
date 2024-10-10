@@ -82,13 +82,13 @@ public class LoginActivity extends AppCompatActivity {
                                     if (task.isSuccessful ( )) {
 
                                         Log.d (TAG, "signInWithEmail:success");
-                                        Intent i = new Intent (getApplicationContext ( ), CompleteProfileActivity.class);
+                                        Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
                                         startActivity (i);
                                         finish ( );
                                     } else {
 
                                         Log.w (TAG, "signInWithEmail:failure", task.getException ( ));
-                                        Toast.makeText (LoginActivity.this, "Authentication failed.",
+                                        Toast.makeText (LoginActivity.this, "User not found",
                                                 Toast.LENGTH_SHORT).show ( );
 
                                     }

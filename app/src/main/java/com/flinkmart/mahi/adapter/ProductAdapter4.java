@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.ProductDetailActivity;
 import com.flinkmart.mahi.databinding.ItemProductBinding;
-import com.flinkmart.mahi.model.Product3;
 import com.flinkmart.mahi.model.Product4;
 import com.hishd.tinycart.model.Cart;
 import com.hishd.tinycart.util.TinyCartHelper;

@@ -15,9 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.model.UserModel;
+import com.flinkmart.mahi.model.UserModel1;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 
@@ -26,9 +28,10 @@ public class CompleteProfileActivity extends AppCompatActivity {
 
     EditText usernameInput;
     EditText address;
+    EditText pincode;
     EditText phoneNumber;
     Button CreateProfile;
-    UserModel userModel;
+    UserModel1 userModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
         phoneNumber = (findViewById (R.id.phone));
         usernameInput = findViewById (R.id.username);
         address = findViewById (R.id.address);
+        pincode = findViewById (R.id.pin);
         CreateProfile = findViewById (R.id.createProfile);
 
         getUsers( );
@@ -55,22 +59,23 @@ public class CompleteProfileActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful ( )) {
-                    userModel = task.getResult ( ).toObject (UserModel.class);
+                    userModel = task.getResult ( ).toObject (UserModel1.class);
                     if (userModel != null) {
                         phoneNumber.setText (userModel.getPhone ( ));
                         usernameInput.setText (userModel.getUsername ( ));
                         address.setText (userModel.getAddress ( ));
+                        pincode.setText (userModel.getPin ());
                     }
 
                 }
             }
         });
     }
-
-    void setUsers() {
+    void setUsers(){
         String phonenumber = phoneNumber.getText ( ).toString ( );
         String username = usernameInput.getText ( ).toString ( );
         String addresss = address.getText ( ).toString ( );
+        String pin = pincode.getText ( ).toString ( );
 
         if (username.isEmpty ( ) || username.length ( ) < 3) {
             usernameInput.setError ("Name should be >3 digit");
@@ -88,24 +93,23 @@ public class CompleteProfileActivity extends AppCompatActivity {
             userModel.setPhone (phonenumber);
             userModel.setUsername (username);
             userModel.setAddress (addresss);
+            userModel.setPin (pin);
             userModel.setCreatedTimestamp (Timestamp.now ( ));
         } else {
-            userModel = new UserModel ( phonenumber,username, addresss, Timestamp.now ( ));
+            userModel = new UserModel1 (phonenumber,username, addresss, pin,Timestamp.now ( ));
         }
         FirebaseUtil.currentUserDetails ( ).set (userModel).addOnCompleteListener (new OnCompleteListener<Void> ( ) {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful ( )) {
-                    Intent intent = new Intent (CompleteProfileActivity.this, MainActivity.class);
-                    intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Intent intent = new Intent (CompleteProfileActivity.this, BranchActivity.class);
+                    intent.putExtra("pincode", pin);
                     startActivity (intent);
                 }
             }
         });
 
     }
-
-
     @Override
     public boolean onSupportNavigateUp() {
         finish ( );

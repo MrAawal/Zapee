@@ -68,7 +68,7 @@ public class Cart implements Serializable {
             throw new QuantityInvalidException("Invalid Item Quantity, the quantity should be greater than zero and the previous quantity of the item.");
         }
 
-        if (prevQty == qty) {
+        if (prevQty == qty){
             cartItemMap.remove(item);
         } else {
             cartItemMap.put(item, prevQty - qty);

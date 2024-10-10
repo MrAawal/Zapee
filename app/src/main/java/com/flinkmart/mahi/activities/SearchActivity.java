@@ -9,9 +9,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.flinkmart.mahi.adapter.ProductAdapter;
+import com.flinkmart.mahi.adapter.ProductAdapter4;
 import com.flinkmart.mahi.databinding.ActivitySearchBinding;
-import com.flinkmart.mahi.model.Product;
+import com.flinkmart.mahi.model.Product4;
 import com.flinkmart.mahi.utils.Constants;
 
 import org.json.JSONArray;
@@ -24,8 +24,8 @@ public class SearchActivity extends AppCompatActivity {
 
 
     ActivitySearchBinding binding;
-    ProductAdapter product;
-    ArrayList<Product> products;
+    ProductAdapter4 product;
+    ArrayList<Product4> products;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +33,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         products = new ArrayList<>();
-        product = new ProductAdapter (this, products);
+        product = new ProductAdapter4 (this, products);
 
 
         String query = getIntent().getStringExtra("query");
@@ -65,7 +65,7 @@ public class SearchActivity extends AppCompatActivity {
                     JSONArray productsArray = object.getJSONArray("products");
                     for(int i =0; i< productsArray.length(); i++) {
                         JSONObject childObj = productsArray.getJSONObject(i);
-                        Product product = new Product (
+                        Product4 product = new Product4 (
                                 childObj.getString("name"),
                                 Constants.PRODUCTS_IMAGE_URL + childObj.getString("image"),
                                 childObj.getString("status"),

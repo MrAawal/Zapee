@@ -6,82 +6,54 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.adapter.CartAdapter;
-import com.flinkmart.mahi.adapter.myadapter;
-import com.flinkmart.mahi.cart.AppDatabase;
-import com.flinkmart.mahi.cart.ProductDao;
-import com.flinkmart.mahi.cart.ProductEntity;
-import com.flinkmart.mahi.databinding.ActivityCategoryBinding;
-import com.flinkmart.mahi.model.Product;
 import com.flinkmart.mahi.databinding.ActivityCartBinding;
-import com.hishd.tinycart.model.Cart;
-import com.hishd.tinycart.model.Item;
-import com.hishd.tinycart.util.TinyCartHelper;
+import com.flinkmart.mahi.databinding.ActivityCategoryBinding;
+import com.flinkmart.mahi.roomdatabase.AppDatabase;
+import com.flinkmart.mahi.roomdatabase.ProductEntity;
+import com.flinkmart.mahi.roomdatabase.ProductDao;
+import com.flinkmart.mahi.roomdatabase.myadapter;
+import com.flinkmart.mahi.roomdatabase.myadapter2;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 public class CartActivity extends AppCompatActivity {
-    ActivityCartBinding binding;
-    CartAdapter adapter;
-    ArrayList<Product> products;
+        ActivityCartBinding binding;
+        RecyclerView recview;
+        TextView rateview;
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            binding= ActivityCartBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+            rateview=findViewById(R.id.subtotal);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate (savedInstanceState);
-        binding = ActivityCartBinding.inflate (getLayoutInflater ( ));
-        setContentView (binding.getRoot ( ));
 
-        products = new ArrayList<> ( );
-        Cart cart = TinyCartHelper.getCart ( );
+            AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+            AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+            ProductDao productDao = db.ProductDao();
 
-        for (Map.Entry<Item, Integer> item : cart.getAllItemsWithQty ( ).entrySet ( )) {
-            Product product = (Product) item.getKey ( );
-            int quantity = item.getValue ( );
-            product.setQuantity (quantity);
 
-            products.add (product);
+            List<ProductEntity> products=productDao.getallproduct();
+            binding.cartList.setLayoutManager(new LinearLayoutManager (this));
+            myadapter2 adapter=new myadapter2 (products,rateview);
+            binding.cartList.setAdapter(adapter);
+            int sum=0,i;
+            for(i=0;i< products.size();i++)
+                sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+            binding.subtotal.setText("₹"+sum);
+            binding.continueBtn.setOnClickListener (new View.OnClickListener ( ) {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent (CartActivity.this, CheckoutActivity.class);
+                    startActivity (intent);
+                }
+            });
+
         }
 
-        adapter = new CartAdapter (this, products, new CartAdapter.CartListener ( ) {
-            @Override
-            public void onQuantityChanged() {
-                binding.subtotal.setText (String.format ("₹ %.2f", cart.getTotalPrice ( )));
-            }
-        });
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager (this);
-        DividerItemDecoration itemDecoration = new DividerItemDecoration (this, layoutManager.getOrientation ( ));
-        binding.cartList.setLayoutManager (layoutManager);
-        binding.cartList.addItemDecoration (itemDecoration);
-        binding.cartList.setAdapter (adapter);
-
-        binding.subtotal.setText (String.format ("₹ %.2f", cart.getTotalPrice ( )));
-
-
-        binding.continueBtn.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View view) {
-                startActivity (new Intent (CartActivity.this, CheckoutActivity.class));
-                finish();
-            }
-        });
-
-        getSupportActionBar ( ).setDisplayHomeAsUpEnabled (true);
     }
-
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish ( );
-        return super.onSupportNavigateUp ( );
-    }
-
-}
