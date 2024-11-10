@@ -5,13 +5,13 @@ import com.hishd.tinycart.model.Item;
 import java.math.BigDecimal;
 
 public class HorizonProductModel implements Item {
-    public String tittle,image,id,price, discount,stock,description;
+    public String tittle,image,id,price, discount,stock,description,category,subcategory,branch;
 
     public HorizonProductModel() {
     }
 
 
-    public HorizonProductModel(String tittle, String image, String id, String price, String discount, String stock, String description) {
+    public HorizonProductModel(String tittle, String image, String id, String price, String discount, String stock, String description, String category, String subcategory, String branch) {
         this.tittle = tittle;
         this.image = image;
         this.id = id;
@@ -19,6 +19,9 @@ public class HorizonProductModel implements Item {
         this.discount = discount;
         this.stock = stock;
         this.description = description;
+        this.category = category;
+        this.subcategory = subcategory;
+        this.branch = branch;
     }
 
     public String getTittle() {
@@ -77,7 +80,30 @@ public class HorizonProductModel implements Item {
         this.description = description;
     }
 
-    @Override
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
     public BigDecimal getItemPrice() {
         return null;
     }

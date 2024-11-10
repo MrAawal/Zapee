@@ -1,24 +1,67 @@
 package com.flinkmart.mahi.model;
 
+import com.hishd.tinycart.model.Cart;
 import com.hishd.tinycart.model.Item;
 
 import java.math.BigDecimal;
 
-public class CartModel implements Item  {
-    private String name, image, status;
-    private double price, discount;
-    private int stock, id;
-    private int quantity;
+public class CartModel{
+    private String id ;
+    private String orderid;
+    private String uid;
+    private String name;
+    private String image;
+    private String  discount;
+    private String  stock;
+    private String description;
+    private String  category;
+    private String subcategory;
+    private  String branch;
+    public int qty, price;
+    public boolean is_selected;
 
-    public CartModel(String name, String image, String status, double price, double discount, int stock, int id, int quantity) {
+    public CartModel() {
+    }
+
+    public CartModel(String id, String orderid, String uid, String name, String image, String discount, String stock, String description, String category, String subcategory, String branch, int qty, int price, boolean is_selected) {
+        this.id = id;
+        this.orderid = orderid;
+        this.uid = uid;
         this.name = name;
         this.image = image;
-        this.status = status;
-        this.price = price;
         this.discount = discount;
         this.stock = stock;
+        this.description = description;
+        this.category = category;
+        this.subcategory = subcategory;
+        this.branch = branch;
+        this.qty = qty;
+        this.price = price;
+        this.is_selected = is_selected;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
         this.id = id;
-        this.quantity = quantity;
+    }
+
+    public String getOrderid() {
+        return orderid;
+    }
+
+    public void setOrderid(String orderid) {
+        this.orderid = orderid;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getName() {
@@ -37,61 +80,75 @@ public class CartModel implements Item  {
         this.image = image;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getDiscount() {
+    public String getDiscount() {
         return discount;
     }
 
-    public void setDiscount(double discount) {
+    public void setDiscount(String discount) {
         this.discount = discount;
     }
 
-    public int getStock() {
+    public String getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(String stock) {
         this.stock = stock;
     }
 
-    public int getId() {
-        return id;
+    public String getDescription() {
+        return description;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public String getCategory() {
+        return category;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    @Override
-    public BigDecimal getItemPrice() {
-        return null;
+    public String getSubcategory() {
+        return subcategory;
     }
 
-    @Override
-    public String getItemName() {
-        return null;
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public boolean isIs_selected() {
+        return is_selected;
+    }
+
+    public void setIs_selected(boolean is_selected) {
+        this.is_selected = is_selected;
     }
 }

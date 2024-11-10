@@ -56,9 +56,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Formerly www.flink-mart.com"
+                android:text="Made With Love "
                 android:textAlignment="center"
-                android:textColor="#020202"
+                android:textColor="#FDA03D"
                 android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>

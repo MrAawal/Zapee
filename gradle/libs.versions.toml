@@ -31,6 +31,7 @@ swiperefreshlayout = "1.1.0"
 circleimageview="3.1.0"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 playServicesMaps = "19.0.0"
+firebaseui="8.0.2"
 
 
 [libraries]
@@ -58,6 +59,8 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 ccp= { group = "com.hbb20", name = "ccp", version = "2.7.3" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-ui-firestore= { group = "com.firebaseui", name = "firebase-ui-firestore", version.ref = "firebaseui" }
+
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
@@ -65,7 +68,6 @@ swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefre
 
 circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
-
 
 
 

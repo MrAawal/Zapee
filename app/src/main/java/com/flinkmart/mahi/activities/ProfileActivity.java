@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.flinkmart.mahi.databinding.ActivityProfileBinding;
 import com.flinkmart.mahi.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,23 +30,24 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseUser user;
     Button logout;
     UserModel userModel;
-
+ActivityProfileBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_profile);
+        binding=ActivityProfileBinding.inflate (getLayoutInflater ());
+        setContentView (binding.getRoot ());
+
+
 
         titleName = findViewById (R.id.titleName);
         profileName = findViewById(R.id.Name);
-        profileAddress = findViewById(R.id.Addres);
         profileContact = findViewById(R.id.Contact);
         create = findViewById(R.id.complete);
         logout = findViewById (R.id.logout);
 
         auth=FirebaseAuth.getInstance ();
         user=auth.getCurrentUser();
-
 
 
         if(user==null) {
@@ -85,10 +87,9 @@ public class ProfileActivity extends AppCompatActivity {
                 if(task.isSuccessful ())  {
                     userModel=  task.getResult ().toObject (UserModel.class);
                     if(userModel!=null){
-                        titleName.setText (userModel.getUsername ());
-                        profileName.setText(user.getEmail());
-                        profileContact.setText (userModel.getPhone ());
-                        profileAddress.setText (userModel.getAddress ());
+                        binding.contact.setText (userModel.getPhone ());
+                        binding.titleName.setText (userModel.getUsername ());
+                        binding.address.setText (userModel.getAddress ());
                     }
                 }
             }

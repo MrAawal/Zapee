@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/provisions"
+        app:showAsAction="always"
+        android:icon="@drawable/baseline_man_24"
+        android:title="Provisions" />
+    <item
+        android:id="@+id/dairy"
+        android:icon="@drawable/child_24"
+        app:showAsAction="always"
+        android:title="Dairy"
+        />
+    <item android:id="@+id/condiment"
+        app:showAsAction="always"
+        android:icon="@drawable/baseline_woman_24"
+        android:title="Condiments" />
+</menu>

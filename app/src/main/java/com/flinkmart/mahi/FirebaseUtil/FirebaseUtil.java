@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 
 import com.flinkmart.mahi.activities.CheckoutActivity;
 import com.flinkmart.mahi.activities.CompleteProfileActivity;
+import com.flinkmart.mahi.model.CartModel;
 import com.flinkmart.mahi.model.UserModel1;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.Timestamp;
@@ -16,6 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+
 
 public class FirebaseUtil{
     public static  String currentUserId(){
@@ -31,31 +34,23 @@ public class FirebaseUtil{
         return FirebaseFirestore.getInstance ( ).collection ("Delete User").document (currentUserId ());
     }
 
-    public static DocumentReference addToCart(){
-        return FirebaseFirestore.getInstance ( ).collection ("user cart").document (currentUserId ());
+    public static DocumentReference cartDetails(String uid){
+        return FirebaseFirestore.getInstance ( )
+                .collection ("cart")
+                .document ( uid );
+    }
+
+    public static DocumentReference favdetail(String uid2){
+        return FirebaseFirestore.getInstance ( )
+                .collection ("favourite")
+                .document ( uid2 );
+    }
+
+    public static CollectionReference allUserCollectionReference() {
+        return FirebaseFirestore.getInstance ( ).collection ("product");
     }
 
 
-
-    public static DocumentReference getChatroomReference(String chatroomId){
-        return FirebaseFirestore.getInstance().collection("chatrooms").document(chatroomId);
-    }
-
-    public static CollectionReference getChatroomMessageReference(String chatroomId){
-        return getChatroomReference(chatroomId).collection("chats");
-    }
-
-    public static String getChatroomId(String userId1,String userId2){
-        if(userId1.hashCode()<userId2.hashCode()){
-            return userId1+"_"+userId2;
-        }else{
-            return userId2+"_"+userId1;
-        }
-    }
-
-    public static CollectionReference allChatroomCollectionReference(){
-        return FirebaseFirestore.getInstance().collection("chatrooms");
-    }
 
 }
 

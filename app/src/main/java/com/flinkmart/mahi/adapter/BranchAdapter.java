@@ -6,11 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.databinding.ItemBranchHorizontalBinding;
+import com.flinkmart.mahi.databinding.ItemFavouriteBinding;
 import com.flinkmart.mahi.model.Branch;
 
 import java.util.ArrayList;
@@ -18,7 +21,6 @@ import java.util.List;
 
 public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchViewholder> {
     private Context context;
-    private boolean is_selected;
     private List<Branch> branchemodel;
     public BranchAdapter(Context context) {
         this.context=context;
@@ -41,16 +43,18 @@ public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchView
 
     public void onBindViewHolder(@NonNull branchViewholder holder, int position) {
         Branch brance=branchemodel.get (position);
-        holder.name.setText (brance.getStorename());
+        holder.binding.branch.setText (brance.getStorename());
         holder.itemView.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
                 if (brance.is_selected){
                     brance.is_selected=false;
+                    holder.binding.lin.setBackgroundColor (context.getResources ().getColor (R.color.white));
+                    Toast.makeText (context, "Remove"+brance.getStorename (), Toast.LENGTH_SHORT).show ( );
                 }else {
                     brance.is_selected=true;
-                    holder.list.setBackgroundColor (context.getResources ().getColor (R.color.teal_700));
-
+                    holder.binding.lin.setBackgroundColor (context.getResources ().getColor (R.color.teal_700));
+                    Toast.makeText (context, "Added"+brance.getStorename (), Toast.LENGTH_SHORT).show ( );
                 }
 
 
@@ -67,7 +71,7 @@ public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchView
     @Override
     public branchViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view= LayoutInflater.from (context).inflate (R.layout.item_branch,parent,false);
+        View view= LayoutInflater.from (context).inflate (R.layout.item_branch_horizontal,parent,false);
         return new branchViewholder (view);
 
     }
@@ -75,14 +79,10 @@ public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchView
 
     class  branchViewholder extends RecyclerView.ViewHolder{
 
-        TextView name;
-        public boolean is_selected;
-private LinearLayout list;
+       ItemBranchHorizontalBinding binding;
         public branchViewholder(@NonNull View itemView) {
             super (itemView);
-
-            name=itemView.findViewById (R.id.branch);
-            list=itemView.findViewById (R.id.list);
+            binding = ItemBranchHorizontalBinding.bind(itemView);
 
         }
     }

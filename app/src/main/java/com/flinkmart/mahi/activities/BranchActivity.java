@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+import java.util.UUID;
 
 public class BranchActivity extends AppCompatActivity {
     ActivityBranchBinding binding;
@@ -36,6 +37,8 @@ public class BranchActivity extends AppCompatActivity {
         setContentView (binding.getRoot ());
 
         String pin = getIntent().getStringExtra("pincode");
+
+
         getStore (pin);
         branchAdapter=new BranchAdapter (this)  ;
         binding.branchList.setAdapter (branchAdapter);
@@ -74,14 +77,15 @@ public class BranchActivity extends AppCompatActivity {
     }
 
     public void setStore(){
+        String uuid= UUID.randomUUID ().toString ();
+        String uid=FirebaseAuth.getInstance ( ).getUid ( );
         List<Branch>itemList=branchAdapter.getSelectedItem();
-        for (int i=0;i<itemList.size ();i++) {
+        for (int i=0;i<itemList.size ();i++){
             Branch branch1 = itemList.get (i);
             branch1.setUid (FirebaseAuth.getInstance ( ).getUid ( ));
             FirebaseFirestore.getInstance ( )
                     .collection ("userstore")
-//                    .whereEqualTo ()
-                    .document (FirebaseAuth.getInstance ( ).getUid ( ))
+                    .document (uid)
                     .set (branch1);
         }
 
@@ -97,12 +101,6 @@ public class BranchActivity extends AppCompatActivity {
                 finish ();
             }
         });
-//        alertDialog.setNegativeButton ("OK", new DialogInterface.OnClickListener ( ) {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                dialogInterface.dismiss ( );
-//            }
-//        });
 
         alertDialog.setNeutralButton ("Understand", new DialogInterface.OnClickListener ( ) {
             @Override

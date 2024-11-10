@@ -61,10 +61,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void ResetPassword() {
+
+
         progressBar.setVisibility(View.VISIBLE);
-
         btnReset.setVisibility(View.INVISIBLE);
-
         mAuth.sendPasswordResetEmail(strEmail)
                 .addOnSuccessListener(new OnSuccessListener<Void> () {
                     @Override

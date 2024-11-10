@@ -54,10 +54,10 @@ public class NewCartAdapter extends RecyclerView.Adapter<NewCartAdapter.CartView
                 .load(product.getImage())
                 .into(holder.binding.image);
 
-        holder.binding.name.setText(product.getName());
-        holder.binding.price.setText("₹ " + product.getPrice());
-        holder.binding.txtQty.setText(product.getQuantity() + " item(s)");
-        holder.binding.DeleteButton.setOnClickListener (new View.OnClickListener ( ) {
+        holder.binding.label.setText(product.getName ());
+        holder.binding.price.setText("₹" + product.getPrice()+" * "+ product.getQuantity ( )+" Qty");
+        holder.binding.quantity.setText(""+product.getQuantity());
+        holder.binding.delete.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View view) {
                 products.remove(position);
@@ -68,21 +68,21 @@ public class NewCartAdapter extends RecyclerView.Adapter<NewCartAdapter.CartView
 
             }
         });
-        holder.binding.btnReduce.setOnClickListener (new View.OnClickListener ( ) {
+        holder.binding.reduce.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
                 int quantity = product.getQuantity();
                 if(quantity > 1)
                     quantity--;
                 product.setQuantity(quantity);
-                holder.binding.txtQty.setText(String.valueOf(quantity));
+                holder.binding.quantity.setText(String.valueOf(quantity));
 
                 notifyDataSetChanged();
                 cart.updateItem(product, product.getQuantity());
                 cartListener.onQuantityChanged();
             }
         });
-        holder.binding.btnAdd.setOnClickListener (new View.OnClickListener ( ) {
+        holder.binding.add.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
                 int quantity = product.getQuantity();
@@ -93,7 +93,7 @@ public class NewCartAdapter extends RecyclerView.Adapter<NewCartAdapter.CartView
                     return;
                 } else {
                     product.setQuantity(quantity);
-                   holder.binding.txtQty.setText(String.valueOf(quantity));
+                   holder.binding.quantity.setText(String.valueOf(quantity));
                 }
 
                 notifyDataSetChanged();

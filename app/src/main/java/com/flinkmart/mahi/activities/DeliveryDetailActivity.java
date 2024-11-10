@@ -2,15 +2,14 @@ package com.flinkmart.mahi.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.flinkmart.mahi.adapter.ImageAdapter;
 import com.flinkmart.mahi.adapter.OrderDetailAdapter;
 import com.flinkmart.mahi.databinding.ActivityDeliveryDetailBinding;
-import com.flinkmart.mahi.databinding.ActivityOrderDetailBinding;
+import com.flinkmart.mahi.model.ImageModel;
 import com.flinkmart.mahi.model.OrderDetails;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,7 +21,7 @@ import java.util.List;
 public class DeliveryDetailActivity extends AppCompatActivity {
 
     ActivityDeliveryDetailBinding binding;
-    OrderDetailAdapter productadaper;
+    ImageAdapter productadaper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,43 +30,35 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         setContentView (binding.getRoot ());
 
         String orderNumber= getIntent ().getStringExtra ("orderNumber");
-        String delivery="30";
+        String delivery="₹30";
         String Totalprice=getIntent ().getStringExtra ("totalPrice");
         String address=getIntent ().getStringExtra ("address");
         String time=getIntent ().getStringExtra ("date");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getProduct (Integer.parseInt (orderNumber));
-        binding.total.setText (Totalprice);
+        getProduct (orderNumber);
+        binding.total.setText ("₹"+Totalprice);
         binding.address.setText (address);
-        binding.date.setText (time);
         binding.delivery.setText (delivery);
         binding.orderid.setText ("#"+orderNumber);
-        binding.packege.setText ("5");
-        binding.paybtn.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText (DeliveryDetailActivity.this, "Payment Service Not Available", Toast.LENGTH_SHORT).show ( );
+        binding.packege.setText ("₹5");
 
-//                Intent intent = new Intent(DeliveryDetailActivity.this, PaymentActivity.class);
-//                intent.putExtra("orderCode", orderNumber);
-//                startActivity(intent);
-            }
-        });
     }
     public boolean onSupportNavigateUp() {
+        Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);
+        startActivity (intent);
         finish();
         return super.onSupportNavigateUp();
     }
 
-    void getProduct(int orderNumber){
+    void getProduct(String orderNumber){
         getAllProduct (orderNumber);
-        productadaper=new OrderDetailAdapter (this)  ;
+        productadaper=new ImageAdapter (this)  ;
         binding.orderDetail.setAdapter (productadaper);
-        binding.orderDetail.setLayoutManager (new GridLayoutManager (this,1));
+        binding.orderDetail.setLayoutManager (new LinearLayoutManager (getApplicationContext (),LinearLayoutManager.HORIZONTAL,false));
 
     }
-    private void getAllProduct(int orderNumber){
+    private void getAllProduct(String orderNumber){
         FirebaseFirestore.getInstance ()
                 .collection ("OrderProduct")
                .whereEqualTo ("orderid",orderNumber)
@@ -77,12 +68,17 @@ public class DeliveryDetailActivity extends AppCompatActivity {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
-                            OrderDetails product=ds.toObject (OrderDetails.class);
+                            ImageModel product=ds.toObject (ImageModel.class);
                             productadaper.addProduct(product);
                         }
 
 
                     }
                 });
+    }
+    public void onBackPressed() {
+        Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);
+        startActivity (intent);
+
     }
 }

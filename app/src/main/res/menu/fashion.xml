@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/kid"
+        android:icon="@drawable/child_24"
+        app:showAsAction="always"
+        android:title="KID'S"
+        />
+    <item android:id="@+id/men"
+        app:showAsAction="always"
+        android:icon="@drawable/baseline_man_24"
+        android:title="MAN'S" />
+
+    <item android:id="@+id/women"
+        app:showAsAction="always"
+        android:icon="@drawable/baseline_woman_24"
+        android:title="WOMEN'S" />
+
+
+
+
+</menu>

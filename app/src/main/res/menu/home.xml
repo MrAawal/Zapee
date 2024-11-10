@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/searchicon"
+        android:icon="@drawable/baseline_search_24"
+        android:title="Search"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/fav"
+        android:icon="@drawable/baseline_favorite_24"
+        android:title="Fav"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/cart"
+        android:icon="@drawable/baseline_shopping_cart_24"
+        android:title="Cart"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/baseline_account_circle_24"
+        android:title="Cart"
+        app:showAsAction="always" />
+
+
+</menu>

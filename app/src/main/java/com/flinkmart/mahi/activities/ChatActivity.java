@@ -14,9 +14,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.adapter.ProductAdapter4;
+import com.flinkmart.mahi.adapter.NewCategoryAdapter;
 import com.flinkmart.mahi.databinding.ActivityChatBinding;
-import com.flinkmart.mahi.model.Product4;
+import com.flinkmart.mahi.model.NewCart;
 import com.flinkmart.mahi.utils.Constants;
 
 import org.json.JSONArray;
@@ -28,8 +28,8 @@ import java.util.ArrayList;
 public class ChatActivity extends AppCompatActivity {
 
     ActivityChatBinding binding;
-    ProductAdapter4 product;
-    ArrayList<Product4> products;
+    NewCategoryAdapter product;
+    ArrayList<NewCart> products;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class ChatActivity extends AppCompatActivity {
 
     void initProducts() {
         products = new ArrayList<> ( );
-        product= new ProductAdapter4 (this, products);
+        product= new NewCategoryAdapter (this, products);
 
         getRecentProducts ( );
 
@@ -64,7 +64,7 @@ public class ChatActivity extends AppCompatActivity {
                     JSONArray productsArray = object.getJSONArray ("products");
                     for (int i = 0; i < productsArray.length ( ); i++) {
                         JSONObject childObj = productsArray.getJSONObject (i);
-                        Product4 product = new Product4 (
+                        NewCart product = new NewCart (
                                 childObj.getString ("name"),
                                 Constants.PRODUCTS_IMAGE_URL + childObj.getString ("image"),
                                 childObj.getString ("status"),

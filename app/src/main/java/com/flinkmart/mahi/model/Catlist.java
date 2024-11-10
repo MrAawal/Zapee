@@ -3,6 +3,7 @@ package com.flinkmart.mahi.model;
 public class Catlist {
     public String tittle;
     public String image;
+    public boolean is_selected;
     public Catlist() {
     }
 

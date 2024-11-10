@@ -1,193 +1,179 @@
 package com.flinkmart.mahi.adapter;
 
-import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.CompleteProfileActivity;
-import com.flinkmart.mahi.databinding.ItemCartBinding;
-import com.flinkmart.mahi.databinding.QuantityDialogBinding;
-import com.flinkmart.mahi.model.Product;
-import com.hishd.tinycart.exceptions.ProductNotFoundException;
-import com.hishd.tinycart.model.Cart;
-import com.hishd.tinycart.model.Item;
-import com.hishd.tinycart.util.TinyCartHelper;
+import com.flinkmart.mahi.databinding.ItemFavouriteBinding;
+import com.flinkmart.mahi.model.CartModel;
+import com.flinkmart.mahi.model.Favourite;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
-    Context context;
-    ArrayList<Product> products;
-    CartListener cartListener;
-    Cart cart;
-    Product currentProduct;
-
-    public interface CartListener {
-        public void onQuantityChanged();
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.LoanModelViewholder> {
+    private Context context;
+    private static  List<CartModel>favouriteModels;
+    String uid= FirebaseAuth.getInstance ( ).getUid ( );
+    TextView Subtotal;
+    public CartAdapter(Context context, TextView Subtotal){
+        this.context=context;
+        this.Subtotal=Subtotal;
+        favouriteModels=new ArrayList<>();
+    }
+    public void addProduct(CartModel favorite){
+        favouriteModels.add (favorite);
+        notifyDataSetChanged ();
+    }
+    public List<CartModel>getSelectedItems(){
+        List<CartModel>cartItems=new ArrayList<> (  );
+        for(int i=0;i<favouriteModels.size ();i++){
+            if (favouriteModels.get (i).is_selected){
+                cartItems.add (favouriteModels.get (i));
+            }
+        }
+        return cartItems;
     }
 
 
-    public CartAdapter(Context context, ArrayList<Product> products, CartListener cartListener) {
-        this.context = context;
-        this.products = products;
-        this.cartListener = cartListener;
-        cart = TinyCartHelper.getCart();
-    }
 
-    @NonNull
-    @Override
-    public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new CartViewHolder(LayoutInflater.from(context).inflate(R.layout.item_cart, parent,false));
-    }
 
-    @Override
-    public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-        Product product = products.get(position);
-        Glide.with(context)
-                .load(product.getImage())
-                .into(holder.binding.image);
+    public void onBindViewHolder(@NonNull LoanModelViewholder holder, int position) {
+        CartModel favourite=favouriteModels.get (position);
+        holder.binding.label.setText (favourite.getName ());
+        holder.binding.price.setText(String.valueOf ("₹"+favourite.getPrice ()+" * "+favourite.getQty ()+" Qty"));
+        holder.binding.Discount.setText ("MRP:₹"+favourite.getDiscount ());
+        holder.binding.Discount.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
+        holder.binding.quantity.setText(String.valueOf (favourite.getQty()));
+        Glide.with (context).load(favourite.getImage())
+                .into (holder.binding.image);
 
-        holder.binding.name.setText(product.getName());
-        holder.binding.price.setText("₹ " + product.getPrice());
-        holder.binding.txtQty.setText(product.getQuantity() + " item(s)");
-        holder.binding.DeleteButton.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View view) {
-                products.remove(position);
-                cart.removeItem (product);
-                notifyItemRemoved (position);
-                notifyDataSetChanged();
-                cartListener.onQuantityChanged ();
+        int sum=0,i;
+        for(i=0;i< favouriteModels.size();i++)
+            sum=sum+(favouriteModels.get(i).getPrice()*favouriteModels.get(i).getQty ());
 
-            }
-        });
+        Subtotal.setText ("₹ "+sum);
 
-        holder.binding.btnAdd.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                int quantity = Integer.parseInt (String.valueOf (product.getQuantity()));
-                quantity++;
-                if(quantity>product.getStock()) {
-                    Toast.makeText(context, "Max stock available: "+ product.getStock(), Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    product.setQuantity(quantity);
-                    holder.binding.txtQty.setText(String.valueOf(quantity));
-                }
-                notifyDataSetChanged();
-                cart.updateItem(product,product.getQuantity());
-                cartListener.onQuantityChanged();
-            }
-        });
-        holder.binding.btnReduce.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
 
-                int quantity = product.getQuantity();
-                if(quantity > 1)
-                    quantity--;
-                product.setQuantity(quantity);
-                holder.binding.txtQty.setText(String.valueOf(quantity));
-
-                notifyDataSetChanged();
-                cart.updateItem(product, product.getQuantity());
-                cartListener.onQuantityChanged();
-
-            }
-        });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                QuantityDialogBinding quantityDialogBinding = QuantityDialogBinding.inflate(LayoutInflater.from(context));
-
-                AlertDialog dialog = new AlertDialog.Builder(context)
-                        .setView(quantityDialogBinding.getRoot())
-                        .create();
-
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.R.color.transparent));
-
-                quantityDialogBinding.productName.setText(product.getName());
-                quantityDialogBinding.productStock.setText("Stock: " + product.getStock());
-                quantityDialogBinding.quantity.setText(String.valueOf(product.getQuantity()));
-                int stock = product.getStock();
+            public void onClick(View view){
 
 
-                quantityDialogBinding.plusBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int quantity = product.getQuantity();
-                        quantity++;
-
-                        if(quantity>product.getStock()) {
-                            Toast.makeText(context, "Max stock available: "+ product.getStock(), Toast.LENGTH_SHORT).show();
-                            return;
-                        } else {
-                            product.setQuantity(quantity);
-                            quantityDialogBinding.quantity.setText(String.valueOf(quantity));
-                        }
-
-                        notifyDataSetChanged();
-                        cart.updateItem(product, product.getQuantity());
-                        cartListener.onQuantityChanged();
-                    }
-                });
-
-                quantityDialogBinding.minusBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int quantity = product.getQuantity();
-                        if(quantity > 1)
-                            quantity--;
-                        product.setQuantity(quantity);
-                        quantityDialogBinding.quantity.setText(String.valueOf(quantity));
-
-                        notifyDataSetChanged();
-                        cart.updateItem(product, product.getQuantity());
-                        cartListener.onQuantityChanged();
-                    }
-                });
-
-                quantityDialogBinding.saveBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-//                        notifyDataSetChanged();
-//                        cart.updateItem(product, product.getQuantity());
-//                        cartListener.onQuantityChanged();
-                    }
-                });
-
-                dialog.show();
             }
         });
+
+        holder.binding.add.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                int quantity = favourite.getQty ();
+                quantity++;
+                favouriteModels.get(position).setQty (quantity);
+                notifyItemChanged (quantity);
+                notifyDataSetChanged();
+                int finalQuantity = quantity;
+                FirebaseFirestore.getInstance ()
+                        .collection ("cart")
+                        .document ( favourite.getId ()+uid)
+                        .update("qty",quantity)
+                        .addOnCompleteListener (new OnCompleteListener<Void> ( ) {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful ()){
+                                    favouriteModels.get(position).setQty (finalQuantity);
+                                    notifyItemChanged (finalQuantity);
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        });
+            }
+        });
+        holder.binding.reduce.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                int quantity = favourite.getQty ();
+               if(quantity>1)
+                quantity--;
+                favouriteModels.get(position).setQty (quantity);
+                notifyItemChanged (quantity);
+                notifyDataSetChanged();
+                int finalQuantity = quantity;
+                FirebaseFirestore.getInstance ()
+                        .collection ("cart")
+                        .document ( favourite.getId ()+uid)
+                        .update("qty",quantity)
+                        .addOnCompleteListener (new OnCompleteListener<Void> ( ) {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful ()){
+                                    favouriteModels.get(position).setQty (finalQuantity);
+                                    notifyItemChanged (finalQuantity);
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        });
+            }
+        });
+        holder.binding.delete.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                FirebaseFirestore.getInstance ()
+                        .collection ("cart")
+                        .document ( favourite.getId ()+uid)
+                        .delete ()
+                        .addOnCompleteListener (new OnCompleteListener<Void> ( ) {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful ()){
+                                    favouriteModels.remove (position);
+                                    notifyItemRemoved (position);
+                                    notifyDataSetChanged ();
+
+                                }
+                            }
+                        });
+
+
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return favouriteModels.size ();
+    }
+    @NonNull
+    @Override
+    public LoanModelViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view= LayoutInflater.from (context).inflate (R.layout.item_favourite,parent,false);
+        return new LoanModelViewholder (view);
     }
 
-    public class CartViewHolder extends RecyclerView.ViewHolder {
 
-        ItemCartBinding binding;
-        public CartViewHolder(@NonNull View itemView) {
+    class  LoanModelViewholder extends RecyclerView.ViewHolder{
+
+        ItemFavouriteBinding binding;
+        public LoanModelViewholder(@NonNull View itemView) {
             super(itemView);
-            binding = ItemCartBinding.bind(itemView);
+            binding = ItemFavouriteBinding.bind(itemView);
         }
-
-
     }
+
+
+
 }

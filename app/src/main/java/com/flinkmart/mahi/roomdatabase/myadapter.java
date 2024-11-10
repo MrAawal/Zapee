@@ -34,15 +34,14 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull myadapter.myviewholder holder, @SuppressLint("RecyclerView") int position) {
-        holder.binding.name.setText(products.get(position).getPname());
-        holder.binding.name.setText(products.get(position).getPname());
+        holder.binding.label.setText(products.get(position).getPname());
         holder.binding.price.setText(String.valueOf("₹ "+products.get(position).getPrice()));
-        holder.binding.txtQty.setText(String.valueOf(products.get(position).getQnt()));
+        holder.binding.quantity.setText(String.valueOf(products.get(position).getQnt()));
 
-        holder.binding.DeleteButton.setOnClickListener(new View.OnClickListener() {
+        holder.binding.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                AppDatabase db = Room.databaseBuilder(holder.binding.id.getContext(),
+                AppDatabase db = Room.databaseBuilder(holder.binding.label.getContext(),
                 AppDatabase.class, "cart_db").allowMainThreadQueries().build();
                 ProductDao productDao = db.ProductDao();
                 productDao.deleteById(products.get(position).getPid());
@@ -53,7 +52,7 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
             }
         });
 
-        holder.binding.btnAdd.setOnClickListener(new View.OnClickListener() {
+        holder.binding.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int qnt=products.get(position).getQnt();
@@ -67,7 +66,7 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
             }
         });
 
-        holder.binding.btnReduce.setOnClickListener(new View.OnClickListener() {
+        holder.binding.reduce.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -104,6 +103,6 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
         int sum=0,i;
         for(i=0;i< products.size();i++)
             sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
-           rateview.setText("₹"+sum);
+            rateview.setText("₹"+sum);
     }
 }

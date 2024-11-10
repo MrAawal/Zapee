@@ -1,47 +1,25 @@
 package com.flinkmart.mahi.activities;
 
-import static com.flinkmart.mahi.activities.CheckoutActivity.getRandomNumber;
 import static java.lang.String.valueOf;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.databinding.ActivityProductDetailBinding;
 import com.flinkmart.mahi.model.CartModel;
-import com.flinkmart.mahi.model.NewProductModel;
-import com.flinkmart.mahi.model.Product;
-import com.flinkmart.mahi.model.ProductTiny;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.ProductDao;
 import com.flinkmart.mahi.roomdatabase.ProductEntity;
-import com.flinkmart.mahi.utils.Constants;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.firebase.auth.FirebaseAuth;
-import com.hishd.tinycart.model.Cart;
-import com.hishd.tinycart.model.Item;
-import com.hishd.tinycart.util.TinyCartHelper;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Random;
 
@@ -60,8 +38,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityProductDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
 
         String id = String.valueOf (getRandomNumber (11111,99999));
         String name = getIntent().getStringExtra("name");

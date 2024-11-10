@@ -7,9 +7,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.flinkmart.mahi.adapter.ProductAdapter4;
+import com.flinkmart.mahi.adapter.NewCategoryAdapter;
 import com.flinkmart.mahi.databinding.ActivityCategoryBinding;
-import com.flinkmart.mahi.model.Product4;
+import com.flinkmart.mahi.model.NewCart;
 import com.flinkmart.mahi.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class CategoryActivity extends AppCompatActivity {
 
     ActivityCategoryBinding binding;
-    ProductAdapter4 product;
-    ArrayList<Product4> products;
+    NewCategoryAdapter product;
+    ArrayList<NewCart> products;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class CategoryActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         products = new ArrayList<>();
-        product = new ProductAdapter4(this, products);
+        product = new NewCategoryAdapter (this, products);
 
 
         int catId = getIntent().getIntExtra("catId", 0);
@@ -62,7 +62,7 @@ public class CategoryActivity extends AppCompatActivity {
                     JSONArray productsArray = object.getJSONArray("products");
                     for(int i =0; i< productsArray.length(); i++) {
                         JSONObject childObj = productsArray.getJSONObject(i);
-                        Product4 product = new Product4(
+                        NewCart product = new NewCart (
                                 childObj.getString("name"),
                                 Constants.PRODUCTS_IMAGE_URL + childObj.getString("image"),
                                 childObj.getString("status"),

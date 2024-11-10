@@ -1,91 +1,64 @@
 package com.flinkmart.mahi.activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
+import com.flinkmart.mahi.Fragment.CategoryFragment;
+import com.flinkmart.mahi.Fragment.HomeFragment;
+import com.flinkmart.mahi.Fragment.OrdersFragment;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.adapter.CatlistAdapter;
-import com.flinkmart.mahi.adapter.HorizonProductAdapter;
-import com.flinkmart.mahi.adapter.NewProductAdapter;
+import com.flinkmart.mahi.adapter.CartAdapter;
+import com.flinkmart.mahi.adapter.ItemAdapter;
 import com.flinkmart.mahi.databinding.ActivityMainBinding;
-import com.flinkmart.mahi.model.Category;
-import com.flinkmart.mahi.model.Catlist;
-import com.flinkmart.mahi.model.HorizonProductModel;
-import com.flinkmart.mahi.model.NewProductModel;
-import com.flinkmart.mahi.model.UserModel;
-import com.flinkmart.mahi.utils.Constants;
+import com.flinkmart.mahi.model.CartModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mancj.materialsearchbar.MaterialSearchBar;
 
-import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, MaterialSearchBar.OnSearchActionListener {
-    MaterialSearchBar searchBar;
-    private DrawerLayout drawer;
-    FirebaseAuth auth;
-    FirebaseUser user;
-    Context context;
-    TextView HeaderAddress;
-    TextView Add, HeaderName;
-    ActivityMainBinding binding;
-    NewProductAdapter newProductAdapter;
-    HorizonProductAdapter horizonProductAdapter;
-    UserModel userModel;
-    CatlistAdapter catlistAdapter;
-    ArrayList<Category> categories;
+public class MainActivity extends AppCompatActivity {
+
+   ActivityMainBinding binding;
+   private int cartQantity=0;
+
+    CartAdapter cartAdapter;
+    public static List<CartModel>cartList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate (savedInstanceState);
-        binding = ActivityMainBinding.inflate (getLayoutInflater ( ));
-        setContentView (binding.getRoot ( ));
-        auth = FirebaseAuth.getInstance ( );
-        user = auth.getCurrentUser ( );
-
-        if (user == null) {
-            //do nothing
-        } else {
-            getAddress ( );
-        }
-
-        ///internet Connection-----------------------------------------------------------------------
+        super.onCreate(savedInstanceState);
+        binding=ActivityMainBinding.inflate (getLayoutInflater ());
+        setContentView (binding.getRoot ());
         if (!isConnected ( )) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder (MainActivity.this);
             alertDialog.setTitle ("No Internet Connected");
@@ -101,96 +74,126 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
 //            Toast.makeText (MainActivity.this, "Wellcome To ZAPEE", Toast.LENGTH_SHORT).show ( );
         }
-        ///internet Connection----------------------------------------------------------------------
-
-        HeaderAddress = findViewById (R.id.headerAddress);
-        HeaderName = findViewById (R.id.headerAddress);
-        Add = findViewById (R.id.add);
-        initOffer( );
-        initOffer1( );
-        initCategories ( );
-        initSlider ( );
-
-        auth = FirebaseAuth.getInstance ( );
-        user = auth.getCurrentUser ( );
 
 
-        drawer = findViewById (R.id.drawer_layout);
-        NavigationView navigationView = findViewById (R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener (this);
-        searchBar = findViewById (R.id.searchBar);
-        searchBar.setOnSearchActionListener (this);
 
+        loadFragment(new HomeFragment ());
 
-        Log.d ("LOG_TAG", getClass ( ).getSimpleName ( ) + ": text " + searchBar.getText ( ));
-        searchBar.setCardViewElevation (10);
-        searchBar.addTextChangeListener (new TextWatcher ( ) {
-
+        binding.bottomNavigation.setOnItemSelectedListener (new NavigationBarView.OnItemSelectedListener ( ) {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                int id=item.getItemId ();
+                if (id==R.id.home){
+                    loadFragment(new HomeFragment ());
+                    return true;
+                } else if (id==R.id.orders) {
+                    loadFragment(new OrdersFragment ());
+                    return true;
+
+                }else if (id==R.id.category) {
+                    loadFragment(new CategoryFragment());
+                    return true;
+                }
+                return false;
             }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Log.d ("LOG_TAG", getClass ( ).getSimpleName ( ) + " text changed " + searchBar.getText ( ));
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-
         });
 
 
+
     }
 
-void initOffer(){
-    getOffer();
-    horizonProductAdapter=new HorizonProductAdapter (this)  ;
-    LinearLayoutManager layoutManager = new LinearLayoutManager (this, LinearLayoutManager.HORIZONTAL,false);
-    binding.offerList.setLayoutManager (layoutManager);
-    binding.offerList.setAdapter (horizonProductAdapter);
-
-}
-void getOffer(){
-    FirebaseFirestore.getInstance ()
-            .collection ("product")
-          .whereEqualTo ("stock","10")
-            .get ()
-            .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
-                    for (DocumentSnapshot ds:dsList){
-                        HorizonProductModel product=ds.toObject (HorizonProductModel.class);
-                        horizonProductAdapter.addProduct(product);
-                    }
 
 
-                }
-            });
-}
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fragmentManager=getSupportFragmentManager ( );
+        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction ();
+        fragmentTransaction.replace (R.id.container,fragment);
+        fragmentTransaction.addToBackStack (null);
+        fragmentTransaction.commit ();
 
-    void initOffer1(){
-        getOffer1();
-        newProductAdapter=new NewProductAdapter(this)  ;
-        LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
-        binding.offerList2.setLayoutManager (layoutManager);
-        binding.offerList2.setAdapter (newProductAdapter);
     }
-    void getOffer1(){
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home, menu);
+        MenuItem menuItem=menu.findItem (R.id.cart);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.profile) {
+            startActivity(new Intent (this, ProfileActivity.class));
+        } else if (item.getItemId() == R.id.fav) {
+            startActivity(new Intent (this, FavouriteActivity.class));
+        }
+        else if (item.getItemId() == R.id.cart) {
+            bottomSheet ();
+        }
+        else if (item.getItemId() == R.id.searchicon) {
+            startActivity(new Intent (this, SearchActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private boolean isConnected(){
+        ConnectivityManager connectivityManager= (ConnectivityManager) getApplicationContext ().getSystemService (getApplicationContext ().CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo ()!=null && connectivityManager.getActiveNetworkInfo ().isConnectedOrConnecting ();
+    }
+
+    private void bottomSheet() {
+        BottomSheetDialog bottomSheetDialog=new BottomSheetDialog ( this);
+        View view= LayoutInflater.from (MainActivity.this).inflate (R.layout.bottomsheet,(LinearLayout)findViewById (R.id.mainlayout),false);
+        bottomSheetDialog.setContentView (view);
+        bottomSheetDialog.show ();
+
+        TextView Subtotal=view.findViewById (R.id.subtotal);;
+        RecyclerView cart=view.findViewById (R.id.cartList);
+
+        Button check=view.findViewById (R.id.checkout);
+
+        if(cartList==null){
+            check.setVisibility (View.INVISIBLE);
+        }
+
+        cartAdapter=new CartAdapter (this,Subtotal);
+
+
+        cart.setAdapter (cartAdapter);
+
+        cart.setLayoutManager (new GridLayoutManager (this,1));
+        getAllProduct ();
+        cartList=cartAdapter.getSelectedItems();
+        check.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                cartList=cartAdapter.getSelectedItems();
+                Intent intent = new Intent(getApplication (), NewCartActivity.class);
+                startActivity (intent);
+                bottomSheetDialog.cancel ();
+
+            }
+        });
+
+
+
+
+    }
+
+    private void getAllProduct(){
+        String uid= FirebaseAuth.getInstance( ).getUid( );
         FirebaseFirestore.getInstance ()
-                .collection ("product")
-                .whereEqualTo ("stock","100")
+                .collection ("cart")
+                .whereEqualTo ("uid",uid)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
-                            NewProductModel product=ds.toObject (NewProductModel.class);
-                            newProductAdapter.addProduct(product);
+                            CartModel product=ds.toObject (CartModel.class);
+                            cartAdapter.addProduct(product);
                         }
 
 
@@ -198,175 +201,4 @@ void getOffer(){
                 });
     }
 
-
-
-
-
-    void getAddress() {
-
-        FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful ( )) {
-                    userModel = task.getResult ( ).toObject (UserModel.class);
-                    if (userModel != null) {
-                        Add.setText ( userModel.getAddress ( ));
-                    }
-                }
-            }
-        });
-
-    }
-
-
-
-    void initCategories() {
-        categories = new ArrayList<> ( );
-        getCategories ( );
-
-        catlistAdapter = new CatlistAdapter (this);
-        binding.categoriesList.setAdapter (catlistAdapter);
-        binding.categoriesList.setLayoutManager (new GridLayoutManager (this, 3));
-    }
-
-    void getCategories() {
-        FirebaseFirestore.getInstance ( )
-                .collection ("category")
-//                .whereEqualTo ("pincode",pin)
-                .get ( )
-                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
-                        for (DocumentSnapshot ds : dsList) {
-                            Catlist catlist = ds.toObject (Catlist.class);
-                            catlistAdapter.addProduct (catlist);
-                        }
-
-                    }
-                });
-
-    }
-
-    private void initSlider() {
-        getRecentOffers ( );
-    }
-
-    void getRecentOffers() {
-        RequestQueue queue = Volley.newRequestQueue (this);
-
-        StringRequest request = new StringRequest (Request.Method.GET, Constants.GET_OFFERS_URL, response -> {
-            try {
-                JSONObject object = new JSONObject (response);
-                if (object.getString ("status").equals ("success")) {
-                    JSONArray offerArray = object.getJSONArray ("news_infos");
-                    for (int i = 0; i < offerArray.length ( ); i++) {
-                        JSONObject childObj = offerArray.getJSONObject (i);
-                        binding.carousel.addData (
-                                new CarouselItem (
-                                        Constants.NEWS_IMAGE_URL + childObj.getString ("image"),
-                                        childObj.getString ("title")
-                                )
-                        );
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace ( );
-            }
-        }, error -> {
-        });
-        queue.add (request);
-    }
-
-
-
-
-     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById (R.id.drawer_layout);
-        if (drawer.isDrawerOpen (GravityCompat.START)) {
-            drawer.closeDrawer (GravityCompat.START);
-        } else {
-            super.onBackPressed ( );
-        }
-    }
-//Drawer Layout Close Alert---------------------------------------------------------------------
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.cart, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-    //Drawer Menu ----------------------------------------------------------------------------------
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId ( );
-
-        if (id == R.id.nav_camera) {
-            Intent i = new Intent (getApplicationContext ( ), ProfileActivity.class);
-            startActivity (i);
-        } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent (getApplicationContext ( ), OrdersActivity.class);
-            startActivity (intent);
-        } else if (id == R.id.nav_manage) {
-            Intent intent = new Intent (getApplicationContext ( ), NewCartActivity.class);
-            startActivity (intent);
-        } else if (id == R.id.nav_share) {
-            Intent intent = new Intent (getApplicationContext ( ), PrivacyActivity.class);
-            startActivity (intent);
-        } else if (id == R.id.nav_send) {
-            Intent intent = new Intent (getApplicationContext ( ), DeleteAccountActivity.class);
-            startActivity (intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById (R.id.drawer_layout);
-        drawer.closeDrawer (GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onSearchStateChanged(boolean enabled) {
-    }
-
-    @Override
-    public void onSearchConfirmed(CharSequence text) {
-        Intent intent = new Intent (MainActivity.this, SearchActivity.class);
-        intent.putExtra ("query", text.toString ( ));
-        startActivity (intent);
-    }
-
-    //Drawer Menu ----------------------------------------------------------------------------------
-
-    //Search And Menu button -----------------------------------------------------------------------
-
-    @Override
-    public void onButtonClicked(int buttonCode) {
-        switch (buttonCode) {
-            case MaterialSearchBar.BUTTON_NAVIGATION:
-                drawer.openDrawer (GravityCompat.START);
-                break;
-            case MaterialSearchBar.BUTTON_SPEECH:
-                break;
-            case MaterialSearchBar.BUTTON_BACK:
-                searchBar.closeSearch ( );
-                break;
-        }
-    }
-
-
-
-    //Search And Menu button -----------------------------------------------------------------------
-
-
-    //Internet Connection---------------------------------------------------------------------------
-    private boolean isConnected(){
-        ConnectivityManager connectivityManager= (ConnectivityManager) getApplicationContext ().getSystemService (context.CONNECTIVITY_SERVICE);
-        return connectivityManager.getActiveNetworkInfo ()!=null && connectivityManager.getActiveNetworkInfo ().isConnectedOrConnecting ();
-    }
-    //Internet Connection---------------------------------------------------------------------------
 }

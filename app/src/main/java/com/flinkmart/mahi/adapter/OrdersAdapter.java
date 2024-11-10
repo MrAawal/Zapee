@@ -3,46 +3,89 @@ package com.flinkmart.mahi.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.OrderDetailActivity;
-import com.flinkmart.mahi.activities.ProductDetailActivity;
 import com.flinkmart.mahi.databinding.ItemOrderBinding;
-import com.flinkmart.mahi.databinding.NewitemProductBinding;
-import com.flinkmart.mahi.model.NewProductModel;
+import com.flinkmart.mahi.model.Favourite;
+import com.flinkmart.mahi.model.ImageModel;
 import com.flinkmart.mahi.model.Order;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelViewholder> {
     private Context context;
-    private List<Order>ordersModel;
-    public OrdersAdapter(Context context){
-        this.context=context;
-        ordersModel=new ArrayList<>();
+    private List<Order>ordersModel=new ArrayList<> ();
+    private ImageAdapter imageAdapter;
+
+    public OrdersAdapter(Context context) {
+        this.context = context;
+        ordersModel = new ArrayList<>();
     }
+
     public void addProduct(Order order){
         ordersModel.add (order);
         notifyDataSetChanged ();
     }
-
+    @NonNull
+    @Override
+    public LoanModelViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view= LayoutInflater.from (context).inflate (R.layout.item_order,parent,false);
+        return new LoanModelViewholder (view);
+    }
 
     public void onBindViewHolder(@NonNull LoanModelViewholder holder, int position) {
 
         Order order=ordersModel.get (position);
-        holder.binding.orderNumber.setText ("Order Id : "+order.getOrderNumber ());
-        holder.binding.price.setText ("₹"+order.getTotalPrice ());
-        holder.binding.status.setText (order.getStatus ());
-        holder.binding.payStatus.setText (order.getPayment());
+        holder.binding.status.setText ("#"+order.getOrderNumber ());
+        holder.binding.textView14.setText (order.getCustomerName ());
+        holder.binding.textView15.setText (order.getCustomerNumber ());
+        holder.binding.textView17.setText (order.getCustomerAddress ());
+        holder.binding.partner.setText (order.getStatus ());
+         CharSequence date= DateFormat.format ("EEEE,MMM d,yyyy h:mm:ss a",order.getOrderPlaceDate ().toDate ());
+         holder.binding.date.setText (date);
+        String orderNumber=order.getOrderNumber ();
+        ImageAdapter  imageAdapter= new ImageAdapter (context);
+        holder.binding.productList.setAdapter (imageAdapter);
+        holder.binding.productList.setLayoutManager (new LinearLayoutManager (context,LinearLayoutManager.HORIZONTAL,false));
+//        holder.binding.productList.setLayoutManager (new LinearLayoutManager (context));
+
+
+//        FirebaseFirestore
+//                .getInstance()
+//                .collection ("OrderProduct")
+//                .whereEqualTo ("branch", orderNumber)
+//                .whereEqualTo ("orderid",orderNumber)
+//                .get ( )
+//                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
+//                        for (DocumentSnapshot ds : dsList){
+//                            ImageModel order = ds.toObject (ImageModel.class);
+//                            imageAdapter.addProduct (order);
+//                        }
+//                    }
+//                });
+
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,9 +94,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
                 intent.putExtra("totalPrice", order.getTotalPrice ());
                 intent.putExtra("address", order.getCustomerAddress());
                 intent.putExtra("payment", order.getPayment ());
-                intent.putExtra("date", order.getOrderPlaceDate());
+                intent.putExtra("date", date);
                 intent.putExtra("status", order.getStatus());
                 context.startActivity(intent);
+
+
+
+
             }
         });
     }
@@ -64,12 +111,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
     public int getItemCount() {
         return ordersModel.size ();
     }
-    @NonNull
-    @Override
-    public LoanModelViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from (context).inflate (R.layout.item_order,parent,false);
-        return new LoanModelViewholder (view);
-    }
+
 
 
     class  LoanModelViewholder extends RecyclerView.ViewHolder{
@@ -77,7 +119,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
         ItemOrderBinding binding;
         public LoanModelViewholder(@NonNull View itemView) {
             super(itemView);
+
             binding = ItemOrderBinding.bind(itemView);
+
         }
     }
 }

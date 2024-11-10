@@ -27,4 +27,5 @@ public class AndroidUtil {
         userModel.setPhone(intent.getStringExtra ("phone"));
         return userModel;
     }
+
 }

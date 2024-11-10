@@ -1,3 +1,5 @@
+import com.android.tools.r8.internal.ui
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
@@ -16,9 +18,8 @@ android {
         applicationId = "com.flinkmart.mahi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 13
-        versionName = "2.3"
-
+        versionCode = 18
+        versionName = "2.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -64,5 +65,6 @@ dependencies {
     annotationProcessor(libs.room.compiler)
     implementation(libs.room.runtime)
     implementation(libs.circleimageview)
+    implementation(libs.firebase.ui.firestore)
 
 }

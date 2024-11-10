@@ -45,8 +45,7 @@ public class OrdersActivity extends AppCompatActivity {
         FirebaseFirestore.getInstance ()
                 .collection ("orders")
                 .whereEqualTo ("uid",uid)
-//                .orderBy ("status", Query.Direction.ASCENDING)
-//                .orderBy ("orderPlaceDate", Query.Direction.ASCENDING)
+                .orderBy ("orderPlaceDate", Query.Direction.ASCENDING)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override

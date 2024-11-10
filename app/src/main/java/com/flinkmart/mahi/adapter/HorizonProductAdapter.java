@@ -7,8 +7,6 @@ import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,21 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.NewProductDetailActivity;
-import com.flinkmart.mahi.activities.ProductDetailActivity;
 import com.flinkmart.mahi.databinding.ItemProductBinding;
-import com.flinkmart.mahi.databinding.NewitemProductBinding;
 import com.flinkmart.mahi.model.HorizonProductModel;
-import com.flinkmart.mahi.model.NewProductModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HorizonProductAdapter extends RecyclerView.Adapter<HorizonProductAdapter.LoanModelViewholder> {
     private Context context;
     private List<HorizonProductModel>productModels;
-    public HorizonProductAdapter(Context context){
-        this.context=context;
-        productModels=new ArrayList<>();
+
+    public HorizonProductAdapter(Context context, List<HorizonProductModel> productModels) {
+        this.context = context;
+        this.productModels = productModels;
     }
 
     public void addProduct(HorizonProductModel productModel){
@@ -42,7 +37,7 @@ public class HorizonProductAdapter extends RecyclerView.Adapter<HorizonProductAd
         HorizonProductModel productModel=productModels.get (position);
         holder.binding.label.setText (productModel.getTittle ());
         holder.binding.price.setText (" ₹"+productModel.getPrice ());
-        holder.binding.Discount.setText ("MRP "+productModel.getDiscount ());
+        holder.binding.Discount.setText ("MRP:"+productModel.getDiscount ());
         holder.binding.Discount.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
         Glide.with (context).load(productModel.getImage())
                 .into (holder.binding.image);
@@ -51,10 +46,13 @@ public class HorizonProductAdapter extends RecyclerView.Adapter<HorizonProductAd
             public void onClick(View v) {
                 Intent intent = new Intent(context, NewProductDetailActivity.class);
                 intent.putExtra("id", productModel.getId());
-                intent.putExtra("description", productModel.getDescription ());
+                intent.putExtra("description",productModel.getDescription ());
                 intent.putExtra("name", productModel.getTittle ());
                 intent.putExtra("image", productModel.getImage());
                 intent.putExtra("price", productModel.getPrice());
+                intent.putExtra("subcategory",productModel.getSubcategory());
+                intent.putExtra("discount",productModel.getDiscount ());
+                intent.putExtra("category",productModel.getCategory());
                 context.startActivity(intent);
             }
         });

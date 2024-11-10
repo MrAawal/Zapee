@@ -9,10 +9,6 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomPrice"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +26,7 @@
         android:id="@+id/bottomPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#D6D6D6"
+        android:background="@color/white"
         android:orientation="horizontal"
         android:padding="15dp"
         app:layout_constraintBottom_toTopOf="@+id/continueBtn"
@@ -62,7 +58,7 @@
             android:layout_weight="1"
             android:gravity="right"
             android:text="PKR 0.0"
-            android:textColor="#4CAF50"
+            android:textColor="@color/fav"
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
