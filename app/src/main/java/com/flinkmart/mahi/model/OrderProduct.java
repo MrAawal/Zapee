@@ -7,7 +7,6 @@ public class OrderProduct {
 
     public int id;
     public int orderid;
-
     public int price;
     public int qty;
 

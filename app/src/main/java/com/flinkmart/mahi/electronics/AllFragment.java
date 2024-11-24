@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.adapter.FilterAdapter;
-import com.flinkmart.mahi.adapter.ItemAdapter;
 import com.flinkmart.mahi.databinding.FragmentAllBinding;
 import com.flinkmart.mahi.model.Item;
 import com.google.android.gms.tasks.OnSuccessListener;

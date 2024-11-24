@@ -31,7 +31,12 @@ swiperefreshlayout = "1.1.0"
 circleimageview="3.1.0"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 playServicesMaps = "19.0.0"
+playServicesLocation="17.0.0"
 firebaseui="8.0.2"
+mediarouter = "1.3.1"
+dexter="6.2.1"
+shimmer="0.5.0"
+firebaseMessaging = "24.0.2"
 
 
 [libraries]
@@ -51,25 +56,33 @@ retrofit = { group = "com.squareup.retrofit2", name="retrofit",version.ref="retr
 converter = { group = "com.squareup.retrofit2", name="converter-gson",version.ref="converter-gson"}
 volley={ group ="com.android.volley" ,name = "volley" ,version.ref = "volley" }
 tinycart={ group ="com.github.hishd" ,name = "tinycart" ,version.ref = "tinycart" }
+
 materialsearchbar={ group ="com.github.mancj" ,name = "materialsearchbar", version.ref = "materialsearchbar" }
 whynotimagecarousel={ group ="org.imaginativeworld.whynotimagecarousel" ,name = "whynotimagecarousel", version.ref = "whynotimagecarousel" }
 androidadvancedwebview = { group = "com.github.delight-im", name="android-advancedwebview",version.ref="androidadvancedwebview"}
+
 roundedimageview = { group = "com.makeramen", name="roundedimageview",version.ref="roundedimageview"}
+
+ccp= { group = "com.hbb20", name = "ccp", version = "2.7.3" }
+
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
-ccp= { group = "com.hbb20", name = "ccp", version = "2.7.3" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-ui-firestore= { group = "com.firebaseui", name = "firebase-ui-firestore", version.ref = "firebaseui" }
 
 
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
-
 circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
+
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
-
-
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouter" }
+dexter = { group = "com.karumi", name = "dexter", version.ref = "dexter" }
+shimmer={group="com.facebook.shimmer",name="shimmer",version.ref="shimmer"}
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

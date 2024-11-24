@@ -1,16 +1,28 @@
 package com.flinkmart.mahi.lifestylemodel;
 
 public class ElectronicCategory {
+    public String id;
     public String tittle;
     public String image;
     public boolean is_selected;
     public ElectronicCategory() {
     }
 
-    public ElectronicCategory(String tittle, String image) {
+    public ElectronicCategory(String id, String tittle, String image, boolean is_selected) {
+        this.id = id;
         this.tittle = tittle;
         this.image = image;
+        this.is_selected = is_selected;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTittle() {
         return tittle;
     }
@@ -27,5 +39,12 @@ public class ElectronicCategory {
         this.image = image;
     }
 
+    public boolean isIs_selected() {
+        return is_selected;
+    }
+
+    public void setIs_selected(boolean is_selected) {
+        this.is_selected = is_selected;
+    }
 }
 

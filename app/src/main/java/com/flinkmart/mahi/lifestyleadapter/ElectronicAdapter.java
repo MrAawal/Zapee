@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.activities.AllProductActivity;
+import com.flinkmart.mahi.activities.SubCatListActivity;
+import com.flinkmart.mahi.databinding.ItemCategoryBinding;
 import com.flinkmart.mahi.lifestyleactivity.ElectronicsListActivity;
 import com.flinkmart.mahi.databinding.ItemLifestyleBinding;
 import com.flinkmart.mahi.lifestylemodel.ElectronicCategory;
@@ -30,7 +33,7 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.ho
     @NonNull
     @Override
     public ElectronicAdapter.holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lifestyle, parent , false);
+       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent , false);
        return  new holder(view);
     }
 
@@ -43,8 +46,10 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.ho
         holder.itemView.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(context, ElectronicsListActivity.class);
-                intent.putExtra("category",catlist.getTittle());
+                Intent intent = new Intent(context, AllProductActivity.class);
+                intent.putExtra("catId",catlist.getId());
+                intent.putExtra("catName",catlist.getTittle());
+
                 context.startActivity(intent);
             }
         });
@@ -63,10 +68,10 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.ho
     }
 
     public class holder extends RecyclerView.ViewHolder{
-        ItemLifestyleBinding binding;
+        ItemCategoryBinding binding;
         public holder(@NonNull View itemView) {
             super(itemView);
-            binding = ItemLifestyleBinding.bind (itemView);
+            binding = ItemCategoryBinding.bind (itemView);
         }
     }
 }

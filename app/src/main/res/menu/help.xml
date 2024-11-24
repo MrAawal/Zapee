@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/help"
-        android:icon="@drawable/baseline_support_agent_24"
+        android:icon="@drawable/baseline_whatsapp_24"
         android:title="Bills"
         app:showAsAction="always" />
 

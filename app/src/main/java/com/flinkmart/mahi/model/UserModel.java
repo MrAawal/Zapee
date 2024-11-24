@@ -8,18 +8,19 @@ public class UserModel {
     private String phone ;
     public  String username;
     public  String address;
+    public  String pin;
     public Timestamp createdTimestamp;
 
     public UserModel() {
     }
 
-    public UserModel(String phone, String username, String address, Timestamp createdTimestamp) {
+    public UserModel(String phone, String username, String address, String pin, Timestamp createdTimestamp) {
         this.phone = phone;
         this.username = username;
         this.address = address;
+        this.pin = pin;
         this.createdTimestamp = createdTimestamp;
     }
-
 
     public String getPhone() {
         return phone;
@@ -43,6 +44,14 @@ public class UserModel {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
     public Timestamp getCreatedTimestamp() {

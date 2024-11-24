@@ -19,7 +19,7 @@ public class PhoneLoginActivity extends AppCompatActivity {
         EditText t1;
         Button b1,EmailLogin;
         FirebaseAuth auth;
-    FirebaseUser user;
+       FirebaseUser user;
 
 
 
@@ -38,12 +38,14 @@ public class PhoneLoginActivity extends AppCompatActivity {
             b1=(Button)findViewById(R.id.send);
             EmailLogin=(Button) findViewById (R.id.EmailLogin);
 
+
+
+
             auth=FirebaseAuth.getInstance ();
             user=auth.getCurrentUser();
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            if(user!=null) {
-                Intent i = new Intent (getApplicationContext ( ), ProfileActivity.class);
+            if(user!=null){
+                Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
                 startActivity (i);
                 finish ( );
             }
@@ -52,7 +54,6 @@ public class PhoneLoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent=new Intent(PhoneLoginActivity.this,LoginActivity.class);
-                    intent.putExtra("mobile",ccp.getFullNumberWithPlus().replace(" ",""));
                     startActivity(intent);
 
                 }
@@ -62,16 +63,19 @@ public class PhoneLoginActivity extends AppCompatActivity {
             b1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent=new Intent(PhoneLoginActivity.this,ManageOtpActivity.class);
-                    intent.putExtra("mobile",ccp.getFullNumberWithPlus().replace(" ",""));
-                    startActivity(intent);
+                    String phone=t1.getText ().toString ();
+
+                    if(phone.isEmpty ()||phone.length ()<10||phone.length ()>10){
+                        t1.setError ("Phone number should be 10 digit");
+                        return;
+                    }else {
+                        Intent intent=new Intent(PhoneLoginActivity.this,ManageOtpActivity.class);
+                        intent.putExtra("mobile",ccp.getFullNumberWithPlus().replace(" ",""));
+                        startActivity(intent);
+                    }
+
                 }
             });
 
         }
-    public boolean onSupportNavigateUp() {
-        finish();
-        return super.onSupportNavigateUp();
-    }
-
     }

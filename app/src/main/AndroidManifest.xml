@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+
 
     <application
         android:allowBackup="true"
@@ -16,11 +21,43 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+
+        <activity
+            android:name=".activities.PickupActivity"
+            android:label="Pick-up And Drop"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB8Zp_xB5VjC-sgVqsPeLxOyxRnfvqCasE" />
+        <activity
+            android:name=".map.MapActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.LikeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.Mahi.Actionbar" />
+        <activity
+            android:name=".roomdatabase.CartActivity"
+            android:label="Cart"
+            android:screenOrientation="portrait"
+            android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
             android:name=".categoryactivity.EssantialActivity"
             android:label="Essantials"
             android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar"  />
+            android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
             android:name=".categoryactivity.GrocceryActivity"
             android:label="Groccery"
@@ -48,7 +85,7 @@
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
             android:name=".activities.FavouriteActivity"
-            android:label="Favorite"
+            android:label="Favourite List"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
@@ -128,19 +165,15 @@
         <activity
             android:name=".activities.ManageOtpActivity"
             android:label="Verify OTP"
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.PhoneLoginActivity"
             android:label=""
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.CompleteProfileActivity"
             android:exported="false"
-            android:label="Complete Profile"
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false"
@@ -151,20 +184,14 @@
             android:name=".activities.LoginActivity"
             android:exported="false"
             android:label=""
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.SignUpActivity"
             android:exported="false"
-            android:label=""
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.MainActivity"
-            android:exported="false"
-            android:label="Zapee"
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
+            android:exported="false" />
         <activity
             android:name=".activities.SearchActivity"
             android:exported="false"
@@ -189,19 +216,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".activities.CartActivity"
-            android:exported="false"
-            android:label="Shopping Cart"
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
-        <activity
             android:name=".activities.OrdersActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/Base.Theme.Mahi.Actionbar" />
-        <activity
-            android:name=".activities.ProductDetailActivity"
-            android:exported="false"
+            android:label="Orders"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
     </application>

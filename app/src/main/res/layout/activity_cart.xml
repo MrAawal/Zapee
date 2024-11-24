@@ -2,78 +2,156 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".activities.CartActivity">
+    android:background="@drawable/login"
+    tools:context=".roomdatabase.CartActivity">
 
+    <Button
+        android:id="@+id/shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:text="Continue Shopping"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/empty" />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomPrice"
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_horizontal"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="196dp"
+        android:fontFamily="monospace"
+        android:gravity="right"
+        android:text="Cart is Empty!"
+        android:textColor="#FF6D00"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/congrage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:background="@drawable/category"
+        android:backgroundTint="#C5FAC1"
+        android:fontFamily="monospace"
+        android:padding="5dp"
+        android:text="Congragulation"
+        android:textColor="@color/red"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="2dp"
+        android:background="@android:color/transparent"
+        android:visibility="visible"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomPrice"
+        app:layout_constraintEnd_toStartOf="@+id/bottomPrice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/congrage">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cartList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp" />
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
-
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/bottomPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#D6D6D6"
-        android:orientation="horizontal"
-        android:padding="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/continueBtn"
+        android:background="#C5FAC1"
+        android:backgroundTint="#C5FAC1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Subtotal"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="1"
-            android:text="(without taxes)"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:textStyle="italic" />
+            <TextView
+                android:id="@+id/subtotal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/product"
+                android:fontFamily="monospace"
+                android:gravity="start"
+                android:padding="10dp"
+                android:text="PKR 0.0"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/subtotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="PKR 0.0"
-            android:textColor="#4CAF50"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/continueBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
 
-    <Button
-        android:id="@+id/continueBtn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/fav"
-        android:text="Continue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="627dp" />
+                android:layout_margin="5dp"
+                android:background="@drawable/product"
+                android:backgroundTint="#C5FAC1"
+                android:drawableTint="#C5FAC1"
+                android:foregroundTint="#C5FAC1"
+                android:gravity="center"
+                android:text="Checkout"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:cornerRadius="10dp"
+                app:iconGravity="textStart"
+                app:iconTint="#C5FAC1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/qty"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:gravity="start"
+                android:padding="10dp"
+                android:text="(without taxes)"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,12 @@
 package com.flinkmart.mahi.activities;
 
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -30,6 +33,7 @@ import java.util.UUID;
 public class BranchActivity extends AppCompatActivity {
     ActivityBranchBinding binding;
     BranchAdapter branchAdapter;
+    private static  List<Branch> branchemodel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -37,28 +41,53 @@ public class BranchActivity extends AppCompatActivity {
         setContentView (binding.getRoot ());
 
         String pin = getIntent().getStringExtra("pincode");
+        binding.textView29.setVisibility (View.INVISIBLE);
+        Handler handler=new Handler (  );
+        handler.postDelayed (()->{
+           binding.textView29.setVisibility (View.VISIBLE);
+           binding.progressBar8.setVisibility (View.INVISIBLE);
+        },2000);
 
 
         getStore (pin);
-        branchAdapter=new BranchAdapter (this)  ;
+
+
+        branchAdapter=new BranchAdapter (this) ;
         binding.branchList.setAdapter (branchAdapter);
         binding.branchList.setLayoutManager (new LinearLayoutManager (this));
         binding.button.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v){
-                    setStore ();
+                String uid=FirebaseAuth.getInstance ( ).getUid ( );
+                List<Branch>itemList=branchAdapter.getSelectedItem();
+
+                for (int i=0;i<itemList.size ();i++){
+                    Branch branch1 = itemList.get (i);
+                    branch1.setUid (FirebaseAuth.getInstance ( ).getUid ( ));
+                    FirebaseFirestore.getInstance ( )
+                            .collection ("userstore")
+                            .document (uid)
+                            .set (branch1);
+
                     Intent intent = new Intent (BranchActivity.this, MainActivity.class);
-                    intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra ("category",branch1.getStorename ());
                     startActivity (intent);
 
+                    if(itemList.isEmpty ( )){
+                        binding.button.setVisibility (View.INVISIBLE);
+                        Toast.makeText (BranchActivity.this, "error", Toast.LENGTH_SHORT).show ( );
+                    }
+
+                }
             }
         });
 
     }
 
 
-    void  getStore(String pin){
 
+
+    void  getStore(String pin){
                 FirebaseFirestore.getInstance ()
                 .collection ("branch")
                 .whereEqualTo ("pincode",pin)
@@ -76,26 +105,12 @@ public class BranchActivity extends AppCompatActivity {
                 });
     }
 
-    public void setStore(){
-        String uuid= UUID.randomUUID ().toString ();
-        String uid=FirebaseAuth.getInstance ( ).getUid ( );
-        List<Branch>itemList=branchAdapter.getSelectedItem();
-        for (int i=0;i<itemList.size ();i++){
-            Branch branch1 = itemList.get (i);
-            branch1.setUid (FirebaseAuth.getInstance ( ).getUid ( ));
-            FirebaseFirestore.getInstance ( )
-                    .collection ("userstore")
-                    .document (uid)
-                    .set (branch1);
-        }
-
-    }
     public void onBackPressed() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder (BranchActivity.this);
         alertDialog.setTitle ("Store Selected");
         alertDialog.setMessage ("Store select compulsory is deliver our product.");
 
-        alertDialog.setPositiveButton ("NO ! I DON'T WANT", new DialogInterface.OnClickListener ( ) {
+        alertDialog.setPositiveButton ("Exit", new DialogInterface.OnClickListener ( ) {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish ();

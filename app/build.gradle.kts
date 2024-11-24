@@ -18,8 +18,8 @@ android {
         applicationId = "com.flinkmart.mahi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 18
-        versionName = "2.8"
+        versionCode = 28
+        versionName = "3.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -46,6 +46,10 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.swiperefreshlayout)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.mediarouter)
+    implementation(libs.dexter)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -66,5 +70,6 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.circleimageview)
     implementation(libs.firebase.ui.firestore)
+    implementation(libs.shimmer)
 
 }

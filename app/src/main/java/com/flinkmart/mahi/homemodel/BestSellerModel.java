@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class BestSellerModel implements com.hishd.tinycart.model.Item {
     public String tittle,image,id,price, discount,stock,description,category,subcategory,branch;
+
     public BestSellerModel() {
     }
 

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
         signupPassword=findViewById(R.id.semail);
         signupButton=findViewById(R.id.signup_button);
         loginRedirectText=findViewById(R.id.bills);
-
+        ProgressBar progressBar=findViewById (R.id.progressBar11);
 
 
 
@@ -71,11 +72,18 @@ public class SignUpActivity extends AppCompatActivity {
                 String user=signupEmail.getText().toString();
                 String pass=signupPassword.getText().toString();
 
+                progressBar.setVisibility (View.VISIBLE);
+                signupButton.setVisibility (View.GONE);
+
                 if(user.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
+                    progressBar.setVisibility (View.INVISIBLE);
+                    signupButton.setVisibility (View.VISIBLE);
                 }
                 if(pass.isEmpty() || signupPassword.length ( ) < 6){
                     signupPassword.setError("Password Should Six Character");
+                    progressBar.setVisibility (View.INVISIBLE);
+                    signupButton.setVisibility (View.VISIBLE);
                 }
                 else{
                     auth.createUserWithEmailAndPassword(user,pass)
@@ -86,12 +94,14 @@ public class SignUpActivity extends AppCompatActivity {
                                         Toast.makeText (SignUpActivity.this, "User register Succes", Toast.LENGTH_SHORT).show ( );
                                         Intent i=new Intent(SignUpActivity.this, CompleteProfileActivity.class);
                                         startActivity(i);
-
-
+                                        finish ();
                                         FirebaseUser user = auth.getCurrentUser();
 
                                     } else {
                                         // If sign in fails, display a message to the user.
+                                        progressBar.setVisibility (View.INVISIBLE);
+                                        signupButton.setVisibility (View.VISIBLE);
+
                                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                         Toast.makeText(SignUpActivity.this, "Email format error or User Already Exist",
                                                 Toast.LENGTH_SHORT).show();

@@ -17,6 +17,7 @@ import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.adapter.NewCategoryAdapter;
 import com.flinkmart.mahi.databinding.ActivityChatBinding;
 import com.flinkmart.mahi.model.NewCart;
+import com.flinkmart.mahi.roomdatabase.CartActivity;
 import com.flinkmart.mahi.utils.Constants;
 
 import org.json.JSONArray;

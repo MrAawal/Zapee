@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.databinding.ItemBundleBinding;
+import com.flinkmart.mahi.databinding.ItemCategoriesBinding;
+import com.flinkmart.mahi.databinding.ItemCategoryLargeBinding;
+import com.flinkmart.mahi.databinding.NewitemProductBinding;
 import com.flinkmart.mahi.lifestyleactivity.ClothingListActivity;
 import com.flinkmart.mahi.databinding.ItemLifestyleBinding;
 import com.flinkmart.mahi.lifestylemodel.LifstyleCategory;
@@ -30,7 +34,7 @@ public class LifstyleAdapter extends RecyclerView.Adapter<LifstyleAdapter.holder
     @NonNull
     @Override
     public LifstyleAdapter.holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cat, parent , false);
+       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.newitem_product, parent , false);
        return  new holder(view);
     }
 
@@ -44,7 +48,8 @@ public class LifstyleAdapter extends RecyclerView.Adapter<LifstyleAdapter.holder
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ClothingListActivity.class);
-                intent.putExtra("category",catlist.getTittle());
+                intent.putExtra("catId",catlist.getId());
+                intent.putExtra("catName",catlist.getTittle());
                 context.startActivity(intent);
             }
         });
@@ -63,10 +68,10 @@ public class LifstyleAdapter extends RecyclerView.Adapter<LifstyleAdapter.holder
     }
 
     public class holder extends RecyclerView.ViewHolder{
-        ItemLifestyleBinding binding;
+        NewitemProductBinding binding;
         public holder(@NonNull View itemView) {
             super(itemView);
-            binding = ItemLifestyleBinding.bind (itemView);
+            binding = NewitemProductBinding.bind (itemView);
         }
     }
 }

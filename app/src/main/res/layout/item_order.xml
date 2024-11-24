@@ -10,11 +10,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -97,6 +93,7 @@
                         android:textAllCaps="true"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/partner"
                         android:layout_width="match_parent"

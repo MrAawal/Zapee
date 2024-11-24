@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class ManageOtpActivity extends AppCompatActivity {
     EditText t2;
     Button b2;
+    Button back;
     String phonenumber;
     String otpid;
     FirebaseAuth mAuth;
@@ -34,14 +36,22 @@ public class ManageOtpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_otp);
 
         phonenumber=getIntent().getStringExtra("mobile").toString();
+
         t2=(EditText)findViewById(R.id.t2);
         b2=(Button)findViewById(R.id.b2);
+        back=findViewById (R.id.imageButton5);
+
         mAuth=FirebaseAuth.getInstance();
+        back.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                onBackPressed ();
+            }
+        });
+
 
         initiateotp();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,10 +118,5 @@ public class ManageOtpActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return super.onSupportNavigateUp();
-    }
 
 }

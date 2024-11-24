@@ -4,7 +4,6 @@ package com.flinkmart.mahi.roomdatabase;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -12,18 +11,17 @@ import java.util.List;
 public interface ProductDao
 {
     @Insert
-    void insertrecord(ProductEntity product);
-
-    @Query("SELECT EXISTS(SELECT * FROM ProductEntity WHERE pid = :productid)")
-    Boolean is_exist(int productid);
+    void insertrecord(Product product);
 
 
-    @Query("SELECT * FROM ProductEntity")
-    List<ProductEntity> getallproduct();
+    @Query("SELECT EXISTS(SELECT * FROM Product WHERE pid = :id)")
+    Boolean is_exist(int id);
 
-    @Query("DELETE FROM ProductEntity WHERE pid = :id")
+    @Query("SELECT * FROM Product")
+    List<Product> getallproduct();
+    @Query("DELETE FROM Product WHERE pid = :id")
     void deleteById(int id);
-//    @Update
-//    void updateProduct(ProductEntity product);
 
+    @Query("UPDATE Product SET qnt=:quantity WHERE pid = :id")
+    void update(int quantity, int id);
 }

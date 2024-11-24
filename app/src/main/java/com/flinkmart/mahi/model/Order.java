@@ -3,13 +3,13 @@ package com.flinkmart.mahi.model;
 import com.google.firebase.Timestamp;
 
 public class Order {
-    private String orderNumber,payment,status,totalPrice,customerAddress,customerName,customerNumber,customerStore;
+    private String orderNumber,payment,status,totalPrice,customerAddress,customerName,customerNumber,customerStore,partner;
     private Timestamp orderPlaceDate;
 
     public Order() {
     }
 
-    public Order(String orderNumber, String payment, String status, String totalPrice, String customerAddress, String customerName, String customerNumber, String customerStore, Timestamp orderPlaceDate) {
+    public Order(String orderNumber, String payment, String status, String totalPrice, String customerAddress, String customerName, String customerNumber, String customerStore, Timestamp orderPlaceDat,String partner) {
         this.orderNumber = orderNumber;
         this.payment = payment;
         this.status = status;
@@ -19,6 +19,7 @@ public class Order {
         this.customerNumber = customerNumber;
         this.customerStore = customerStore;
         this.orderPlaceDate = orderPlaceDate;
+        this.partner=partner;
     }
 
     public String getOrderNumber() {
@@ -91,5 +92,13 @@ public class Order {
 
     public void setOrderPlaceDate(Timestamp orderPlaceDate) {
         this.orderPlaceDate = orderPlaceDate;
+    }
+
+    public String getPartner() {
+        return partner;
+    }
+
+    public void setPartner(String partner) {
+        this.partner = partner;
     }
 }

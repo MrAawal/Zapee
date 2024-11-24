@@ -14,21 +14,22 @@ public class ProductEntity
     @ColumnInfo(name = "pname")
     public String pname;
 
+    @ColumnInfo(name = "image")
+    public String image;
+
     @ColumnInfo(name = "price")
     public int price;
 
     @ColumnInfo(name = "qnt")
     public int qnt;
-    @ColumnInfo(name = "uid")
-    public String uid;
 
 
-    public ProductEntity(int pid, String pname, int price, int qnt,String uid) {
+    public ProductEntity(int pid, String pname, String image, int price, int qnt) {
         this.pid = pid;
         this.pname = pname;
+        this.image = image;
         this.price = price;
         this.qnt = qnt;
-        this.uid = uid;
     }
 
     public int getPid() {
@@ -47,6 +48,14 @@ public class ProductEntity
         this.pname = pname;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public int getPrice() {
         return price;
     }
@@ -62,13 +71,4 @@ public class ProductEntity
     public void setQnt(int qnt) {
         this.qnt = qnt;
     }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
 }

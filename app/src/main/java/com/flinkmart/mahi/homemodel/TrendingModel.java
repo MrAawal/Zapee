@@ -1,107 +1,39 @@
 package com.flinkmart.mahi.homemodel;
 
+import androidx.room.ColumnInfo;
+import androidx.room.PrimaryKey;
+
 import java.math.BigDecimal;
 
-public class TrendingModel implements com.hishd.tinycart.model.Item {
-    public String tittle,image,id,price, discount,stock,description,category,subcategory,branch;
-
+public class TrendingModel  {
     public int qty;
+
+    public int pid;
+
+    public String pname;
+
+
+    public String image;
+
+    public int price;
+
+    public int qnt;
+
+    public String description;
+
+    public String discount;
     public TrendingModel() {
     }
 
-
-    public TrendingModel(String tittle, String image, String id, String price, String discount, String stock, String description, String category, String subcategory, String branch, int qty) {
-        this.tittle = tittle;
-        this.image = image;
-        this.id = id;
-        this.price = price;
-        this.discount = discount;
-        this.stock = stock;
-        this.description = description;
-        this.category = category;
-        this.subcategory = subcategory;
-        this.branch = branch;
+    public TrendingModel(int qty, int pid, String pname, String image, int price, int qnt, String description, String discount) {
         this.qty = qty;
-    }
-
-    public String getTittle() {
-        return tittle;
-    }
-
-    public void setTittle(String tittle) {
-        this.tittle = tittle;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
+        this.pid = pid;
+        this.pname = pname;
         this.image = image;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
         this.price = price;
-    }
-
-    public String getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(String discount) {
-        this.discount = discount;
-    }
-
-    public String getStock() {
-        return stock;
-    }
-
-    public void setStock(String stock) {
-        this.stock = stock;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
+        this.qnt = qnt;
         this.description = description;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getSubcategory() {
-        return subcategory;
-    }
-
-    public void setSubcategory(String subcategory) {
-        this.subcategory = subcategory;
-    }
-
-    public String getBranch() {
-        return branch;
-    }
-
-    public void setBranch(String branch) {
-        this.branch = branch;
+        this.discount = discount;
     }
 
     public int getQty() {
@@ -112,13 +44,59 @@ public class TrendingModel implements com.hishd.tinycart.model.Item {
         this.qty = qty;
     }
 
-    @Override
-    public BigDecimal getItemPrice() {
-        return null;
+    public int getPid() {
+        return pid;
     }
 
-    @Override
-    public String getItemName() {
-        return null;
+    public void setPid(int pid) {
+        this.pid = pid;
+    }
+
+    public String getPname() {
+        return pname;
+    }
+
+    public void setPname(String pname) {
+        this.pname = pname;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getQnt() {
+        return qnt;
+    }
+
+    public void setQnt(int qnt) {
+        this.qnt = qnt;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
     }
 }

@@ -40,7 +40,7 @@ public class SearchActivity extends AppCompatActivity {
         binding=ActivitySearchBinding.inflate (getLayoutInflater () );
         setContentView (binding.getRoot ());
         itemList=new ArrayList<> (  );
-        initProduct ();
+//        initProduct ();
         binding.SearchInput.requestFocus();
        binding.SearchInput.setOnQueryTextListener (new SearchView.OnQueryTextListener ( ) {
            @Override
@@ -70,7 +70,7 @@ public class SearchActivity extends AppCompatActivity {
     void initProduct(){
         getProduct();
         subCategoryListAdapter=new SubCategoryItemAdapter (this)  ;
-        LinearLayoutManager layoutManager = new GridLayoutManager (this, 3);
+        LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
         binding.SearchList.setLayoutManager (layoutManager);
         binding.SearchList.setAdapter (subCategoryListAdapter);
     }
@@ -103,7 +103,7 @@ public class SearchActivity extends AppCompatActivity {
                 .setQuery(query,Item.class).build();
 
         adapter = new SearchAdapter (options,getApplicationContext(),itemList);
-        binding.SearchList.setLayoutManager(new GridLayoutManager (this,2));
+        binding.SearchList.setLayoutManager(new GridLayoutManager (this,1));
         binding.SearchList.setAdapter(adapter);
         adapter.startListening();
 
@@ -138,8 +138,9 @@ public class SearchActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
     public void onBackPressed() {
+        super.onBackPressed ( );
         Intent intent = new Intent (SearchActivity.this, MainActivity.class);
         startActivity (intent);
-        finish ();
+        finish ( );
     }
 }

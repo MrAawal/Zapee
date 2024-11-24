@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
@@ -23,9 +24,11 @@ import com.flinkmart.mahi.activities.NewProductDetailActivity;
 import com.flinkmart.mahi.databinding.NewitemProductBinding;
 import com.flinkmart.mahi.model.CartModel;
 import com.flinkmart.mahi.model.Item;
+import com.flinkmart.mahi.roomdatabase.AppDatabase;
+import com.flinkmart.mahi.roomdatabase.Product;
+import com.flinkmart.mahi.roomdatabase.ProductDao;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -67,55 +70,101 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyHolder> 
 
         holder.binding.cart.setVisibility (View.VISIBLE);
         holder.binding.remove.setVisibility (View.INVISIBLE);
+        holder.binding.qntLayout.setVisibility (View.INVISIBLE);
+
 
         Glide.with (context).load(productModel.getImage ())
                 .into (holder.binding.image);
         holder.binding.cart.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
+                AppDatabase db= Room.databaseBuilder(context,AppDatabase.class,"cart_db").allowMainThreadQueries().build();
+                ProductDao productDao=db.ProductDao();
+                List<Product> products=productDao.getallproduct ();
 
+                int id= Integer.parseInt (productModel.getId ());
 
-                String uid= FirebaseAuth.getInstance ( ).getUid ( );
-                if(uid==null){
-                    Toast.makeText (context, "Please Login", Toast.LENGTH_SHORT).show ( );
-                }else{
-                    String orderNumber = String.valueOf (getRandomNumber (11111, 99999));
-                    String id = productModel.getId();
-                    int price= Integer.parseInt (productModel.getPrice ());
-                    int qntty=1;
-                    CartModel orderProduct = new CartModel(id,orderNumber,uid,productModel.getTittle (),productModel.getImage (),productModel.getDiscount (),productModel.getStock (),productModel.getDescription (),productModel.getCategory (),productModel.getSubcategory (),"",qntty,price,true);
-                    FirebaseFirestore.getInstance ( )
-                            .collection ("cart")
-                            .document (id+uid)
-                            .set (orderProduct);
-                    holder.binding.cart.setVisibility (View.INVISIBLE);
-                    holder.binding.remove.setVisibility (View.VISIBLE);
-                    Toast.makeText (context, "Added in Cart list", Toast.LENGTH_SHORT).show ( );
+                Boolean check=productDao.is_exist(id);
+                if(check==false) {
+                    productDao.insertrecord (new Product (id,productModel.getTittle (),productModel.getImage (),Integer.parseInt (productModel.getPrice ()),1,productModel.getDiscount (),productModel.getDescription ()));
+                }else {
+                    Toast.makeText (context, "Item Exist", Toast.LENGTH_SHORT).show ( );
                 }
+                holder.binding.cart.setVisibility (View.INVISIBLE);
+                holder.binding.remove.setVisibility (View.VISIBLE);
 
-            }
-        });
-        holder.binding.remove.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                String id = productModel.getId();
-                FirebaseFirestore.getInstance ()
-                        .collection ("cart")
-                        .document ( id+uid)
-                        .delete ()
-                        .addOnCompleteListener (new OnCompleteListener<Void> ( ) {
+                holder.binding.qntLayout.setVisibility (View.INVISIBLE);
+
+                holder.binding.add.setOnClickListener (new View.OnClickListener ( ) {
+                    @Override
+                    public void onClick(View v) {
+
+                        holder.binding.add.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful ()){
-                                    holder.binding.cart.setVisibility (View.VISIBLE);
-                                    holder.binding.remove.setVisibility (View.INVISIBLE);
-//                                    Toast.makeText (context, "Item Remove", Toast.LENGTH_SHORT).show ( );
-                                }
+                            public void onClick(View view) {
+                                int qnt=products.get(position).getQnt();
+                                qnt++;
+                                products.get(position).setQnt(qnt);
+
+                                int qty = 0, i;
+                                for (i = 0; i < products.size ( ); i++)
+                                    qty = qty + (products.get (i).getQnt ( ));
+                                holder.binding.quantity.setText (""+qty);
+
+                                notifyDataSetChanged();
+
+                                AppDatabase db = Room.databaseBuilder(holder.binding.add.getContext(),
+                                        AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+                                ProductDao productDao = db.ProductDao();
+                                productDao.update (qnt,products.get (position).getPid ());
+
                             }
                         });
 
+                    }
+                });
+
+                holder.binding.reduce.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int qnt=products.get(position).getQnt();
+                            qnt--;
+                        products.get(position).setQnt(qnt);
+
+
+
+                            int qty = 0, i;
+                            for (i = 0; i < products.size ( ); i++)
+                                qty = qty + (products.get (i).getQnt ( ));
+                            holder.binding.quantity.setText (""+qty+" Items");
+
+                        notifyDataSetChanged();
+
+                        AppDatabase db = Room.databaseBuilder(holder.binding.reduce.getContext(),
+                                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+                        ProductDao productDao = db.ProductDao();
+                        productDao.update (qnt,products.get (position).getPid ());
+
+                    }
+                });
+
             }
         });
+
+        holder.binding.remove.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                int id= Integer.parseInt (productModel.getId ());
+                AppDatabase db = Room.databaseBuilder(holder.binding.remove.getContext(),
+                        AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+                ProductDao productDao = db.ProductDao();
+
+                productDao.deleteById(id);
+                holder.binding.remove.setVisibility (View.INVISIBLE);
+                holder.binding.cart.setVisibility (View.VISIBLE);
+            }
+        });
+
         holder.binding.heart2.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
@@ -162,22 +211,15 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyHolder> 
             }
         });
 
+        AppDatabase db= Room.databaseBuilder(context,AppDatabase.class,"cart_db").allowMainThreadQueries().build();
+        ProductDao productDao=db.ProductDao();
 
-        FirebaseUtil.cartDetails (productModel.getId ()+uid).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful ( )) {
-                    cartItem = task.getResult ( ).toObject (CartModel.class);
-                    if (cartItem!= null){
-                     holder.binding.cart.setVisibility (View.INVISIBLE);
-                     holder.binding.remove.setVisibility (View.VISIBLE);
-                    }else{
-
-                    }
-                }
-            }
-
-        });
+        int id= Integer.parseInt (productModel.getId ());
+        Boolean check=productDao.is_exist(id);
+        if(check==true){
+           holder.binding.cart.setVisibility (View.INVISIBLE);
+           holder.binding.remove.setVisibility (View.VISIBLE);
+        }
 
         FirebaseUtil.favdetail (productModel.getId ()+uid).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
             @Override
@@ -267,6 +309,8 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyHolder> 
 
 
     }
+
+
 
 
 }

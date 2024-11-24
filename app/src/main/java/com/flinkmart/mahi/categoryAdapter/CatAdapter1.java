@@ -48,7 +48,8 @@ public class CatAdapter1 extends RecyclerView.Adapter<CatAdapter1.holder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, SubCatListActivity.class);
-                intent.putExtra("category",catlist.getTittle());
+                intent.putExtra("category",catlist.getId ());
+                intent.putExtra("categoryName",catlist.getTittle ());
                 context.startActivity(intent);
             }
         });

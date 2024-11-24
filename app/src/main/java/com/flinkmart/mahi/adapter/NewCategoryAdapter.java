@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.ProductDetailActivity;
+import com.flinkmart.mahi.activities.NewProductDetailActivity;
 import com.flinkmart.mahi.databinding.ItemProductBinding;
 import com.flinkmart.mahi.model.NewCart;
 import com.hishd.tinycart.model.Cart;
@@ -48,7 +48,7 @@ public class NewCategoryAdapter extends RecyclerView.Adapter<NewCategoryAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, ProductDetailActivity.class);
+                Intent intent = new Intent(context, NewProductDetailActivity.class);
                 intent.putExtra("name", product.getName());
                 intent.putExtra("image", product.getImage());
                 intent.putExtra("id", product.getId());

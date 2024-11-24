@@ -45,7 +45,8 @@ public class FragmentCategoryListAdapter extends RecyclerView.Adapter<FragmentCa
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(context, AllProductActivity.class);
-                intent.putExtra("category",catlist.getTittle());
+                intent.putExtra("catId",catlist.getId());
+                intent.putExtra("catName",catlist.getTittle());
                 context.startActivity(intent);
             }
         });
