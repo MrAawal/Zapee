@@ -94,7 +94,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 if (task.isSuccessful ( )) {
                     branch = task.getResult ( ).toObject (Branch.class);
                     if (branch != null) {
-                        binding.address.setText ("Your Selected Store : " + branch.getStorename ( ));
+                        binding.address.setText ("Order Pick-up From " + branch.getStorename ( ));
                     }else{
                         Intent intent = new Intent (CheckoutActivity.this, CompleteProfileActivity.class);
                         startActivity (intent);
@@ -192,7 +192,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 });
     }
     void processOrder(String orderNumber){
-        OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid, userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ), branch.getStorename ( ), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), null, null, "Pending", "cod");
+        OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid, userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ), branch.getStorename ( ), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), null, null, "Pending", "cod","pending");
         FirebaseFirestore.getInstance ( )
                 .collection ("orders")
                 .document (orderNumber)

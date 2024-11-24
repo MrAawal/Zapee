@@ -2,6 +2,7 @@ package com.flinkmart.mahi.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,7 +30,7 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         binding= ActivityDeliveryDetailBinding.inflate (getLayoutInflater ());
         setContentView (binding.getRoot ());
 
-        String orderNumber= getIntent ().getStringExtra ("orderNumber");
+        int orderNumber= Integer.parseInt (getIntent ().getStringExtra ("orderNumber"));
         String delivery="₹30";
         String Totalprice=getIntent ().getStringExtra ("totalPrice");
         String address=getIntent ().getStringExtra ("address");
@@ -42,6 +43,14 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         binding.delivery.setText (delivery);
         binding.orderid.setText ("#"+orderNumber);
         binding.packege.setText ("₹5");
+        binding.button2.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);
+                startActivity (intent);
+                finish();
+            }
+        });
 
     }
     public boolean onSupportNavigateUp() {
@@ -51,17 +60,17 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
-    void getProduct(String orderNumber){
+    void getProduct(int orderNumber){
         getAllProduct (orderNumber);
         productadaper=new ImageAdapter (this)  ;
         binding.orderDetail.setAdapter (productadaper);
         binding.orderDetail.setLayoutManager (new LinearLayoutManager (getApplicationContext (),LinearLayoutManager.HORIZONTAL,false));
 
     }
-    private void getAllProduct(String orderNumber){
+    private void getAllProduct(int orderNumber){
         FirebaseFirestore.getInstance ()
                 .collection ("OrderProduct")
-               .whereEqualTo ("orderid",orderNumber)
+               .whereEqualTo ("pid",orderNumber)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override

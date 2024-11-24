@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.swiperefreshlayout)
     implementation(libs.play.services.maps)
+    implementation(libs.mediarouter)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

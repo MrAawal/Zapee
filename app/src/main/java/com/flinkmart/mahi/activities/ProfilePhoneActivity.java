@@ -26,11 +26,10 @@ public class ProfilePhoneActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_profile);
-        profileName = findViewById(R.id.Name);
-        profileContact = findViewById(R.id.Contact);
-        create = findViewById(R.id.complete);
+        profileName = findViewById(R.id.name);
+        profileContact = findViewById(R.id.contact);
         logout = findViewById (R.id.logout);
-        titleName = findViewById (R.id.titleName);
+
 
         showAllUserData();
 

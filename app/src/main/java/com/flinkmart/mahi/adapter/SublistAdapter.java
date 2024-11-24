@@ -1,37 +1,20 @@
 package com.flinkmart.mahi.adapter;
 
-import static com.google.android.material.internal.ContextUtils.getActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.AllProductActivity;
-import com.flinkmart.mahi.activities.NewProductDetailActivity;
 import com.flinkmart.mahi.databinding.ItemCategoriesBinding;
-import com.flinkmart.mahi.homeadapter.ItemAdapter10;
-import com.flinkmart.mahi.homeadapter.ItemAdapter4;
-import com.flinkmart.mahi.homemodel.Item4;
 import com.flinkmart.mahi.model.Catlist;
-import com.flinkmart.mahi.model.ImageModel;
-import com.flinkmart.mahi.model.Item;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +24,10 @@ public class SublistAdapter extends RecyclerView.Adapter<SublistAdapter.branchVi
     private List<Catlist> catlists;
 
 
-    RecyclerView recyclerView;
+    TextView recyclerView;
 
 
-    public SublistAdapter(Context context,RecyclerView recyclerView){
+    public SublistAdapter(Context context){
         this.context=context;
         this.recyclerView=recyclerView;
         catlists=new ArrayList<> ();
@@ -71,10 +54,6 @@ public class SublistAdapter extends RecyclerView.Adapter<SublistAdapter.branchVi
                 .into (holder.binding.image);
 
 
-
-        holder.itemView.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
                 holder.itemView.setOnClickListener (new View.OnClickListener ( ) {
                     @Override
                     public void onClick(View v) {
@@ -86,8 +65,8 @@ public class SublistAdapter extends RecyclerView.Adapter<SublistAdapter.branchVi
                     }
                 });
             }
-        });
-    }
+
+
 
     @Override
     public int getItemCount() {

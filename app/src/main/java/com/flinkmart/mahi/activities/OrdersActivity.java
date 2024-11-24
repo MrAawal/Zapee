@@ -1,10 +1,12 @@
 package com.flinkmart.mahi.activities;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.adapter.OrdersAdapter;
 import com.flinkmart.mahi.databinding.ActivityOrdersBinding;
 import com.flinkmart.mahi.model.Order;
@@ -27,17 +29,20 @@ public class OrdersActivity extends AppCompatActivity {
         binding= ActivityOrdersBinding.inflate (getLayoutInflater ());
         setContentView (binding.getRoot ());
         String uid=FirebaseAuth.getInstance ( ).getUid ( );
+        TextView text=findViewById (R.id.textView);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getProduct (uid);
+        getProduct (uid,text);
+
+
     }
     public boolean onSupportNavigateUp() {
         finish();
         return super.onSupportNavigateUp();
     }
 
-    void getProduct(String uid){
+    void getProduct(String uid, TextView text){
         getAllProduct (uid);
-        productadaper=new OrdersAdapter (this)  ;
+        productadaper=new OrdersAdapter (this,text)  ;
         binding.productList.setAdapter (productadaper);
         binding.productList.setLayoutManager (new GridLayoutManager (this,1));
     }

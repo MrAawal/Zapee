@@ -16,11 +16,13 @@ public class OrderPlaceModel {
     private String longitude;
     private String status;
     private String payment;
+    private String partner;
+
 
     public OrderPlaceModel() {
     }
 
-    public OrderPlaceModel(String orderNumber, String uid, String customerName, String customerNumber, String customerAddress, String customerStore, String totalPrice, String deliveryCharge, Timestamp orderPlaceDate, String lattitude, String longitude, String status, String payment) {
+    public OrderPlaceModel(String orderNumber, String uid, String customerName, String customerNumber, String customerAddress, String customerStore, String totalPrice, String deliveryCharge, Timestamp orderPlaceDate, String lattitude, String longitude, String status, String payment,String partner) {
         this.orderNumber = orderNumber;
         this.uid = uid;
         this.customerName = customerName;
@@ -34,6 +36,7 @@ public class OrderPlaceModel {
         this.longitude = longitude;
         this.status = status;
         this.payment = payment;
+        this.partner=partner;
     }
 
     public String getOrderNumber() {
@@ -138,5 +141,13 @@ public class OrderPlaceModel {
 
     public void setPayment(String payment) {
         this.payment = payment;
+    }
+
+    public String getPartner() {
+        return partner;
+    }
+
+    public void setPartner(String partner) {
+        this.partner = partner;
     }
 }

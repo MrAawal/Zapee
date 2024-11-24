@@ -40,14 +40,23 @@ public class FirebaseUtil{
                 .document ( uid );
     }
 
+
+
     public static DocumentReference favdetail(String uid2){
         return FirebaseFirestore.getInstance ( )
                 .collection ("favourite")
                 .document ( uid2 );
     }
-
     public static CollectionReference allUserCollectionReference() {
         return FirebaseFirestore.getInstance ( ).collection ("product");
+    }
+    public static CollectionReference orders(String uid) {
+        return FirebaseFirestore.getInstance ( ).collection ("orders");
+
+    }
+    public static CollectionReference favourite(String uid) {
+        return FirebaseFirestore.getInstance ( ).collection ("favourite");
+
     }
 
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fav"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".activities.LoginActivity">
@@ -27,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:text="Login"
                 android:textAlignment="center"
+                android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="36sp"
                 android:textStyle="bold" />

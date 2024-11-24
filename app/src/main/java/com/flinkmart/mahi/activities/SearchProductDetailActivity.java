@@ -5,9 +5,12 @@ import static com.flinkmart.mahi.activities.NewCheckoutActivity.getRandomNumber;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -16,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
@@ -24,7 +28,12 @@ import com.flinkmart.mahi.databinding.ActivityNewProductDetailBinding;
 import com.flinkmart.mahi.model.Favourite;
 import com.flinkmart.mahi.model.Item;
 import com.flinkmart.mahi.model.ProductTiny;
+import com.flinkmart.mahi.roomdatabase.AppDatabase;
+import com.flinkmart.mahi.roomdatabase.CartActivity;
+import com.flinkmart.mahi.roomdatabase.Product;
+import com.flinkmart.mahi.roomdatabase.ProductDao;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -67,18 +76,31 @@ public class SearchProductDetailActivity extends AppCompatActivity {
 
         Cart cart = TinyCartHelper.getCart();
 
-        binding.productDescription.setText ("Discription : "+discription);
+        binding.view.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                bottomsheet(discription);
+            }
+        });
         binding.price.setText ("₹"+price);
         binding.name.setText(name);
-        binding.cartbtn.setOnClickListener(new View.OnClickListener() {
+        binding.cartbtn2.setOnClickListener (new View.OnClickListener ( ) {
             @Override
-            public void onClick(View view) {
-                String name = getIntent().getStringExtra("name");
-                cart.addItem(currentProduct,1);
-                binding.cartbtn.setEnabled(false);
-                binding.cartbtn.setVisibility (View.INVISIBLE);
-                binding.cartbtn.setText("Added in cart");
-                Toast.makeText (SearchProductDetailActivity.this, "Product Added in Cart", Toast.LENGTH_SHORT).show ( );
+            public void onClick(View v) {
+                AppDatabase db= Room.databaseBuilder(getApplicationContext (),AppDatabase.class,"cart_db").allowMainThreadQueries().build();
+                ProductDao productDao=db.ProductDao();
+                List<Product> products=productDao.getallproduct ();
+
+                int ide= Integer.parseInt (id);
+
+                Boolean check=productDao.is_exist(ide);
+                if(check==false) {
+                    productDao.insertrecord (new Product (ide,name,image,Integer.parseInt (price),1,discount,discription));
+                    Toast.makeText (SearchProductDetailActivity.this, "Added to cart", Toast.LENGTH_SHORT).show ( );
+                }else {
+                    Toast.makeText (getApplicationContext (), "Item Exist", Toast.LENGTH_SHORT).show ( );
+                }
+//                binding.cartbtn2.setBackgroundColor (getApplication ().getResources ().getColor (R.color.purple_500));
 
             }
         });
@@ -117,7 +139,7 @@ public class SearchProductDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.cart) {
-            startActivity(new Intent (this, NewCartActivity.class));
+            startActivity(new Intent (this, CartActivity.class));
         } else if (item.getItemId() == R.id.fav) {
             startActivity(new Intent (this, FavouriteActivity.class));
         }
@@ -168,6 +190,22 @@ public class SearchProductDetailActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         finish();
         return super.onSupportNavigateUp();
+    }
+
+    private void bottomsheet(String discription) {
+
+        BottomSheetDialog bottomSheetDialog=new BottomSheetDialog ( this);
+        View view= LayoutInflater.from (SearchProductDetailActivity.this).inflate (R.layout.description,(LinearLayout)findViewById (R.id.mainlayout),false);
+        bottomSheetDialog.setContentView (view);
+        bottomSheetDialog.show ();
+
+        TextView Discription=view.findViewById (R.id.dis);
+        Discription.setText (discription);
+
+
+
+
+
     }
     public void onBackPressed() {
         Intent intent = new Intent (SearchProductDetailActivity.this, SearchActivity.class);

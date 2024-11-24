@@ -78,7 +78,6 @@ public class HomeFragment extends Fragment {
     CatAdapter2 catAdapter2;
 
 
-
     List<BestSellerModel>item1s=new ArrayList<> (  );
     List<TrendingModel>item2s=new ArrayList<> (  );
 
@@ -90,7 +89,7 @@ public class HomeFragment extends Fragment {
     LifstyleAdapter lifstyleAdapter;
     CatAdapter5 footwearAdapter;
     ElectronicAdapter electronicAdapter;
-    BottomAdapter footwearItemAdapter;
+    BottomAdapter bottomAdapter;
 
     List<LifstyleCategory>lifstyleCategories=new ArrayList<> (  );
     List<FootwearCategory>footwearCategories=new ArrayList<> (  );
@@ -230,10 +229,8 @@ public class HomeFragment extends Fragment {
 
     private void initEssantialProduct() {
         FirebaseFirestore.getInstance ( )
-                .collection ("product")
+                .collection ("OrderProduct")
                 .limit (12)
-                .whereEqualTo ("show",true)
-                .whereEqualTo ("stock","10")
                 .get ( )
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
@@ -243,7 +240,6 @@ public class HomeFragment extends Fragment {
                             TrendingModel productList = ds.toObject (TrendingModel.class);
                             itemAdapter2.addProduct(productList);
                         }
-
                     }
                 });
     }
@@ -345,9 +341,8 @@ public class HomeFragment extends Fragment {
     private void footwearFashion() {
         FirebaseFirestore.getInstance ( )
                 .collection ("product")
-                .limit (6)
-                .whereEqualTo ("show",true)
-                .whereEqualTo ("category","footwear")
+                .limit (12)
+                .whereEqualTo ("category","Oral Care")
                 .get ( )
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
@@ -355,7 +350,7 @@ public class HomeFragment extends Fragment {
                         List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
                         for (DocumentSnapshot ds : dsList) {
                             BottomModel productList = ds.toObject (BottomModel.class);
-                            footwearItemAdapter.addProduct(productList);
+                            bottomAdapter.addProduct(productList);
                         }
 
                     }
@@ -416,8 +411,8 @@ public class HomeFragment extends Fragment {
         binding.footwearList.setAdapter (footwearAdapter);
 
         binding.footwear.setLayoutManager (new GridLayoutManager (getActivity (),2));
-        footwearItemAdapter=new BottomAdapter (getContext (),footwearItems);
-        binding.footwear.setAdapter (footwearItemAdapter);
+        bottomAdapter=new BottomAdapter (getContext (),footwearItems);
+        binding.footwear.setAdapter (bottomAdapter);
 
     }
 }

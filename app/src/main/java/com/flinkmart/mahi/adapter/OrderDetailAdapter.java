@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.ProductDetailActivity;
 import com.flinkmart.mahi.databinding.ItemOrderBinding;
 import com.flinkmart.mahi.databinding.ItemVieworderBinding;
 import com.flinkmart.mahi.model.Order;

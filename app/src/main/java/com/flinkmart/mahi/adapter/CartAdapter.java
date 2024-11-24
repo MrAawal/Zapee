@@ -30,6 +30,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.LoanModelViewh
     private static  List<CartModel>favouriteModels;
     String uid= FirebaseAuth.getInstance ( ).getUid ( );
     TextView Subtotal;
+
+    private int cartqty=0;
     public CartAdapter(Context context, TextView Subtotal){
         this.context=context;
         this.Subtotal=Subtotal;
@@ -66,13 +68,22 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.LoanModelViewh
         for(i=0;i< favouriteModels.size();i++)
             sum=sum+(favouriteModels.get(i).getPrice()*favouriteModels.get(i).getQty ());
 
-        Subtotal.setText ("₹ "+sum);
+
+        int qnty=0;
+        for (CartModel favourite1:getSelectedItems ()){
+            qnty+=favourite1.getQty ();
+        }
+        cartqty=qnty;
+
+        Subtotal.setText (String.valueOf (cartqty));
+
+        Subtotal.setVisibility (cartqty == 0 ? View.GONE:View.VISIBLE);
+
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-
 
             }
         });
@@ -82,6 +93,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.LoanModelViewh
             public void onClick(View v) {
                 int quantity = favourite.getQty ();
                 quantity++;
+
                 favouriteModels.get(position).setQty (quantity);
                 notifyItemChanged (quantity);
                 notifyDataSetChanged();
@@ -100,6 +112,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.LoanModelViewh
                                 }
                             }
                         });
+
             }
         });
         holder.binding.reduce.setOnClickListener (new View.OnClickListener ( ) {
@@ -123,6 +136,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.LoanModelViewh
                                     favouriteModels.get(position).setQty (finalQuantity);
                                     notifyItemChanged (finalQuantity);
                                     notifyDataSetChanged();
+                                    notifyDataSetChanged ();
                                 }
                             }
                         });
@@ -173,7 +187,5 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.LoanModelViewh
             binding = ItemFavouriteBinding.bind(itemView);
         }
     }
-
-
 
 }

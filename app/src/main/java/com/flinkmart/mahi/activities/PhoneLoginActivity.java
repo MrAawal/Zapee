@@ -40,7 +40,6 @@ public class PhoneLoginActivity extends AppCompatActivity {
 
             auth=FirebaseAuth.getInstance ();
             user=auth.getCurrentUser();
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
             if(user!=null) {
                 Intent i = new Intent (getApplicationContext ( ), ProfileActivity.class);
@@ -52,7 +51,6 @@ public class PhoneLoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent=new Intent(PhoneLoginActivity.this,LoginActivity.class);
-                    intent.putExtra("mobile",ccp.getFullNumberWithPlus().replace(" ",""));
                     startActivity(intent);
 
                 }
@@ -69,9 +67,4 @@ public class PhoneLoginActivity extends AppCompatActivity {
             });
 
         }
-    public boolean onSupportNavigateUp() {
-        finish();
-        return super.onSupportNavigateUp();
-    }
-
     }

@@ -4,7 +4,7 @@ public class ImageModel {
     private String id ;
     private String orderid;
     private String uid;
-    private String name;
+    private String pname;
     private String image;
     private String  discount;
     private String  stock;
@@ -12,17 +12,17 @@ public class ImageModel {
     private String  category;
     private String subcategory;
     private  String branch;
-    public int qty, price;
+    public int qnt, price;
     public boolean is_selected;
 
     public ImageModel() {
     }
 
-    public ImageModel(String id, String orderid, String uid, String name, String image, String discount, String stock, String description, String category, String subcategory, String branch, int qty, int price, boolean is_selected) {
+    public ImageModel(String id, String orderid, String uid, String pname, String image, String discount, String stock, String description, String category, String subcategory, String branch, int qnt, int price, boolean is_selected) {
         this.id = id;
         this.orderid = orderid;
         this.uid = uid;
-        this.name = name;
+        this.pname = pname;
         this.image = image;
         this.discount = discount;
         this.stock = stock;
@@ -30,7 +30,7 @@ public class ImageModel {
         this.category = category;
         this.subcategory = subcategory;
         this.branch = branch;
-        this.qty = qty;
+        this.qnt = qnt;
         this.price = price;
         this.is_selected = is_selected;
     }
@@ -59,12 +59,12 @@ public class ImageModel {
         this.uid = uid;
     }
 
-    public String getName() {
-        return name;
+    public String getPname() {
+        return pname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPname(String pname) {
+        this.pname = pname;
     }
 
     public String getImage() {
@@ -123,12 +123,12 @@ public class ImageModel {
         this.branch = branch;
     }
 
-    public int getQty() {
-        return qty;
+    public int getQnt() {
+        return qnt;
     }
 
-    public void setQty(int qty) {
-        this.qty = qty;
+    public void setQnt(int qnt) {
+        this.qnt = qnt;
     }
 
     public int getPrice() {

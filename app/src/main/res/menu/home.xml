@@ -9,15 +9,16 @@
         android:title="Search"
         app:showAsAction="always" />
 
-    <item android:id="@+id/fav"
-        android:icon="@drawable/baseline_favorite_24"
-        android:title="Fav"
-        app:showAsAction="always"/>
+<!--    <item android:id="@+id/fav"-->
+<!--        android:icon="@drawable/baseline_favorite_24"-->
+<!--        android:title="Fav"-->
+<!--        app:showAsAction="always"/>-->
 
     <item android:id="@+id/cart"
         android:icon="@drawable/baseline_shopping_cart_24"
         android:title="Cart"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        app:actionLayout="@layout/cart_action_item" />
 
     <item
         android:id="@+id/profile"

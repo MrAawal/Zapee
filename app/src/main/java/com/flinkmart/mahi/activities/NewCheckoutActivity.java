@@ -1,30 +1,37 @@
 package com.flinkmart.mahi.activities;
 
-import static com.flinkmart.mahi.activities.FavouriteActivity.cartItemList;
-import static com.flinkmart.mahi.activities.NewCartActivity.cartList;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.adapter.BranchAdapter;
 import com.flinkmart.mahi.adapter.CheckItemAdapter;
 import com.flinkmart.mahi.databinding.ActivityNewCheckoutBinding;
 import com.flinkmart.mahi.model.Branch;
-import com.flinkmart.mahi.model.CartModel;
-import com.flinkmart.mahi.model.Favourite;
 import com.flinkmart.mahi.model.OrderPlaceModel;
 import com.flinkmart.mahi.model.UserModel1;
+import com.flinkmart.mahi.roomdatabase.AppDatabase;
+import com.flinkmart.mahi.roomdatabase.Product;
+import com.flinkmart.mahi.roomdatabase.ProductDao;
+import com.flinkmart.mahi.roomdatabase.mycheckadapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,12 +41,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class NewCheckoutActivity extends AppCompatActivity {
 
     ActivityNewCheckoutBinding binding;
     final int del = 30;
     final int gst = 5;
+
+    int Discount=0;
+    int DiscountSavePrice=0;
     private String uid;
     ProgressDialog progressDialog;
     FirebaseAuth auth;
@@ -48,7 +59,9 @@ public class NewCheckoutActivity extends AppCompatActivity {
     Branch branch;
     CheckItemAdapter checkItemAdapter;
     int maintotal=0;
+    int more=0;
     int Total;
+    int DiscountTotal=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +70,33 @@ public class NewCheckoutActivity extends AppCompatActivity {
         setContentView (binding.getRoot ( ));
         auth = FirebaseAuth.getInstance ( );
         user = auth.getCurrentUser ( );
+
+        progressDialog = new ProgressDialog (this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Order Processing...");
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+        AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+
+
+        List<Product> products=productDao.getallproduct();
+
+        if(products.size()==0){
+                   binding.mainlayout.setVisibility (View.GONE);
+                   binding.button3.setVisibility (View.VISIBLE);
+                   binding.textView.setVisibility (View.VISIBLE);
+                   binding.emty.setVisibility (View.VISIBLE);
+                   binding.linearLayout7.setVisibility (View.GONE);
+                   binding.button3.setOnClickListener (new View.OnClickListener ( ) {
+                       @Override
+                       public void onClick(View v) {
+                           Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
+                           startActivity (i);
+                       }
+                   });
+        }
+
         if (user == null) {
             Intent i = new Intent (getApplicationContext ( ), LoginActivity.class);
             startActivity (i);
@@ -74,8 +114,8 @@ public class NewCheckoutActivity extends AppCompatActivity {
                             binding.addressBox.setText (userModel.getAddress ( ));
                             binding.Name.setText (userModel.getUsername ( ));
                             binding.Contact.setText (userModel.getPhone ( ));
-                            binding.Email.setText (userModel.getAddress ( ));
-                            binding.pinnumber.setText (userModel.getPin ( ));
+                            binding.Email.setText (userModel.getPin ( ));
+                            binding.pinnumber.setText (userModel.getAddress ( ));
                         } else {
                             Intent intent = new Intent (NewCheckoutActivity.this, CompleteProfileActivity.class);
                             startActivity (intent);
@@ -91,7 +131,7 @@ public class NewCheckoutActivity extends AppCompatActivity {
                 if (task.isSuccessful ( )) {
                     branch = task.getResult ( ).toObject (Branch.class);
                     if (branch!= null) {
-                        binding.address.setText ("Your Selected Store : " + branch.getStorename ( ));
+                        binding.address.setText ("Order Pick-up From " + branch.getStorename ( ));
                     } else {
 
                         Intent intent = new Intent (NewCheckoutActivity.this,CompleteProfileActivity.class);
@@ -108,14 +148,13 @@ public class NewCheckoutActivity extends AppCompatActivity {
 
 
         uid = FirebaseAuth.getInstance ( ).getUid ( );
-
-        getProduct ();
+        TextView rateview=findViewById (R.id.subtotal);
+        getProduct (rateview);
         binding.checkoutBtn.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View view) {
                 String orderNumber = String.valueOf (getRandomNumber (11111, 99999));
                 processOrder (orderNumber);
-                proccesProduct(orderNumber);
             }
         });
 
@@ -123,9 +162,7 @@ public class NewCheckoutActivity extends AppCompatActivity {
         binding.imageButton.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent (NewCheckoutActivity.this, BranchActivity.class);
-                intent.putExtra ("pincode", userModel.getPin ( ));
-                startActivity (intent);
+                bottomsheet ();
             }
         });
 
@@ -134,89 +171,115 @@ public class NewCheckoutActivity extends AppCompatActivity {
     }
 
     protected void onStart() {
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+
+        List<Product> products=productDao.getallproduct();
         super.onStart ( );
-        for (int i=0;i< cartList.size ( );i++){
-            CartModel cart=cartList.get (i);
-            int pric=cart.getPrice ();
-            int quan=cart.getQty ();
+        for (int i=0;i<products.size ();i++){
+            Product favourite=products.get(i);
+
+            int pric=favourite.getPrice ();
+            int quan=favourite.getQnt ();
             int total=pric*quan;
+            int discount = Integer.parseInt (favourite.getDiscount ( ))*quan;
             maintotal+=total;
             Total=maintotal+del+gst;
+            more=500-maintotal;
+
+
+
+
+            DiscountTotal+=discount;
+            Discount=DiscountTotal-maintotal;
+
         }
+        binding.mrptotal.setText ("₹"+DiscountTotal);
+        binding.mrptotal.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
         binding.subtotal.setText (String.valueOf ("₹"+maintotal));
-        binding.total.setText (String.valueOf (Total));
+        binding.saveMrp.setText ("₹"+Discount);
+
+        if(maintotal>500){
+            Total=maintotal;
+            binding.MaxTotal.setText(String.valueOf ("₹"+maintotal));
+            binding.Del.setText ("FREE");
+            binding.tax.setText ("FREE");
+            binding.tax.setTextColor (getColor (R.color.teal_700));
+            binding.Del.setTextColor (getColor (R.color.teal_700));
+            binding.view.setText ("Congragulation You Got Free Delivery & Free Bag");
+            binding.view.setTextColor (getColor (R.color.purple_500));
+        }else {
+            binding.total.setText ("₹"+Total);
+            binding.MaxTotal.setText (String.valueOf ("₹"+Total));
+            binding.view.setText("Add More ₹" +more+ " For Get Free Delivery & Bag");
+            binding.view.setTextColor (getColor (R.color.red));
+        }
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.cart, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    void getProduct(){
-        getAllProduct ();
-        checkItemAdapter=new CheckItemAdapter (this)  ;
-        binding.cartList.setAdapter (checkItemAdapter);
-        binding.cartList.setLayoutManager (new GridLayoutManager (this,1));
-    }
-    private void getAllProduct() {
-        String uid = FirebaseAuth.getInstance ( ).getUid ( );
-        FirebaseFirestore.getInstance ( )
-                .collection ("cart")
-                .whereEqualTo ("uid", uid)
-                .get ( )
-                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
-                        for (DocumentSnapshot ds : dsList) {
-                            Favourite product = ds.toObject (Favourite.class);
-                            checkItemAdapter.addProduct (product);
-                        }
 
 
-                    }
-                }).addOnCompleteListener (new OnCompleteListener<QuerySnapshot> ( ) {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+    void getProduct(TextView rateview){
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
 
-                    }
-                });
+        binding.cartList.setLayoutManager(new LinearLayoutManager (this));
+
+        List<Product> products=productDao.getallproduct();
+
+        TextView quantity = null;
+
+        mycheckadapter adapter=new mycheckadapter (products, rateview,quantity);
+        binding.cartList.setAdapter(adapter);
+
+        int sum=0,i;
+        for(i=0;i< products.size();i++)
+            sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+
+
+
     }
     void processOrder(String orderNumber){
-
-        OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid, userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ), branch.getStorename ( ), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), null, null, "Pending", "cod");
+        progressDialog.show ();
+        OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid, userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ), branch.getStorename ( ), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), null, null, "Pending", "cod","pending");
         FirebaseFirestore.getInstance ( )
                 .collection ("orders")
                 .document (orderNumber)
                 .set (orderPlaceModel);
-    }
 
-    void proccesProduct(String orderNumber){
-        binding.progress.setVisibility(View.VISIBLE);
-        progressDialog.setMessage ("Proccesing");
-        progressDialog.show ( );
 
-        for (int i = 0; i <cartList.size(); i++){
-                CartModel cart = cartList.get (i);
-                cart.setOrderid (orderNumber);
-                cart.setBranch (orderNumber);
+        AppDatabase db = Room.databaseBuilder (getApplicationContext ( ),
+                AppDatabase.class, "cart_db").allowMainThreadQueries ( ).build ( );
+        ProductDao productDao = db.ProductDao ( );
+
+        List<Product> products = productDao.getallproduct ( );
+
+        try {
+            for (int i = 0; i < products.size ( ); i++) {
+                Product cart = products.get (i);
+                cart.setPid (Integer.parseInt (orderNumber));
                 FirebaseFirestore.getInstance ( )
                         .collection ("OrderProduct")
-                        .document ()
+                        .document ( )
                         .set (cart);
                 Intent intent = new Intent (NewCheckoutActivity.this, DeliveryDetailActivity.class);
-                intent.putExtra("orderNumber", orderNumber);
-                intent.putExtra("totalPrice", String.valueOf (Total));
-                intent.putExtra("address",userModel.getAddress () );
-                intent.putExtra("payment", "Cash on delivery");
-                intent.putExtra("date", Timestamp.now ());
+                intent.putExtra ("orderNumber", orderNumber);
+                intent.putExtra ("totalPrice", String.valueOf (Total));
+                intent.putExtra ("address", userModel.getAddress ( ));
+                intent.putExtra ("payment", "Cash on delivery");
+                intent.putExtra ("date", Timestamp.now ( ));
                 startActivity (intent);
             }
-            progressDialog.dismiss ();
+        }catch (Exception e){
 
 
+        };
     }
+
+
+
 
     public static int getRandomNumber(int min, int max) {
         return (new Random ( )).nextInt ((max - min) + 1) + min;
@@ -226,5 +289,77 @@ public class NewCheckoutActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish ( );
         return super.onSupportNavigateUp ( );
+    }
+
+
+    private void bottomsheet() {
+
+        BottomSheetDialog bottomSheetDialog=new BottomSheetDialog ( this);
+        View view= LayoutInflater.from (NewCheckoutActivity.this).inflate (R.layout.branchsheet,(LinearLayout)findViewById (R.id.cartbtn),false);
+        bottomSheetDialog.setContentView (view);
+        bottomSheetDialog.show ();
+
+        BranchAdapter branchAdapter;
+        String pin = userModel.getPin ();
+
+        RecyclerView branchList=view.findViewById (R.id.branchList);
+        Button setButton=view.findViewById (R.id.button);
+
+
+        branchAdapter=new BranchAdapter (this)  ;
+        branchList.setAdapter (branchAdapter);
+        branchList.setLayoutManager (new LinearLayoutManager (this));
+
+        getStore (pin,branchAdapter);
+
+        setButton.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v){
+                setStore (branchAdapter);
+                bottomSheetDialog.cancel();
+                Intent intent = new Intent (NewCheckoutActivity.this,NewCheckoutActivity.class);
+                startActivity (intent);
+                finish ();
+            }
+        });
+
+
+
+
+
+    }
+
+    void  getStore(String pin, BranchAdapter branchAdapter){
+
+        FirebaseFirestore.getInstance ()
+                .collection ("branch")
+                .whereEqualTo ("pincode",pin)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            Branch loanModel=ds.toObject (Branch.class);
+                            branchAdapter.addProduct (loanModel);
+                        }
+
+                    }
+                });
+    }
+
+    public void setStore(BranchAdapter branchAdapter){
+        String uid=FirebaseAuth.getInstance ( ).getUid ( );
+        List<Branch>itemList=branchAdapter.getSelectedItem();
+        for (int i=0;i<itemList.size ();i++){
+            Branch branch1 = itemList.get (i);
+            branch1.setUid (FirebaseAuth.getInstance ( ).getUid ( ));
+            FirebaseFirestore.getInstance ( )
+                    .collection ("userstore")
+                    .document (uid)
+                    .set (branch1);
+            onStateNotSaved ();
+        }
+
     }
 }

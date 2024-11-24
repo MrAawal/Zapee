@@ -34,14 +34,14 @@ public class ManageOtpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_otp);
 
         phonenumber=getIntent().getStringExtra("mobile").toString();
+
         t2=(EditText)findViewById(R.id.t2);
         b2=(Button)findViewById(R.id.b2);
+
         mAuth=FirebaseAuth.getInstance();
 
         initiateotp();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +98,7 @@ public class ManageOtpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful())
                         {
-                            startActivity(new Intent (ManageOtpActivity.this,MainActivity.class));
+                            startActivity(new Intent (ManageOtpActivity.this,CompleteProfileActivity.class));
                             finish();
 
                         } else {
@@ -108,10 +108,5 @@ public class ManageOtpActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return super.onSupportNavigateUp();
-    }
 
 }

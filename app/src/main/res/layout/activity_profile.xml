@@ -1,108 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/orders"
+    android:id="@+id/mainlayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/profilebkg"
-    android:backgroundTint="#F6FAF3"
-    app:constraint_referenced_tags="50dp"
-    tools:context=".activities.ProfileActivity">
+    android:layout_height="wrap_content"
+    android:background="@drawable/category"
+    android:backgroundTint="@android:color/transparent"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="60dp"
+        android:layout_height="5dp"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:background="@color/black"
+        android:backgroundTint="@color/black" />
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="3dp"
         android:background="@drawable/product"
         android:orientation="horizontal"
-        android:padding="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="5dp">
 
-        <LinearLayout
-            android:layout_width="96dp"
-            android:layout_height="117dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
+            app:cardCornerRadius="10dp">
 
             <ImageView
-                android:id="@+id/imageView7"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/baseline_account_circle_24" />
-
-        </LinearLayout>
+                android:id="@+id/imageView2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_person_24" />
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/titleName"
-                android:layout_width="match_parent"
+                android:id="@+id/name"
+                android:layout_width="298dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginEnd="253dp"
                 android:fontFamily="monospace"
-                android:paddingLeft="15dp"
-                android:text="Name"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="12dp"
+                android:paddingTop="5dp"
+                android:text="Not Found"
+                android:textColor="#FF6D00"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@id/profileImg"
-                app:layout_constraintStart_toStartOf="@id/profileImg"
-                app:layout_constraintTop_toBottomOf="@id/profileImg" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintTop_toTopOf="@+id/imageView2" />
 
             <TextView
                 android:id="@+id/contact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:fontFamily="monospace"
-                android:paddingLeft="15dp"
-                android:text="Contact"
-                android:textStyle="bold" />
+                android:text="Not Found"
+                android:textColor="@color/teal_700"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/name"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/name"
+                app:layout_constraintTop_toBottomOf="@+id/name" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="monospace"
+                android:text="Not Found"
+                android:textColor="@color/teal_700"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/contact"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/contact"
+                app:layout_constraintTop_toBottomOf="@+id/contact" />
 
             <TextView
                 android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:text="TextView"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="right"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/complete"
-                    android:layout_width="86dp"
-                    android:layout_height="38dp"
-                    android:text="Edit Profile"
-                    android:textSize="12dp"
-                    app:cornerRadius="20dp" />
-            </LinearLayout>
+                android:layout_marginTop="2dp"
+                android:fontFamily="monospace"
+                android:text="Not Found"
+                android:textColor="@color/teal_700"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintEnd_toEndOf="@+id/email"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/email"
+                app:layout_constraintTop_toBottomOf="@+id/email"
+                app:layout_constraintVertical_bias="0.0" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="300dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Logout"
-        android:textSize="18sp"
-        app:cornerRadius="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout3"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/teal_700"
+            android:gravity="center"
+            android:text="Logout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+    </LinearLayout>
+
+</LinearLayout>
+

@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -17,11 +16,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
-import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.adapter.CartAdapter;
 import com.flinkmart.mahi.adapter.FilterAdapter;
@@ -30,10 +30,14 @@ import com.flinkmart.mahi.databinding.ActivitySubCatListBinding;
 import com.flinkmart.mahi.model.CartModel;
 import com.flinkmart.mahi.model.Catlist;
 import com.flinkmart.mahi.model.Item;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.flinkmart.mahi.roomdatabase.AppDatabase;
+import com.flinkmart.mahi.roomdatabase.CartActivity;
+import com.flinkmart.mahi.roomdatabase.Product;
+import com.flinkmart.mahi.roomdatabase.ProductDao;
+import com.flinkmart.mahi.roomdatabase.myadapter;
+import com.flinkmart.mahi.roomdatabase.myadapter2;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -46,6 +50,7 @@ public class SubCatListActivity extends AppCompatActivity {
     ActivitySubCatListBinding binding;
 
     RecyclerView recyclerView;
+    int total=0;
 
     CartAdapter cartAdapter;
     public static List<CartModel>cartList;
@@ -65,16 +70,68 @@ public class SubCatListActivity extends AppCompatActivity {
             setContentView (binding.getRoot ( ));
 
             String category=getIntent().getStringExtra("category");
-            recyclerView=findViewById (R.id.list);
+            recyclerView=findViewById (R.id.productList);
+
+
 
             initcategory(category);
 
             initProduct (category);
 
-            bottomSheet ();
-
             getSupportActionBar().setTitle(category);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                    AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+            ProductDao productDao = db.ProductDao();
+
+            List<Product> products=productDao.getallproduct ();
+
+            TextView quantity=findViewById (R.id.cartQnt);
+            TextView Subtotal=findViewById (R.id.Subtotal);
+            TextView text=findViewById (R.id.text);
+            TextView banner=findViewById (R.id.congrage);
+
+            CardView layout=findViewById (R.id.bottomPrice);
+
+            binding.catList.setLayoutManager (new LinearLayoutManager (this));
+            myadapter2 adapter=new myadapter2(products,quantity,Subtotal, text, banner);
+            binding.cartList.setAdapter(adapter);
+
+
+            int sum=0,i;
+            for(i=0;i< products.size();i++)
+                sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+
+            Subtotal.setText("₹"+sum);
+
+            int qty = 0;
+            for (i = 0; i < products.size ( ); i++)
+                qty = qty + (products.get (i).getQnt ( ));
+
+
+            if (qty>1){
+                quantity.setText (""+qty+" ITEMS | "+"₹"+sum);
+            }else {
+                quantity.setText (""+qty+" ITEM | "+"₹"+sum);
+            }
+            if(products.size ()==0){
+                binding.cartlayout.setVisibility (View.GONE);
+            }
+            binding.continues.setOnClickListener (new View.OnClickListener ( ) {
+                @Override
+                public void onClick(View v) {
+                    bottomSheet ();
+                }
+            });
+
+            binding.imageButton3.setOnClickListener (new View.OnClickListener ( ) {
+                @Override
+                public void onClick(View v) {
+                    binding.cartlayout.setVisibility (View.GONE);
+
+                }
+            });
 
         }
 
@@ -86,7 +143,7 @@ public class SubCatListActivity extends AppCompatActivity {
     void initcategory(String category){
         getSubCategory (category);
         itemList = new ArrayList<> ();
-        sublistAdapter = new SublistAdapter (this,recyclerView);
+        sublistAdapter = new SublistAdapter (this);
         LinearLayoutManager layoutManager = new GridLayoutManager (this, 1);
         binding.catList.setAdapter (sublistAdapter);
         binding.catList.setLayoutManager (layoutManager);
@@ -145,6 +202,34 @@ public class SubCatListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.category, menu);
         MenuItem searchItem=menu.findItem (R.id.searchicon);
+        MenuItem cart=menu.findItem (R.id.cart);
+        View actionView=cart.getActionView ();
+
+        TextView quantity=actionView.findViewById (R.id.cart_badge_textview);
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+
+        List<Product> products=productDao.getallproduct ();
+
+
+
+        if(products.size ()==0){
+            quantity.setVisibility (View.GONE);
+        }
+        int qty = 0,i;
+        for (i = 0; i < products.size ( ); i++)
+            qty = qty + (products.get (i).getQnt ( ));
+
+        quantity.setText (""+qty+" Items");
+        actionView.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected (cart);
+            }
+        });
+
         SearchView searchView= (SearchView) searchItem.getActionView ();
         searchView.setMaxWidth (Integer.MAX_VALUE);
         searchView.setOnQueryTextListener (new SearchView.OnQueryTextListener ( ){
@@ -160,8 +245,6 @@ public class SubCatListActivity extends AppCompatActivity {
             }
         });
 
-
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -169,61 +252,97 @@ public class SubCatListActivity extends AppCompatActivity {
         BottomSheetDialog bottomSheetDialog=new BottomSheetDialog ( this);
         View view= LayoutInflater.from (SubCatListActivity.this).inflate (R.layout.bottomsheet,(LinearLayout)findViewById (R.id.mainlayout),false);
         bottomSheetDialog.setContentView (view);
-
-
         bottomSheetDialog.show ();
 
-        TextView Subtotal=view.findViewById (R.id.subtotal);;
+
         RecyclerView cart=view.findViewById (R.id.cartList);
+        Button check=view.findViewById (R.id.continueBtn);
 
-        Button check=view.findViewById (R.id.checkout);
+        CardView cardView=view.findViewById (R.id.bottomPrice);
 
-        if(cartList==null){
-            bottomSheetDialog.cancel ();
-            check.setVisibility (View.INVISIBLE);
+        TextView Subtotal=view.findViewById (R.id.subtotal);
+        TextView quantity=view.findViewById (R.id.qty);
+        TextView banner=view.findViewById (R.id.congrage);
+        TextView text=view.findViewById (R.id.empty);
+        Button shop=view.findViewById (R.id.shop);
+
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+
+        List<Product> products=productDao.getallproduct ();
+
+
+        int sum=0,i;
+        for(i=0;i< products.size();i++)
+            sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+        total=500-sum;
+
+         if(sum<500){
+            banner.setText("Add More ₹" +total+ " For Get Free Delivery & Free Bag");
+            banner.setTextColor (getColor (R.color.red));
+        }else {
+            banner.setText("Congragulation You Got Free Delivery & Free Bag");
+            banner.setTextColor (getColor (R.color.purple_500));
         }
 
-        cartAdapter=new CartAdapter (this,Subtotal);
-
-        cart.setAdapter (cartAdapter);
-
-        cart.setLayoutManager (new GridLayoutManager (this,1));
-        getAllProduct ();
-        cartList=cartAdapter.getSelectedItems();
-        check.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                cartList=cartAdapter.getSelectedItems();
-                Toast.makeText (getApplication (), cartList.size ()+"Items Selected", Toast.LENGTH_SHORT).show ( );
-                Intent intent = new Intent(getApplication (), NewCartActivity.class);
-                startActivity (intent);
-                bottomSheetDialog.cancel ();
-            }
-        });
 
 
+        if(products.size ()==0){
+            text.setVisibility (View.VISIBLE);
+            check.setVisibility (View.GONE);
+            cardView.setVisibility (View.GONE);
+            shop.setVisibility (View.VISIBLE);
+            banner.setVisibility (View.GONE);
 
+            shop.setOnClickListener (new View.OnClickListener ( ) {
+                @Override
+                public void onClick(View v) {
+                    Intent i=new Intent(getApplicationContext (), MainActivity.class);
+                    startActivity(i);
+                }
+            });
 
+        }else {
+
+        }
+
+                    check.setOnClickListener (new View.OnClickListener ( ) {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i=new Intent(getApplicationContext (), NewCheckoutActivity.class);
+                            startActivity(i);
+                        }
+                    });
+
+        getAllProduct(Subtotal,quantity,cart,text,banner,cardView);
     }
 
-    private void getAllProduct(){
-        String uid= FirebaseAuth.getInstance( ).getUid( );
-        FirebaseFirestore.getInstance ()
-                .collection ("cart")
-                .whereEqualTo ("uid",uid)
-                .get ()
-                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
-                        for (DocumentSnapshot ds:dsList){
-                            CartModel product=ds.toObject (CartModel.class);
-                            cartAdapter.addProduct(product);
-                        }
+    private void getAllProduct(TextView Subtotal, TextView quantity, RecyclerView cart, TextView text, TextView banner, CardView cardView){
+            onResume ();
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+
+        cart.setLayoutManager(new LinearLayoutManager (this));
+        List<Product> products=productDao.getallproduct();
 
 
-                    }
-                });
+        myadapter adapter=new myadapter(products, Subtotal,quantity, text,banner,cardView);
+        cart.setAdapter(adapter);
+
+
+        int sum=0,i;
+        for(i=0;i< products.size();i++)
+            sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+
+        Subtotal.setText("₹"+sum);
+        int qty = 0;
+        for (i = 0; i < products.size ( ); i++)
+            qty = qty + (products.get (i).getQnt ( ));
+        quantity.setText (""+qty+" Items");
+
     }
 
     @Override
@@ -232,16 +351,12 @@ public class SubCatListActivity extends AppCompatActivity {
             startActivity(new Intent (this, FavouriteActivity.class));
         }
         else if (item.getItemId() == R.id.cart) {
-            bottomSheet ();
+            startActivity(new Intent (this, CartActivity.class));
         }
         else if (item.getItemId() == R.id.searchicon) {
             startActivity(new Intent (this, SearchActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
 
     }

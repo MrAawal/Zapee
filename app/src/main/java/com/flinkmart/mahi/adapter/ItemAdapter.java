@@ -47,18 +47,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.holder>{
         holder.binding.Discount.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
         Glide.with (context).load(newProductModel.getImage ())
                 .into (holder.binding.image);
-//        holder.binding.reduce.setVisibility (View.INVISIBLE);
-//        holder.binding.add.setVisibility (View.INVISIBLE);
-//        holder.binding.quantity.setVisibility (View.INVISIBLE);
-//        holder.binding.cart.setOnClickListener (new View.OnClickListener ( ) {
-//            @Override
-//            public void onClick(View v) {
-//                holder.binding.cart.setVisibility (View.INVISIBLE);
-//                holder.binding.reduce.setVisibility (View.VISIBLE);
-//                holder.binding.add.setVisibility (View.VISIBLE);
-//                holder.binding.quantity.setVisibility (View.VISIBLE);
-//            }
-//        });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

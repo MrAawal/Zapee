@@ -70,7 +70,7 @@ public class SearchActivity extends AppCompatActivity {
     void initProduct(){
         getProduct();
         subCategoryListAdapter=new SubCategoryItemAdapter (this)  ;
-        LinearLayoutManager layoutManager = new GridLayoutManager (this, 3);
+        LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
         binding.SearchList.setLayoutManager (layoutManager);
         binding.SearchList.setAdapter (subCategoryListAdapter);
     }
@@ -103,7 +103,7 @@ public class SearchActivity extends AppCompatActivity {
                 .setQuery(query,Item.class).build();
 
         adapter = new SearchAdapter (options,getApplicationContext(),itemList);
-        binding.SearchList.setLayoutManager(new GridLayoutManager (this,2));
+        binding.SearchList.setLayoutManager(new GridLayoutManager (this,1));
         binding.SearchList.setAdapter(adapter);
         adapter.startListening();
 

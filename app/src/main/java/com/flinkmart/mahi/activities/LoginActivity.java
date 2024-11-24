@@ -71,7 +71,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if(pass.isEmpty()){
                     loginPassword.setError("Password cannot be empty");
-
                 }else {
 
                     mAuth.signInWithEmailAndPassword (user, pass)

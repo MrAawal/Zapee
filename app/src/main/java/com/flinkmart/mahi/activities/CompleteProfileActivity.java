@@ -89,7 +89,9 @@ public class CompleteProfileActivity extends AppCompatActivity {
             address.setError ("Address Cant not be Empty");
             return;
         }
-        if (userModel != null) {
+        if (userModel != null){
+            Intent intent = new Intent (CompleteProfileActivity.this, MainActivity.class);
+            startActivity (intent);
             userModel.setPhone (phonenumber);
             userModel.setUsername (username);
             userModel.setAddress (addresss);

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,15 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.OrderDetailActivity;
 import com.flinkmart.mahi.databinding.ItemOrderBinding;
-import com.flinkmart.mahi.model.Favourite;
-import com.flinkmart.mahi.model.ImageModel;
 import com.flinkmart.mahi.model.Order;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +26,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
     private Context context;
     private List<Order>ordersModel=new ArrayList<> ();
     private ImageAdapter imageAdapter;
+    TextView text;
 
-    public OrdersAdapter(Context context) {
+    public OrdersAdapter(Context context,TextView text) {
         this.context = context;
+        this.text=text;
         ordersModel = new ArrayList<>();
     }
 
@@ -57,34 +52,19 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
         holder.binding.textView14.setText (order.getCustomerName ());
         holder.binding.textView15.setText (order.getCustomerNumber ());
         holder.binding.textView17.setText (order.getCustomerAddress ());
-        holder.binding.partner.setText (order.getStatus ());
-         CharSequence date= DateFormat.format ("EEEE,MMM d,yyyy h:mm:ss a",order.getOrderPlaceDate ().toDate ());
-         holder.binding.date.setText (date);
+        holder.binding.partner.setText (order.getPartner ());
+
+        holder.binding.partner.setTextColor (context.getResources ().getColor (R.color.purple_500));
+
+        CharSequence date= DateFormat.format ("EEEE,MMM d,yyyy h:mm:ss a",order.getOrderPlaceDate ().toDate ());
+        holder.binding.date.setText (date);
         String orderNumber=order.getOrderNumber ();
         ImageAdapter  imageAdapter= new ImageAdapter (context);
         holder.binding.productList.setAdapter (imageAdapter);
         holder.binding.productList.setLayoutManager (new LinearLayoutManager (context,LinearLayoutManager.HORIZONTAL,false));
-//        holder.binding.productList.setLayoutManager (new LinearLayoutManager (context));
 
 
-//        FirebaseFirestore
-//                .getInstance()
-//                .collection ("OrderProduct")
-//                .whereEqualTo ("branch", orderNumber)
-//                .whereEqualTo ("orderid",orderNumber)
-//                .get ( )
-//                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-//                    @Override
-//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
-//                        for (DocumentSnapshot ds : dsList){
-//                            ImageModel order = ds.toObject (ImageModel.class);
-//                            imageAdapter.addProduct (order);
-//                        }
-//                    }
-//                });
-
-
+        Toast.makeText (context, ""+ordersModel.size (), Toast.LENGTH_SHORT).show ( );
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,10 +77,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
                 intent.putExtra("date", date);
                 intent.putExtra("status", order.getStatus());
                 context.startActivity(intent);
-
-
-
-
             }
         });
     }

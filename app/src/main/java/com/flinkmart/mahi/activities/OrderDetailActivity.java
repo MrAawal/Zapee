@@ -29,7 +29,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         binding= ActivityOrderDetailBinding.inflate (getLayoutInflater ());
         setContentView (binding.getRoot ());
 
-        String orderNumber= getIntent ().getStringExtra ("orderNumber");
+        Integer orderNumber= Integer.valueOf (getIntent ().getStringExtra ("orderNumber"));
         String delivery="₹30";
         String Totalprice=getIntent ().getStringExtra ("totalPrice");
         String address=getIntent ().getStringExtra ("address");
@@ -50,16 +50,16 @@ public class OrderDetailActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
-    void getProduct(String orderNumber){
+    void getProduct(Integer orderNumber){
         getAllProduct (orderNumber);
         productadaper=new ImageAdapter (this)  ;
         binding.orderDetail.setAdapter (productadaper);
         binding.orderDetail.setLayoutManager (new LinearLayoutManager (getApplicationContext (),LinearLayoutManager.HORIZONTAL,false));
     }
-    private void getAllProduct(String orderNumber){
+    private void getAllProduct(Integer orderNumber){
         FirebaseFirestore.getInstance ()
                 .collection ("OrderProduct")
-                .whereEqualTo ("orderid",orderNumber)
+                .whereEqualTo ("pid",orderNumber)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
