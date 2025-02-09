@@ -41,7 +41,7 @@ public class BundleAdapter extends RecyclerView.Adapter<BundleAdapter.LoanModelV
     public void onBindViewHolder(@NonNull LoanModelViewholder holder, int position) {
         HorizonProductModel productModel=productModels.get (position);
         holder.binding.label.setText (productModel.getTittle ());
-        holder.binding.price.setText (" ₹"+productModel.getPrice ());
+        holder.binding.price.setText ("₹"+productModel.getPrice ());
         holder.binding.Discount.setText ("MRP:"+productModel.getDiscount ());
         holder.binding.Discount.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
         Glide.with (context).load(productModel.getImage())

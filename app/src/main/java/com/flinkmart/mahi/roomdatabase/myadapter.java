@@ -2,11 +2,11 @@ package com.flinkmart.mahi.roomdatabase;
 
 import static com.flinkmart.mahi.R.color.*;
 
-import android.content.Context;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,8 +17,6 @@ import androidx.room.Room;
 import com.bumptech.glide.Glide;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.databinding.ItemCartBinding;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,13 +29,17 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
 
     CardView cardView;
 
-    public myadapter(List<Product> products, TextView rateview, TextView quantity, TextView text, TextView banner,CardView cardView) {
+    ImageView imageView;
+
+
+    public myadapter(List<Product> products, TextView rateview, TextView quantity, TextView text, TextView banner, CardView cardView, ImageView imageView) {
         this.products = products;
         this.rateview= rateview;
         this.text=text;
         this.quantity=quantity;
         this.banner=banner;
         this.cardView=cardView;
+        this.imageView=imageView;
     }
 
     @NonNull
@@ -142,18 +144,19 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
 
         rateview.setText("₹"+sum);
 
-        add=500-sum;
+        add=1000-sum;
 
-        if(sum<500){
-            banner.setText ("Add More ₹"+add+"For Get Free Delivery & Free Bag");
+        if(sum<1000){
+            banner.setText ("Add More ₹"+add+"For Get Free Delivery");
             banner.setTextColor (banner.getContext ().getResources ().getColor (R.color.red));
         }else{
-            banner.setText("Congragulation You Got Free Delivery & Free Bag");
+            banner.setText("Congratulations You Got Free Delivery");
             banner.setTextColor (banner.getContext ().getResources ().getColor (purple_500));
         }
         if(sum==0){
             banner.setVisibility (View.GONE);
             text.setVisibility (View.VISIBLE);
+            imageView.setVisibility (View.VISIBLE);
             cardView.setVisibility (View.GONE);
         }
     }

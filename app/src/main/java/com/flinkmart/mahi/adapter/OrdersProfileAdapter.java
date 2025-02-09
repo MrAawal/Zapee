@@ -50,28 +50,27 @@ public class OrdersProfileAdapter extends RecyclerView.Adapter<OrdersProfileAdap
     }
 
     public void onBindViewHolder(@NonNull LoanModelViewholder holder, int position) {
-
-        if(ordersModel.size ()>0){
-            text.setText ("");
-            text.setVisibility (View.GONE);
-        }
-
         Order order=ordersModel.get (position);
         holder.binding.status.setText ("#"+order.getOrderNumber ());
         holder.binding.textView14.setText (order.getCustomerName ());
         holder.binding.textView15.setText (order.getCustomerNumber ());
         holder.binding.textView17.setText (order.getCustomerAddress ());
-        holder.binding.partner.setText (order.getPartner ());
 
+        holder.binding.partner.setText (order.getStatus ());
         holder.binding.partner.setTextColor (context.getResources ().getColor (R.color.purple_500));
 
         CharSequence date= DateFormat.format ("EEEE,MMM d,yyyy h:mm:ss a",order.getOrderPlaceDate ().toDate ());
         holder.binding.date.setText (date);
 
+        if(ordersModel.size ()<-1){
+            text.setText ("No order Place yet");
+        }else {
+            text.setText ("");
+        }
 
         ImageAdapter  imageAdapter= new ImageAdapter (context);
         holder.binding.productList.setAdapter (imageAdapter);
-        holder.binding.productList.setLayoutManager (new LinearLayoutManager (context));
+        holder.binding.productList.setLayoutManager (new LinearLayoutManager (context,LinearLayoutManager.HORIZONTAL,false));
         int orderNumber= Integer.parseInt (order.getOrderNumber ());
 
         FirebaseFirestore.getInstance ()
@@ -103,7 +102,7 @@ public class OrdersProfileAdapter extends RecyclerView.Adapter<OrdersProfileAdap
                 intent.putExtra("address", order.getCustomerAddress());
                 intent.putExtra("payment", order.getPayment ());
                 intent.putExtra("date", date);
-                intent.putExtra("status", order.getPartner ());
+                intent.putExtra("status", order.getStatus ());
                 context.startActivity(intent);
             }
         });

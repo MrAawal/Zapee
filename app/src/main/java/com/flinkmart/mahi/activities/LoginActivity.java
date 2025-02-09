@@ -2,7 +2,10 @@ package com.flinkmart.mahi.activities;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText loginEmail,loginPassword;
     private TextView signupRedirectText;
     private Button loginButton;
-    private ImageButton phone;
+    private TextView phone;
 
     TextView forgotPassword;
 
@@ -103,15 +106,25 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful ( )) {
-                                        Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
+                                        Intent i = new Intent (getApplicationContext ( ),MainActivity.class);
+                                        i.putExtra("storecate", "groccery");
                                         startActivity (i);
                                         finish ( );
-                                    } else {
+                                    } else{
                                         progressBar.setVisibility (View.INVISIBLE);
                                         loginButton.setVisibility (View.VISIBLE);
-                                        Log.w (TAG, "signInWithEmail:failure", task.getException ( ));
-                                        Toast.makeText (LoginActivity.this, "User not registered",
-                                                Toast.LENGTH_SHORT).show ( );
+
+                                        AlertDialog.Builder builder=new AlertDialog.Builder (LoginActivity.this);
+                                        builder.setMessage ("Email format error or user not exist!");
+
+                                        builder.setPositiveButton ("Ok", new DialogInterface.OnClickListener ( ) {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                               builder.setCancelable (true);
+                                            }
+                                        });
+
+                                        builder.show ();
 
                                     }
                                 }

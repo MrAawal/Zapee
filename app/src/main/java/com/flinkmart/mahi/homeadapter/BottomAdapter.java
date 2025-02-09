@@ -43,7 +43,6 @@ public class BottomAdapter extends RecyclerView.Adapter<BottomAdapter.holder>{
 
     public BottomAdapter(Context context, List<BottomModel> productItems) {
         this.context = context;
-
         this.productItems = productItems;
     }
 
@@ -64,13 +63,18 @@ public class BottomAdapter extends RecyclerView.Adapter<BottomAdapter.holder>{
         holder.binding.price.setText ("₹"+newProductModel.getPrice ());
         holder.binding.Discount.setText ("₹"+newProductModel.getDiscount ());
         holder.binding.Discount.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
+        Glide.with (context).load(newProductModel.getImage ())
+                .into (holder.binding.image);
+
+        int mrp= Integer.parseInt (newProductModel.getDiscount ());
+        int price= Integer.parseInt (newProductModel.getPrice ());
+        String sum= String.valueOf (mrp-price);
+        holder.binding.parcent.setText ("SAVE ₹"+sum);
 
 
         holder.binding.cart.setVisibility (View.VISIBLE);
-        holder.binding.remove.setVisibility (View.INVISIBLE);
 
-        Glide.with (context).load(newProductModel.getImage ())
-                .into (holder.binding.image);
+        holder.binding.remove.setVisibility (View.INVISIBLE);
 
         holder.binding.cart.setOnClickListener (new View.OnClickListener ( ) {
             @Override
@@ -177,11 +181,11 @@ public class BottomAdapter extends RecyclerView.Adapter<BottomAdapter.holder>{
         List<Product> products=productDao.getallproduct ();
         int id= Integer.parseInt (newProductModel.getId ());
         Boolean check=productDao.is_exist(id);
+
         if(check==true){
             holder.binding.cart.setVisibility (View.INVISIBLE);
             holder.binding.remove.setVisibility (View.VISIBLE);
-
-}
+         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

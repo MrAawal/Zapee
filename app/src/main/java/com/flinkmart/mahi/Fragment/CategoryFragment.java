@@ -12,19 +12,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.activities.ProfileActivity;
 import com.flinkmart.mahi.activities.SearchActivity;
-import com.flinkmart.mahi.adapter.FragmentCategoryListAdapter;
+import com.flinkmart.mahi.scrapadaper.FragmentCategoryListAdapter;
 import com.flinkmart.mahi.databinding.FragmentCategoryBinding;
 import com.flinkmart.mahi.model.Catlist;
 import com.flinkmart.mahi.model.UserModel;
+import com.flinkmart.mahi.utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +64,7 @@ public class CategoryFragment extends Fragment {
         binding.shimmer.startShimmer ();
         binding.shimmer.setVisibility (View.VISIBLE);
         binding.home.setVisibility (View.INVISIBLE);
+        binding.linearLayout4.setVisibility (View.INVISIBLE);
 
         binding.searchBar.setOnClickListener (new View.OnClickListener ( ) {
             @Override
@@ -73,9 +89,50 @@ public class CategoryFragment extends Fragment {
         getUsername ();
         setUpRecyclerView ();
         initCategory ();
+        banner();
 
 
         return  view;
+    }
+
+    private  void banner() {
+        final List<SlideModel>imageList=new ArrayList<> ();
+        FirebaseDatabase.getInstance ().getReference ().child ("banner").addListenerForSingleValueEvent (new ValueEventListener ( ) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren ( )) {
+                    imageList.add (new SlideModel (ds.child ("image").getValue (  ).toString (), ds.child ("tittle").getValue (  ).toString (), ScaleTypes.FIT));
+                    binding.carousel.setImageList (imageList,ScaleTypes.FIT);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                RequestQueue queue = Volley.newRequestQueue (getActivity ());
+                StringRequest request = new StringRequest (Request.Method.GET, Constants.GET_OFFERS_URL, response -> {
+                    try {
+                        JSONObject object = new JSONObject (response);
+                        if (object.getString ("status").equals ("success")) {
+                            JSONArray offerArray = object.getJSONArray ("news_infos");
+                            for (int i = 0; i < offerArray.length ( ); i++) {
+                                JSONObject childObj = offerArray.getJSONObject (i);
+                                imageList.add (new SlideModel (Constants.NEWS_IMAGE_URL + childObj.getString ("image"), "", ScaleTypes.FIT));
+                                binding.carousel.setImageList (imageList,ScaleTypes.FIT);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace ( );
+                    }
+                }, ( error1) -> {
+                });
+                queue.add (request);
+            }
+        });
+
+
+
+
     }
 
     private void initCategory() {
@@ -92,6 +149,7 @@ public class CategoryFragment extends Fragment {
                             binding.shimmer.stopShimmer ();
                             binding.home.setVisibility (View.VISIBLE);
                             binding.shimmer.setVisibility (View.INVISIBLE);
+                            binding.linearLayout4.setVisibility (View.VISIBLE);
 
                             Catlist catlist = ds.toObject (Catlist.class);
                             catlistAdapter.addProduct(catlist);

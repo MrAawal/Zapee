@@ -9,11 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,13 +24,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.adapter.CartAdapter;
-import com.flinkmart.mahi.adapter.FilterAdapter;
+import com.flinkmart.mahi.adapter.CatListAdapter;
+import com.flinkmart.mahi.dynamicrv.DynamicRvAdapter;
+import com.flinkmart.mahi.model.Catlist;
+import com.flinkmart.mahi.scrapadaper.CartAdapter;
 import com.flinkmart.mahi.adapter.FilterAdapter2;
-import com.flinkmart.mahi.adapter.SublistAdapter;
 import com.flinkmart.mahi.databinding.ActivitySubCatListBinding;
 import com.flinkmart.mahi.model.CartModel;
-import com.flinkmart.mahi.model.Catlist;
 import com.flinkmart.mahi.model.Item;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.CartActivity;
@@ -38,7 +38,7 @@ import com.flinkmart.mahi.roomdatabase.Product;
 import com.flinkmart.mahi.roomdatabase.ProductDao;
 import com.flinkmart.mahi.roomdatabase.myadapter;
 import com.flinkmart.mahi.roomdatabase.myadapter2;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +48,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class SubCatListActivity extends AppCompatActivity {
     ActivitySubCatListBinding binding;
 
@@ -55,11 +56,18 @@ public class SubCatListActivity extends AppCompatActivity {
     int total=0;
 
     CartAdapter cartAdapter;
-    public static List<CartModel>cartList;
+    List<CartModel>cartList=new ArrayList<> ();
 
-    SublistAdapter sublistAdapter;
     FilterAdapter2 filterAdapter;
-    List<Item>itemList;
+    ArrayList<Item>itemList;
+    ArrayList<Catlist> categoryItems;
+
+    DynamicRvAdapter dynamicRvAdapter;
+
+    CatListAdapter categoryListAdapter;
+
+
+
 
 
     String uid= FirebaseAuth.getInstance ( ).getUid ( );
@@ -86,9 +94,9 @@ public class SubCatListActivity extends AppCompatActivity {
 
 
 
-            initcategory(categoryId);
 
             initProduct (categoryId,quantity,layout);
+            initCat(categoryId);
 
             getSupportActionBar().setTitle(categoryName.toUpperCase (  ));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -116,9 +124,9 @@ public class SubCatListActivity extends AppCompatActivity {
 
 
             if (qty>1){
-                quantity.setText (""+qty+" ITEMS |"+"₹"+sum);
+                quantity.setText (""+qty+" ITEMS IN CART |"+"₹"+sum);
             }else {
-                quantity.setText (""+qty+" ITEM |"+"₹"+sum);
+                quantity.setText (""+qty+" ITEM IN CART |"+"₹"+sum);
             }
             if(products.size ()==0){
                 binding.cartlayout.setVisibility (View.GONE);
@@ -134,7 +142,7 @@ public class SubCatListActivity extends AppCompatActivity {
             });
 
             binding.imageButton3.setVisibility (View.GONE);
-            binding.continues.setText ("Checkout");
+            binding.continues.setText ("Go to cart");
 
         }
 
@@ -143,52 +151,25 @@ public class SubCatListActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
-    void initcategory(String categoryId){
-        getSubCategory (categoryId);
-        itemList = new ArrayList<> ();
-        sublistAdapter = new SublistAdapter (this );
-        LinearLayoutManager layoutManager = new GridLayoutManager (this, 1);
-        binding.catList.setAdapter (sublistAdapter);
-        binding.catList.setLayoutManager (layoutManager);
-    }
-
-    void getSubCategory(String categoryId) {
-            FirebaseFirestore.getInstance ( )
-                    .collection ("subcategory")
-                    .whereEqualTo ("category",categoryId)
-                    .get ( )
-                    .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
-                            for (DocumentSnapshot ds : dsList) {
-                                Catlist catlist = ds.toObject (Catlist.class);
-                                sublistAdapter.addProduct (catlist);
-                            }
-
-                        }
-                    }).addOnFailureListener (new OnFailureListener ( ) {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText (SubCatListActivity.this, "No cat Selected", Toast.LENGTH_SHORT).show ( );
-                        }
-                    });;
-        }
 
     void initProduct(String category, TextView quantity, CardView layout){
-        getProduct(category);
-        itemList = new ArrayList<> ();
+          getProduct (category);
+
+          itemList = new ArrayList<> ();
+
         LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
         binding.productList.setLayoutManager (layoutManager);
-        filterAdapter = new FilterAdapter2 (this ,itemList,quantity,layout);
+        filterAdapter = new FilterAdapter2 (this,itemList,quantity,layout);
         binding.productList.setAdapter(filterAdapter);
     }
     void getProduct(String category){
 
         ProgressBar progressBar=new ProgressBar (this);
+        progressBar.setVisibility (View.VISIBLE);
 
         FirebaseFirestore.getInstance ()
                 .collection ("product")
+                .whereEqualTo ("show",true)
                 .whereEqualTo ("category", category)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
@@ -196,10 +177,49 @@ public class SubCatListActivity extends AppCompatActivity {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
-                            binding.progressBar5.setVisibility (View.INVISIBLE);
-
+                            binding.progressBar13.setVisibility (View.INVISIBLE);
                             Item product=ds.toObject (Item.class);
                             filterAdapter.addProduct(product);
+                        }
+
+
+                    }
+                });
+
+    }
+
+    void initCat(String categoryId){
+        getCat (categoryId);
+        categoryItems = new ArrayList<> ();
+        itemList=new ArrayList<> ();
+
+        TextView quantity=findViewById (R.id.cartQnt);
+        RecyclerView recyclerView1=findViewById (R.id.productList);
+        CardView layout=findViewById (R.id.cartlayout);
+        ProgressBar progressBar=new ProgressBar (this);
+
+        LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
+        binding.catList.setLayoutManager (layoutManager);
+        categoryListAdapter = new CatListAdapter (this,categoryItems,recyclerView1,filterAdapter,itemList,quantity,layout);
+        binding.catList.setAdapter(categoryListAdapter);
+    }
+    void getCat(String categoryId){
+        ProgressBar progressBar=new ProgressBar (this);
+        progressBar.setVisibility (View.VISIBLE);
+        FirebaseFirestore.getInstance ()
+                .collection ("subcategory")
+                .whereEqualTo ("catname", categoryId)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            binding.progressBar13.setVisibility (View.INVISIBLE);
+                            binding.progressBar5.setVisibility (View.INVISIBLE);
+                            Catlist product=ds.toObject (Catlist.class);
+                            categoryListAdapter.addProduct(product);
+
                         }
 
 
@@ -230,14 +250,14 @@ public class SubCatListActivity extends AppCompatActivity {
         int qty = 0,i;
         for (i = 0; i < products.size ( ); i++)
             qty = qty + (products.get (i).getQnt ( ));
-
-        quantity.setText (""+qty+" Items");
+        quantity.setText (""+qty);
         actionView.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
                 onOptionsItemSelected (cart);
             }
         });
+
 
         SearchView searchView= (SearchView) searchItem.getActionView ();
         searchView.setMaxWidth (Integer.MAX_VALUE);
@@ -331,17 +351,22 @@ public class SubCatListActivity extends AppCompatActivity {
     }
 
     private void getAllProduct(TextView Subtotal, TextView quantity, RecyclerView cart, TextView text, TextView banner, CardView cardView){
-            onResume ();
+
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "cart_db").allowMainThreadQueries().build();
         ProductDao productDao = db.ProductDao();
 
+
+
         cart.setLayoutManager(new LinearLayoutManager (this));
         List<Product> products=productDao.getallproduct();
 
+        ImageView imageView=findViewById (R.id.imageView7);
 
-        myadapter adapter=new myadapter(products, Subtotal,quantity, text,banner,cardView);
+
+        myadapter adapter=new myadapter(products, Subtotal,quantity, text,banner,cardView, imageView);
         cart.setAdapter(adapter);
+
 
 
         int sum=0,i;
@@ -353,6 +378,11 @@ public class SubCatListActivity extends AppCompatActivity {
         for (i = 0; i < products.size ( ); i++)
             qty = qty + (products.get (i).getQnt ( ));
         quantity.setText (""+qty+" Items");
+
+    }
+
+    protected void onResume() {
+        super.onResume();
 
     }
 

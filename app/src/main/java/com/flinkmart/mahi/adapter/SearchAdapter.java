@@ -1,5 +1,6 @@
 package com.flinkmart.mahi.adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
 import static com.flinkmart.mahi.activities.NewCheckoutActivity.getRandomNumber;
 
 import android.content.Context;
@@ -41,13 +42,14 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<Item,SearchAdapter.I
     Context context;
 
     CartModel cartItem;
+
+
     String uid= FirebaseAuth.getInstance ( ).getUid ( );
 
     private List<Item>itemList;
     private List<Item>filteredList;
 
     public SearchAdapter(@NonNull FirestoreRecyclerOptions<Item> options, Context context, List<Item> itemList) {
-
         super (options);
         this.context = context;
         this.itemList = itemList;
@@ -69,6 +71,11 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<Item,SearchAdapter.I
         holder.binding.remove.setVisibility (View.INVISIBLE);
         Glide.with (context).load(model.getImage ())
                 .into (holder.binding.image);
+
+        holder.binding.cartFunction.setVisibility (View.INVISIBLE);
+
+        holder.binding.cart.setVisibility (View.VISIBLE);
+        holder.binding.remove.setVisibility (View.INVISIBLE);
         holder.binding.cart.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
@@ -77,7 +84,6 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<Item,SearchAdapter.I
                 List<Product> products=productDao.getallproduct ();
 
                 int id= Integer.parseInt (model.getId ());
-
                 Boolean check=productDao.is_exist(id);
                 if(check==false) {
                     productDao.insertrecord (new Product (id,model.getTittle (),model.getImage (),Integer.parseInt (model.getPrice ()),1,model.getDiscount (),model.getDescription ()));
@@ -101,6 +107,8 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<Item,SearchAdapter.I
                 productDao.deleteById(id);
                 holder.binding.remove.setVisibility (View.INVISIBLE);
                 holder.binding.cart.setVisibility (View.VISIBLE);
+
+
 
             }
         });
@@ -179,6 +187,7 @@ public class SearchAdapter extends FirestoreRecyclerAdapter<Item,SearchAdapter.I
             @Override
             public void onClick(View v){
             Intent intent = new Intent(context, SearchProductDetailActivity.class);
+
             intent.putExtra("id", model.getId());
             intent.putExtra("description",model.getDescription ());
             intent.putExtra("name", model.getTittle ());

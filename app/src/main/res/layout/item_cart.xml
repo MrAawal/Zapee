@@ -5,8 +5,9 @@
     android:id="@+id/favItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="1dp"
-    android:background="#C5FAC1"
+    android:layout_marginTop="2dp"
+    android:background="@drawable/product"
+    android:backgroundTint="@color/white"
     android:padding="5dp">
 
     <LinearLayout
@@ -26,8 +27,8 @@
             android:layout_height="match_parent"
             android:layout_marginRight="3dp"
             android:background="@drawable/product"
-            android:padding="5dp"
-            android:scaleType="fitCenter"
+            android:backgroundTint="@color/bg"
+            android:scaleType="centerCrop"
             app:srcCompat="@drawable/placeholder" />
 
         <LinearLayout
@@ -48,9 +49,11 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="1dp"
                     android:layout_weight="1"
-                    android:fontFamily="monospace"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-condensed-medium"
+                    android:maxLines="1"
                     android:text="Discount"
-                    android:textColor="@color/red"
+                    android:textColor="@color/black"
                     android:textSize="16sp" />
 
                 <TextView
@@ -59,10 +62,10 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="1dp"
                     android:layout_weight="1"
-                    android:fontFamily="monospace"
+                    android:fontFamily="sans-serif-condensed-medium"
                     android:text="PKR 34000"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -80,11 +83,11 @@
                     android:layout_margin="1dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:fontFamily="monospace"
+                    android:fontFamily="sans-serif-condensed-medium"
                     android:maxLines="3"
                     android:text="Tittle"
                     android:textColor="@color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <ImageButton
                     android:id="@+id/delete"
@@ -93,7 +96,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@android:color/transparent"
                     android:scaleType="centerCrop"
-                    android:tint="@color/fav"
+                    android:tint="@color/teal_700"
                     app:srcCompat="@drawable/baseline_delete_24" />
 
             </LinearLayout>
@@ -104,6 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/product"
+                android:backgroundTint="@color/bg"
                 android:orientation="horizontal">
 
                 <TextView
@@ -114,7 +118,7 @@
                     android:gravity="center"
                     android:scaleType="centerCrop"
                     android:text="-"
-                    android:textColor="@color/fav"
+                    android:textColor="@color/teal_700"
                     android:textSize="40sp"
 
                     />
@@ -126,7 +130,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="TextView"
-                    android:textColor="@color/teal_700"
+                    android:textColor="@color/black"
                     android:textSize="30sp" />
 
                 <TextView
@@ -137,7 +141,7 @@
                     android:gravity="center"
                     android:scaleType="centerCrop"
                     android:text="+"
-                    android:textColor="@color/fav"
+                    android:textColor="@color/teal_700"
                     android:textSize="40sp" />
 
             </LinearLayout>

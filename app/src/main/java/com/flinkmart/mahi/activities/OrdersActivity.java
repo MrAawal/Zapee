@@ -33,11 +33,11 @@ public class OrdersActivity extends AppCompatActivity {
 
         binding.textView.setVisibility (View.INVISIBLE);
 
-        Handler handler=new Handler (  );
-        handler.postDelayed (()->{
-            binding.textView.setVisibility (View.VISIBLE);
-            binding.progressBar7.setVisibility (View.INVISIBLE);
-        },500);
+//        Handler handler=new Handler (  );
+//        handler.postDelayed (()->{
+//            binding.textView.setVisibility (View.VISIBLE);
+//            binding.progressBar7.setVisibility (View.INVISIBLE);
+//        },500);
 
         String uid=FirebaseAuth.getInstance ( ).getUid ( );
         TextView text=findViewById (R.id.textView);

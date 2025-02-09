@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
+    android:background="@color/bg"
     tools:context=".activities.PickupActivity">
 
     <LinearLayout
@@ -15,6 +15,29 @@
         app:layout_constraintBottom_toTopOf="@+id/button7"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/product"
+            android:padding="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <fragment
+                android:id="@+id/google_map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,7 +64,7 @@
             <LinearLayout
                 android:id="@+id/linearLayout10"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:layout_marginStart="3dp"
                 android:layout_marginEnd="3dp"
@@ -145,7 +168,7 @@
             android:gravity="bottom"
             android:orientation="vertical"
             android:padding="5dp"
-            android:paddingBottom="20dp">
+            android:paddingBottom="100dp">
 
             <TextView
                 android:id="@+id/textView23"
@@ -160,12 +183,14 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="5dp">
+                android:layout_marginTop="5dp"
+                android:layout_weight="1">
 
                 <EditText
                     android:id="@+id/dropAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="Enter Drop Address"
                     android:inputType="textMultiLine" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -191,7 +216,8 @@
                     android:id="@+id/dropContact"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Contact" />
+                    android:hint="Contact"
+                    android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -204,49 +230,9 @@
                     android:id="@+id/dropPin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Pincode" />
+                    android:hint="Pincode"
+                    android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/product"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="15dp">
-
-                <TextView
-                    android:id="@+id/textView16"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="Crafted in Bengaluru"
-                    android:textSize="50sp" />
-
-                <TextView
-                    android:id="@+id/textView20"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:text="Made with Love"
-                    android:textSize="30sp" />
-
-                <View
-                    android:id="@+id/view7"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:background="@drawable/heart2" />
-
-            </LinearLayout>
-
-
         </LinearLayout>
 
     </LinearLayout>

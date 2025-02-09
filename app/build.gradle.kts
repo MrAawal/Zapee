@@ -4,12 +4,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+    alias(libs.plugins.google.firebase.appdistribution)
 }
 
 android {
     namespace = "com.flinkmart.mahi"
     compileSdk = 34
-
     buildFeatures{
         viewBinding = true
     }
@@ -18,8 +18,8 @@ android {
         applicationId = "com.flinkmart.mahi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 28
-        versionName = "3.8"
+        versionCode = 37
+        versionName = "4.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -36,17 +36,18 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.bom)
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore)
     implementation(libs.swiperefreshlayout)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.play.services.auth)
     implementation(libs.mediarouter)
     implementation(libs.dexter)
     implementation(libs.firebase.messaging)
@@ -65,6 +66,9 @@ dependencies {
     implementation(libs.roundedimageview)
     implementation(libs.gson)
     implementation(libs.ccp)
+    implementation(libs.maps.utils)
+
+
 
     annotationProcessor(libs.room.compiler)
     implementation(libs.room.runtime)

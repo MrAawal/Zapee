@@ -18,11 +18,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.room.Room;
 
-import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.FavouriteActivity;
-import com.flinkmart.mahi.activities.NewCartActivity;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
+import com.flinkmart.mahi.scrab.NewCartActivity;
 import com.flinkmart.mahi.adapter.FilterAdapter;
 import com.flinkmart.mahi.databinding.ActivityNewProductDetailBinding;
 import com.flinkmart.mahi.model.CartModel;
@@ -36,6 +37,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -69,9 +74,22 @@ NewProductDetailActivity extends AppCompatActivity {
         String subcat =  getIntent().getStringExtra ("subcategory");
         String cat =  getIntent().getStringExtra ("category");
 
-        Glide.with(this)
-                .load(image)
-                .into(binding.productImage);
+        final List<SlideModel>imageList=new ArrayList<> ();
+        FirebaseDatabase.getInstance ().getReference ().child ("banner").addListenerForSingleValueEvent (new ValueEventListener ( ) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren ( )) {
+                    imageList.add (new SlideModel (ds.child ("image").getValue (  ).toString (), ds.child ("tittle").getValue (  ).toString (), ScaleTypes.FIT));
+                    binding.carousel.setImageList (imageList,ScaleTypes.FIT);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
         getSupportActionBar().setTitle(name);
@@ -118,77 +136,8 @@ NewProductDetailActivity extends AppCompatActivity {
 
         }
 
-        binding.fav2.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                String uid= FirebaseAuth.getInstance ( ).getUid ( );
-                if(uid==null){
-                    Toast.makeText (NewProductDetailActivity.this, "Please Login", Toast.LENGTH_SHORT).show ( );
-                } else {
-                    String orderNumber = String.valueOf (getRandomNumber (11111, 99999));
-                    Favourite orderProduct = new Favourite (id,orderNumber,uid,name,image,discount,"",discription,
-                            cat,subcat,"",1,Integer.parseInt (price),true);
-                    FirebaseFirestore.getInstance ( )
-                            .collection ("favourite")
-                            .document (id+uid)
-                            .set (orderProduct);
-                    binding.fav2.setVisibility (View.INVISIBLE);
-                    binding.fav.setVisibility (View.VISIBLE);
-                    Toast.makeText (NewProductDetailActivity.this, "Added in favourite list", Toast.LENGTH_SHORT).show ( );
-                }
 
-            }
-        });
 
-      binding.fav.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                FirebaseFirestore.getInstance ()
-                        .collection ("favourite")
-                        .document ( id+uid)
-                        .delete ()
-                        .addOnCompleteListener (new OnCompleteListener<Void> ( ) {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful ()){
-                                    binding.fav.setVisibility (View.INVISIBLE);
-                                    binding.fav2.setVisibility (View.VISIBLE);
-                                    Toast.makeText (NewProductDetailActivity.this, "Item Remove", Toast.LENGTH_SHORT).show ( );
-                                }
-                            }
-                        });
-
-            }
-        });
-
-        FirebaseUtil.cartDetails (id+uid).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful ( )) {
-                    cartItem = task.getResult ( ).toObject (CartModel.class);
-                    if (cartItem!= null){
-                        binding.cartbtn.setBackgroundColor (getApplication ().getResources ().getColor (R.color.teal_700));
-                    }else{
-
-                    }
-                }
-            }
-
-        });
-        FirebaseUtil.favdetail (id+uid).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful ( )) {
-                    cartItem = task.getResult ( ).toObject (CartModel.class);
-                    if (cartItem!= null){
-                        binding.fav2.setVisibility (View.INVISIBLE);
-                    }else{
-
-                    }
-                }
-            }
-
-        });
 
         initOffer1(subcat);
     }

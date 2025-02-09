@@ -138,10 +138,10 @@ public class myadapter2 extends RecyclerView.Adapter<myadapter2.myviewholder>{
         add=500-sum;
 
         if(sum<500){
-            banner.setText ("Add More ₹"+add+"For Get Free Delivery & Free Bag");
+            banner.setText ("Add More ₹"+add+"For Get Free Delivery");
             banner.setTextColor (banner.getContext ().getResources ().getColor (R.color.red));
         }else{
-            banner.setText("Congragulation You Got Free Delivery & Free Bag");
+            banner.setText("Congratulations You Got Free Delivery");
             banner.setTextColor (banner.getContext ().getResources ().getColor (purple_500));
         }
         if(sum==0){

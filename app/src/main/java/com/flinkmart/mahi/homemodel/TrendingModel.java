@@ -9,6 +9,7 @@ public class TrendingModel  {
     public int qty;
 
     public int pid;
+    public String branch;
 
     public String pname;
 
@@ -22,7 +23,16 @@ public class TrendingModel  {
     public String description;
 
     public String discount;
+
+
+
     public TrendingModel() {
+
+
+    }
+
+    public TrendingModel(String branch) {
+        this.branch = branch;
     }
 
     public TrendingModel(int qty, int pid, String pname, String image, int price, int qnt, String description, String discount) {
@@ -34,6 +44,14 @@ public class TrendingModel  {
         this.qnt = qnt;
         this.description = description;
         this.discount = discount;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     public int getQty() {

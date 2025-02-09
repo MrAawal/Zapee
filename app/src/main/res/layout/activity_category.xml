@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login"
-    tools:context=".activities.CategoryActivity">
+    tools:context=".scrab.CategoryActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productList"

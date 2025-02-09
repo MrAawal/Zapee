@@ -93,7 +93,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
             userModel.setAddress (addresss);
             userModel.setCreatedTimestamp (Timestamp.now ( ));
         } else {
-            userModel = new UserModel ( "",phonenumber,username, addresss, Timestamp.now ( ));
+            userModel = new UserModel ( phonenumber,username,addresss, "","","","","","","", Timestamp.now ( ));
         }
         FirebaseUtil.deleteUserDetail ( ).set (userModel).addOnCompleteListener (new OnCompleteListener<Void> ( ) {
             @Override

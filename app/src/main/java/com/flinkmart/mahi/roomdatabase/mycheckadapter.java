@@ -40,7 +40,7 @@ public class mycheckadapter extends RecyclerView.Adapter<mycheckadapter.myviewho
     public void onBindViewHolder(@NonNull @NotNull mycheckadapter.myviewholder holder, int position) {
 
         holder.binding.label.setText(products.get(position).getPname());
-        holder.binding.price.setText(String.valueOf(products.get(position).getPrice()));
+        holder.binding.price.setText(String.valueOf("₹"+products.get(position).getPrice()));
         holder.binding.quantity.setText(String.valueOf(products.get(position).getQnt()));
         holder.binding.Discount.setText ("₹"+products.get (position).getDiscount ());
         holder.binding.Discount.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);

@@ -5,23 +5,22 @@
     android:id="@+id/cartbtn"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
+    android:background="#F4F3F3"
     tools:context="com.flinkmart.mahi.activities.AllProductActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cartlayout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/teal_700"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#C5FAC1"
+            android:layout_margin="5dp"
+            android:background="@drawable/product"
+            android:backgroundTint="@color/fav"
             android:orientation="horizontal">
 
             <TextView
@@ -29,13 +28,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
-                android:background="@drawable/product"
+                android:layout_weight="1"
                 android:gravity="center|start"
                 android:padding="5dp"
                 android:text="Cart Items"
-                android:textAllCaps="false"
-                android:textColor="@color/teal_700"
-                android:textSize="26dp" />
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/Subtotal"
@@ -52,14 +51,15 @@
 
             <Button
                 android:id="@+id/continues"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_margin="3dp"
                 android:background="@drawable/product"
                 android:backgroundTint="@color/fav"
+                android:drawableLeft="@drawable/baseline_shopping_cart_24"
                 android:padding="5dp"
-                android:text="View" />
+                android:text="View Cart"
+                android:textSize="20sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cartList"
@@ -83,7 +83,6 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -92,12 +91,10 @@
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
-        app:layout_constraintBottom_toTopOf="@+id/cartlayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBar3"

@@ -7,12 +7,11 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.FavouriteActivity;
-import com.flinkmart.mahi.activities.NewCartActivity;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
+import com.flinkmart.mahi.scrab.NewCartActivity;
 import com.flinkmart.mahi.adapter.ViewPagerAdapter4;
 import com.google.android.material.tabs.TabLayout;
 public class EssantialActivity extends AppCompatActivity {

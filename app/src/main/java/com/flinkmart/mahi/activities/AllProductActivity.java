@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -20,16 +21,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.adapter.FilterAdapter;
 import com.flinkmart.mahi.adapter.FilterAdapter2;
 import com.flinkmart.mahi.databinding.ActivityAllProductBinding;
 import com.flinkmart.mahi.model.CartModel;
 import com.flinkmart.mahi.model.Item;
+import com.flinkmart.mahi.restuarant.RestaurantCartActivity;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.CartActivity;
 import com.flinkmart.mahi.roomdatabase.Product;
 import com.flinkmart.mahi.roomdatabase.ProductDao;
 import com.flinkmart.mahi.roomdatabase.myadapter;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,6 +50,7 @@ public class AllProductActivity extends AppCompatActivity {
     public static List<CartModel>cartList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //4.7
         super.onCreate (savedInstanceState);
         binding = ActivityAllProductBinding.inflate (getLayoutInflater ( ));
         setContentView (binding.getRoot ( ));
@@ -95,8 +98,7 @@ public class AllProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
-                startActivity(new Intent (getApplicationContext (), CartActivity.class));
+                startActivity(new Intent (getApplicationContext (), RestaurantCartActivity.class));
 //                    bottomSheet ();
             }
         });
@@ -133,6 +135,7 @@ public class AllProductActivity extends AppCompatActivity {
     void getProduct(String CategoryId){
         FirebaseFirestore.getInstance ()
                 .collection ("product")
+                .whereEqualTo ("show",true)
                 .whereEqualTo ("subcategory",CategoryId)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
@@ -175,9 +178,9 @@ public class AllProductActivity extends AppCompatActivity {
             qty = qty + (products.get (i).getQnt ( ));
 
         if (qty>1){
-            quantity.setText (""+qty+" ITEMS | "+"₹"+sum);
+            quantity.setText (""+qty);
         }else {
-            quantity.setText (""+qty+" ITEM | "+"₹"+sum);
+            quantity.setText (""+qty);
         }
         actionView.setOnClickListener (new View.OnClickListener ( ) {
             @Override
@@ -292,10 +295,12 @@ public class AllProductActivity extends AppCompatActivity {
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "cart_db").allowMainThreadQueries().build();
         ProductDao productDao = db.ProductDao();
+        ImageView imageView=findViewById (R.id.imageView7);
 
         cart.setLayoutManager(new LinearLayoutManager (this));
         List<Product> products=productDao.getallproduct();
-        myadapter adapter=new myadapter(products, Subtotal,quantity, text,banner,cardView);
+        myadapter adapter=new myadapter(products, Subtotal,quantity, text,banner,cardView, imageView);
+
         cart.setAdapter(adapter);
 
 

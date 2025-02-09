@@ -1,56 +1,150 @@
 package com.flinkmart.mahi.activities;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.branchAdapter.BranchGrocceryActivity;
+import com.flinkmart.mahi.map.LocationModel;
 import com.flinkmart.mahi.map.MapActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class SplashActivity extends AppCompatActivity {
 
-    public static int SPLASH_TIMER=1500;
-    FirebaseAuth auth;
-    FirebaseUser user;
+    public static int SPLASH_TIMER=3000;
+    String user;
+    SupportMapFragment smf;
+    FusedLocationProviderClient client;
+
+    LocationManager locationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-
-
-        new Handler ().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                auth= FirebaseAuth.getInstance ();
-                user=auth.getCurrentUser();
-
-                if (user==null) {
-                    startActivity(new Intent (getApplicationContext (), PhoneLoginActivity.class));
-                    finish ();
-                }else {
-                    SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
-                    if(sp.contains("latitude"))
-                    {
-                        startActivity(new Intent (getApplicationContext (), MainActivity.class));
+        locationManager= (LocationManager) getSystemService (Context.LOCATION_SERVICE);
+        if(locationManager.isProviderEnabled (LocationManager.GPS_PROVIDER)){
+            new Handler ().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    user=FirebaseAuth.getInstance ( ).getUid ( );
+                    if (user!=null){
+                        Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
+                        startActivity (i);
                         finish ();
                     }else{
-                        Intent i = new Intent (getApplicationContext ( ), MapActivity.class);
-                        startActivity (i);
-                        finish ( );
+                        startActivity(new Intent (getApplicationContext (),PhoneLoginActivity.class));
+                        finish ();
                     }
                 }
+            }, SPLASH_TIMER); // Delay in milliseconds
+        }else {
+            showAlertMessageLocationDisabled();
+        }
 
-            }
-        }, SPLASH_TIMER); // Delay in milliseconds
     }
+
+    private void showAlertMessageLocationDisabled() {
+        AlertDialog.Builder dialog=new AlertDialog.Builder (this);
+        dialog.setTitle ("Location is off !");
+        dialog.setMessage ("Please turn on location from settings and retry ");
+        dialog.setPositiveButton ("Go to setting", new DialogInterface.OnClickListener ( ) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity (new Intent (Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                finish ();
+            }
+        });
+
+        dialog.setNegativeButton ("Not now", new DialogInterface.OnClickListener ( ) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onBackPressed ();
+                finish ();
+            }
+        });
+
+
+        dialog.setCancelable (false);
+        dialog.show ();
+
+    }
+
+
+    private void getPermition(){
+        smf = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
+        client = LocationServices.getFusedLocationProviderClient(this);
+                Dexter.withContext(this).withPermission(ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener () {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+                        onBackPressed ();
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
+
+
+    }
+
+
 }

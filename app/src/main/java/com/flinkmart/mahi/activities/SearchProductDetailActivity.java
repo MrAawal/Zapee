@@ -2,8 +2,8 @@ package com.flinkmart.mahi.activities;
 
 import static com.flinkmart.mahi.activities.NewCheckoutActivity.getRandomNumber;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,42 +13,54 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
-import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.adapter.ColorAdapter;
+import com.flinkmart.mahi.adapter.SizeAdapter;
+import com.flinkmart.mahi.adapter.SizeAdapterProductDetail;
 import com.flinkmart.mahi.adapter.SubCategoryItemAdapter;
 import com.flinkmart.mahi.databinding.ActivityNewProductDetailBinding;
+import com.flinkmart.mahi.homeadapter.LatestProductAdapter;
 import com.flinkmart.mahi.model.Favourite;
 import com.flinkmart.mahi.model.Item;
 import com.flinkmart.mahi.model.ProductTiny;
+import com.flinkmart.mahi.model.Size;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.CartActivity;
 import com.flinkmart.mahi.roomdatabase.Product;
 import com.flinkmart.mahi.roomdatabase.ProductDao;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.hishd.tinycart.model.Cart;
-import com.hishd.tinycart.util.TinyCartHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchProductDetailActivity extends AppCompatActivity {
 
     ActivityNewProductDetailBinding binding;
     ProductTiny currentProduct;
-    SubCategoryItemAdapter newProductAdapter;
+    LatestProductAdapter newProductAdapter;
     Favourite favorite;
+
+    SizeAdapterProductDetail sizeAdapter;
+    ColorAdapter colorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +76,22 @@ public class SearchProductDetailActivity extends AppCompatActivity {
         String subcat =  getIntent().getStringExtra ("subcategory");
         String cat =  getIntent().getStringExtra ("category");
 
-        Glide.with(this)
-                .load(image)
-                .into(binding.productImage);
+        final List<SlideModel>imageList=new ArrayList<> ();
+        FirebaseDatabase.getInstance ().getReference ().child (id).addListenerForSingleValueEvent (new ValueEventListener ( ) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren ( )) {
+                    imageList.add (new SlideModel (ds.child ("link").getValue (  ).toString (), "", ScaleTypes.FIT));
+                    binding.carousel.setImageList (imageList,ScaleTypes.FIT);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         getProductDetails(id);
 
@@ -74,7 +99,6 @@ public class SearchProductDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Cart cart = TinyCartHelper.getCart();
 
         binding.view.setOnClickListener (new View.OnClickListener ( ) {
             @Override
@@ -84,49 +108,99 @@ public class SearchProductDetailActivity extends AppCompatActivity {
         });
         binding.price.setText ("₹"+price);
         binding.name.setText(name);
+
+        binding.cartbtn2.setVisibility (View.VISIBLE);
+        binding.remove.setVisibility (View.INVISIBLE);
         binding.cartbtn2.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
+
                 AppDatabase db= Room.databaseBuilder(getApplicationContext (),AppDatabase.class,"cart_db").allowMainThreadQueries().build();
                 ProductDao productDao=db.ProductDao();
-                List<Product> products=productDao.getallproduct ();
 
                 int ide= Integer.parseInt (id);
 
+                SharedPreferences sp3=getSharedPreferences("ProductQnty"+id,MODE_PRIVATE);
+
+
+                String quantit=sp3.getString ("qnt","1");
+
                 Boolean check=productDao.is_exist(ide);
-                if(check==false) {
-                    productDao.insertrecord (new Product (ide,name,image,Integer.parseInt (price),1,discount,discription));
-                    Toast.makeText (SearchProductDetailActivity.this, "Added to cart", Toast.LENGTH_SHORT).show ( );
-                }else {
-                    Toast.makeText (getApplicationContext (), "Item Exist", Toast.LENGTH_SHORT).show ( );
+
+                if(check==false){
+                    SharedPreferences sp=getSharedPreferences("ProductSize",MODE_PRIVATE);
+                    SharedPreferences sp2=getSharedPreferences("ProductColor",MODE_PRIVATE);
+
+                    String size = sp.getString ("size", "")+"-"+sp2.getString ("color", "");
+
+                    productDao.insertrecord (new Product (ide,name+size,image,Integer.parseInt (price),1,discount,discription));
+                    binding.remove.setVisibility (View.VISIBLE);
+                    binding.cartbtn2.setVisibility (View.INVISIBLE);
+
+                    SharedPreferences.Editor editor=sp.edit ();
+                    SharedPreferences.Editor editor1=sp2.edit ();
+                    SharedPreferences.Editor editor2=sp3.edit ();
+
+                    editor.clear ().commit ();
+                    editor.apply();
+
+                    editor2.clear ().commit ();
+                    editor.apply();
+
+                    editor1.clear ().commit ();
+                    editor.apply();
+
+                    editor1.remove ("color");
+                    editor1.apply ();
+
+                    editor2.remove ("qnt");
+                    editor2.apply ();
+
+
                 }
-//                binding.cartbtn2.setBackgroundColor (getApplication ().getResources ().getColor (R.color.purple_500));
 
             }
         });
-        binding.fav.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                String uid= FirebaseAuth.getInstance ( ).getUid ( );
-                if(uid==null){
-                    Toast.makeText (SearchProductDetailActivity.this, "Please Login", Toast.LENGTH_SHORT).show ( );
-                } else {
-                    String orderNumber = String.valueOf (getRandomNumber (11111, 99999));
-                    Favourite orderProduct = new Favourite (id,orderNumber,uid,name,image,discount,"",discription,
-                            cat,subcat,"",1,Integer.parseInt (price),true);
-                    FirebaseFirestore.getInstance ( )
-                            .collection ("favourite")
-                            .document (id)
-                            .set (orderProduct);
-                    binding.fav.setEnabled(false);
-                    binding.fav.setVisibility (View.INVISIBLE);
-                    binding.fav2.setVisibility (View.VISIBLE);
-                    Toast.makeText (SearchProductDetailActivity.this, "Added in favourite list", Toast.LENGTH_SHORT).show ( );
-                }
 
-            }
-        });
+        RecyclerView colorList=binding.colorList;
+        TextView textView=findViewById (R.id.cartbtn2);
+        sizeAdapter=new SizeAdapterProductDetail (this, colorAdapter, colorList,id,textView)  ;
+        LinearLayoutManager layoutManager = new GridLayoutManager (this, 4);
+        binding.sizeList.setLayoutManager (layoutManager);
+        binding.sizeList.setAdapter (sizeAdapter);
+
+        colorAdapter=new ColorAdapter (this)  ;
+        LinearLayoutManager layoutManager1 = new GridLayoutManager (this, 4);
+        binding.colorList.setLayoutManager (layoutManager1);
+        binding.colorList.setAdapter (colorAdapter);
+
+        sizeList(id);
+
         initOffer1(subcat);
+    }
+
+    private void sizeList(String id) {
+        FirebaseFirestore.getInstance ()
+                .collection ("productSize")
+                .whereEqualTo ("id",id)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            binding.cartbtn2.setEnabled (false);
+                            binding.cartbtn2.setTextColor (getResources ().getColor (R.color.grey));
+                            Size product=ds.toObject (Size.class);
+                            sizeAdapter.addProduct(product);
+                        }
+
+
+                    }
+                });
+
+
+
     }
 
     @Override
@@ -159,8 +233,9 @@ public class SearchProductDetailActivity extends AppCompatActivity {
 
     void initOffer1(String subcat){
         getOffer1(subcat);
-        newProductAdapter=new SubCategoryItemAdapter (this)  ;
-        LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
+        List<Item>itemList=new ArrayList<> ();
+        newProductAdapter=new LatestProductAdapter (this,itemList)  ;
+        LinearLayoutManager layoutManager = new GridLayoutManager (this, 3);
         binding.productList.setLayoutManager (layoutManager);
         binding.productList.setAdapter (newProductAdapter);
     }
@@ -174,6 +249,7 @@ public class SearchProductDetailActivity extends AppCompatActivity {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
+                            binding.progressBar6.setVisibility (View.INVISIBLE);
                             Item product=ds.toObject (Item.class);
                             newProductAdapter.addProduct(product);
                         }

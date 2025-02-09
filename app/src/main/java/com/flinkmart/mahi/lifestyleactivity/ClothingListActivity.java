@@ -13,8 +13,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.FavouriteActivity;
-import com.flinkmart.mahi.activities.NewCartActivity;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
+import com.flinkmart.mahi.scrab.NewCartActivity;
 import com.flinkmart.mahi.adapter.FilterAdapter;
 import com.flinkmart.mahi.databinding.ActivityProductListBinding;
 import com.flinkmart.mahi.fashionfragment.KidFragment;

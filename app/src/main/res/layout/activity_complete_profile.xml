@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
+    android:background="@color/bg"
+    android:backgroundTint="@color/white"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".activities.CompleteProfileActivity">
@@ -32,13 +33,10 @@
             android:backgroundTint="@color/fav"
             android:text="Complete"
             android:textSize="18sp"
-            app:cornerRadius="20dp"
-            />
-
+            app:cornerRadius="20dp" />
 
 
     </FrameLayout>
-
 
 
     <LinearLayout
@@ -53,8 +51,9 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_margin="5dp"
+            android:layout_weight="1"
             android:background="@drawable/product"
+            android:backgroundTint="@color/white"
             android:padding="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +74,29 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/product"
+            android:backgroundTint="@color/white"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/autoAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:text="Loading..."
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/product"
+            android:backgroundTint="@color/white"
             app:cardCornerRadius="10dp">
 
             <LinearLayout
@@ -92,10 +113,38 @@
                     android:visibility="gone">
 
                     <EditText
+                        android:id="@+id/featuresAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Features" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone">
+
+                    <EditText
                         android:id="@+id/HeaderAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Address" />
+                        android:hint="Map Area" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/mapPin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Map Pincode" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -162,8 +211,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/product"
+            android:backgroundTint="@color/white"
             android:orientation="vertical"
             android:padding="15dp"
             android:visibility="visible">

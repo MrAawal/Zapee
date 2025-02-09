@@ -1,131 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".activities.LoginActivity">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="20dp">
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:drawableTint="@color/grey"
+            android:text="Zapee"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/grey"
+            android:textSize="50sp"
+            android:textStyle="bold" />
 
-            <TextView
+        <EditText
+            android:id="@+id/login_email"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/custom_edittext"
+            android:drawableLeft="@android:drawable/sym_action_email"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/fav"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:padding="8dp"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/custom_edittext"
+            android:drawableLeft="@drawable/baseline_vpn_key_24"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/fav"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            app:passwordToggleEnabled="true" />
+
+        <TextView
+            android:id="@+id/EmailLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:gravity="center"
+            android:letterSpacing="0.08"
+            android:padding="8dp"
+            android:text="Forgot Password?"
+            android:textSize="16sp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp">
+
+            <ProgressBar
+                android:id="@+id/progressBar4"
+                android:layout_width="50dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:visibility="invisible" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
+                android:backgroundTint="@color/fav"
+                android:paddingStart="20dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="10dp"
                 android:text="Login"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="36sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/login_email"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="40dp"
-                android:background="@drawable/custom_edittext"
-                android:drawableLeft="@drawable/baseline_person_24"
-                android:drawablePadding="8dp"
-                android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:padding="8dp"
-                android:textColor="@color/black" />
-
-            <EditText
-                android:id="@+id/login_password"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="35dp"
-                android:background="@drawable/custom_edittext"
-                android:drawableLeft="@drawable/baseline_lock_24"
-                android:drawablePadding="8dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:padding="8dp"
-                android:textColor="@color/black"
-                app:passwordToggleEnabled="true" />
-
-            <TextView
-                android:id="@+id/EmailLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="Forgot Password?"
-                android:textColor="@color/teal_700"
-                android:textSize="16sp" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp">
-
-                <ProgressBar
-                    android:id="@+id/progressBar4"
-                    android:layout_width="50dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="invisible" />
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:cornerRadius="10dp"
+                app:iconGravity="textStart" />
 
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/login_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:backgroundTint="@color/fav"
-                    android:paddingStart="20dp"
-                    android:paddingTop="10dp"
-                    android:paddingEnd="20dp"
-                    android:paddingBottom="10dp"
-                    android:text="Login"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="10dp"
-                    app:iconGravity="textStart" />
+        </FrameLayout>
 
+        <TextView
+            android:id="@+id/signupRedirectText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:drawableEnd="@drawable/baseline_arrow_circle_right_24"
+            android:drawableTint="@color/teal_700"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:padding="8dp"
+            android:text="Not yet registered? Signup"
+            android:textColor="@color/teal_700"
+            android:textSize="50sp" />
 
-            </FrameLayout>
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/signupRedirectText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:padding="8dp"
-                android:text="Not yet registered? Signup"
-                android:textColor="@color/teal_700"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <ImageButton
+    <Button
         android:id="@+id/imageButton4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:backgroundTint="@color/white"
+        android:drawableLeft="@android:drawable/stat_sys_phone_call"
+        android:drawableRight="@drawable/baseline_arrow_forward_24"
+        android:drawableTint="@color/black"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="center|start"
+        android:padding="10dp"
+        android:text="  Login with phone number"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+        app:layout_constraintVertical_bias="0.166" />
+
+    <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/product"
-        android:backgroundTint="@color/teal_700"
-        android:padding="10dp"
-        app:srcCompat="@drawable/baseline_perm_phone_msg_24" />
+        android:background="@color/white"
+        app:cardCornerRadius="10dp" />
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

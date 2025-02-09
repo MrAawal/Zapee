@@ -1,29 +1,11 @@
 {
   "project_info": {
     "project_number": "531533294608",
+    "firebase_url": "https://firelogin-1d14f-default-rtdb.firebaseio.com",
     "project_id": "firelogin-1d14f",
     "storage_bucket": "firelogin-1d14f.appspot.com"
   },
   "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:531533294608:android:6faf8ed34583bc776b2e95",
-        "android_client_info": {
-          "package_name": "com.flinkmart.firelogin"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAUDL27XzSLoU42xAQ_zTDPU9RHooottDQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:531533294608:android:b1b7be7a1c83a2186b2e95",

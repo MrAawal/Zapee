@@ -52,25 +52,24 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
 
     public void onBindViewHolder(@NonNull LoanModelViewholder holder, int position) {
 
-        if(ordersModel.size ()>0){
-            text.setText ("");
-            text.setVisibility (View.GONE);
-        }
+
 
         Order order=ordersModel.get (position);
         holder.binding.status.setText ("#"+order.getOrderNumber ());
         holder.binding.textView14.setText (order.getCustomerName ());
         holder.binding.textView15.setText (order.getCustomerNumber ());
         holder.binding.textView17.setText (order.getCustomerAddress ());
-        holder.binding.partner.setText (order.getPartner ());
-
+        holder.binding.partner.setText (order.getStatus());
         holder.binding.partner.setTextColor (context.getResources ().getColor (R.color.purple_500));
-
         CharSequence date= DateFormat.format ("EEEE,MMM d,yyyy h:mm:ss a",order.getOrderPlaceDate ().toDate ());
         holder.binding.date.setText (date);
 
 
-
+         if(ordersModel.size ()<-1){
+             text.setText ("No order Place yet");
+         }else {
+             text.setText ("");
+         }
 
         String orderNumber=order.getOrderNumber ();
 
@@ -80,18 +79,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.LoanModelV
         holder.binding.productList.setAdapter (imageAdapter);
         holder.binding.productList.setLayoutManager (new LinearLayoutManager (context,LinearLayoutManager.HORIZONTAL,false));
 
-
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View view) {
+            public void onClick(View view){
                 Intent intent = new Intent(context, OrderDetailActivity.class);
                 intent.putExtra("orderNumber", order.getOrderNumber());
                 intent.putExtra("totalPrice", order.getTotalPrice ());
                 intent.putExtra("address", order.getCustomerAddress());
                 intent.putExtra("payment", order.getPayment ());
                 intent.putExtra("date", date);
-                intent.putExtra("status", order.getPartner ());
+                intent.putExtra("status", order.getStatus ());
                 context.startActivity(intent);
             }
         });

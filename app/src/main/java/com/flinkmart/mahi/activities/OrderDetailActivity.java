@@ -58,7 +58,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         String time=getIntent ().getStringExtra ("date");
         String status=getIntent ().getStringExtra ("status");
 
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getProduct (orderNumber);
         binding.total.setText ("₹"+Totalprice);
@@ -66,6 +65,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         binding.date.setText (time);
         binding.orderid.setText ("#"+orderNumber);
         binding.status.setText (status);
+
         binding.imageButton2.setVisibility (View.GONE);
         if(status=="Pending"){
             binding.imageButton2.setVisibility (View.GONE);
@@ -144,7 +144,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         getAllProduct (orderNumber);
         productadaper=new ImageAdapter (this)  ;
         binding.orderDetail.setAdapter (productadaper);
-        binding.orderDetail.setLayoutManager (new LinearLayoutManager (this));
+        binding.orderDetail.setLayoutManager (new GridLayoutManager (this,4));
     }
     private void getAllProduct(Integer orderNumber){
         FirebaseFirestore.getInstance ()

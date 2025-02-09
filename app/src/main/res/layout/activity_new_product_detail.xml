@@ -6,8 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="3dp"
-    android:background="@drawable/login"
-    tools:context=".activities.ProductDetailActivity">
+    android:background="@color/bg"
+    tools:context=".activities.NewProductDetailActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Button" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,56 +37,79 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-
-                    <ImageView
-                        android:id="@+id/productImage"
+                    <com.denzcoskun.imageslider.ImageSlider
+                        android:id="@+id/carousel"
                         android:layout_width="match_parent"
-                        android:layout_height="250dp"
-                        android:background="@android:color/transparent"
-                        android:backgroundTint="@android:color/transparent"
-                        android:padding="5dp"
-                        android:scaleType="fitCenter"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:srcCompat="@drawable/placeholder" />
+                        android:layout_height="360dp"
+                        android:layout_marginBottom="13dp"
+                        android:background="@color/bg"
+                        app:iss_auto_cycle="true"
+                        app:iss_corner_radius="10"
+                        app:iss_delay="1500"
+                        app:iss_error_image="@drawable/placeholder"
+                        app:iss_period="1500"
+                        app:iss_text_align="CENTER"
+                        app:iss_title_background="@drawable/flag_transparent" />
 
-                    <ImageButton
-                        android:id="@+id/fav"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="right"
-                        android:background="@android:color/transparent"
-                        android:scaleType="centerCrop"
-                        android:visibility="gone"
-                        app:srcCompat="@drawable/heart" />
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cartFonction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="-35dp"
+                        android:background="@color/white"
+                        android:backgroundTint="@color/white"
+                        app:cardCornerRadius="10dp">
 
-                    <ImageButton
-                        android:id="@+id/fav2"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="right"
-                        android:background="@drawable/product"
-                        android:scaleType="centerCrop"
-                        android:visibility="gone"
-                        app:srcCompat="@drawable/heart2" />
+                        <TextView
+                            android:id="@+id/cartbtn2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:drawableRight="@drawable/baseline_add_24"
+                            android:drawableTint="@color/fav"
+                            android:gravity="center"
+                            android:padding="5dp"
+                            android:text="ADD TO CART"
+                            android:textColor="@color/fav"
+                            android:textSize="25sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/remove"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:drawableLeft="@drawable/baseline_delete_24"
+                            android:drawableTint="@color/red"
+                            android:gravity="center"
+                            android:padding="5dp"
+                            android:text="REMOVE"
+                            android:textColor="@color/red"
+                            android:textSize="25sp"
+                            android:textStyle="bold" />
+
+                    </androidx.cardview.widget.CardView>
 
                     <TextView
                         android:id="@+id/name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="-17dp"
                         android:background="@color/white"
                         android:fontFamily="monospace"
-                        android:padding="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="20dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="5dp"
                         android:selectAllOnFocus="false"
                         android:shadowColor="@color/black"
                         android:text="TextView"
@@ -83,12 +119,6 @@
                         android:textStyle="bold"
                         tools:layout_editor_absoluteX="10dp"
                         tools:layout_editor_absoluteY="268dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/white"
-                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -156,40 +186,62 @@
                                 android:textSize="40sp" />
                         </LinearLayout>
 
-                        <Button
-                            android:id="@+id/cartbtn2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="right|center_horizontal"
-                            android:layout_marginLeft="50dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/product"
-                            android:foregroundGravity="right"
-                            android:gravity="center"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/baseline_add_24"
-                            android:text="Add to cart"
-                            android:textSize="20sp"
-                            android:tint="@color/fav" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:orientation="vertical">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/sizeList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/colorList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:background="@color/white"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/information"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="monospace"
-                            android:padding="10dp"
-                            android:text="Product Information            See"
-                            android:textColor="@color/black"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="monospace"
+                                android:padding="10dp"
+                                android:text="Product Information"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/information"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="monospace"
+                                android:gravity="right"
+                                android:padding="10dp"
+                                android:text="See"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/view"
@@ -219,9 +271,10 @@
 
                 </LinearLayout>
 
-                <androidx.cardview.widget.CardView
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
 
                     <ProgressBar
                         android:id="@+id/progressBar6"
@@ -236,7 +289,7 @@
                         android:layout_height="match_parent" />
 
 
-                </androidx.cardview.widget.CardView>
+                </FrameLayout>
 
 
             </LinearLayout>

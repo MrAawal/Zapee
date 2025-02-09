@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.flinkmart.mahi.adapter.ItemAdapter;
+import com.flinkmart.mahi.adapter.BeautyListAdapter;
 import com.flinkmart.mahi.databinding.FragmentAllBinding;
 import com.flinkmart.mahi.model.Item;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +23,7 @@ import java.util.List;
 
 public class AllFragment extends Fragment {
     FragmentAllBinding binding;
-    ItemAdapter dealListAdapter;
+    BeautyListAdapter dealListAdapter;
     List<Item> productLists=new ArrayList<> (  );
 
     @Override
@@ -66,7 +66,7 @@ public class AllFragment extends Fragment {
 
     private void setUpRecyclerView() {
         binding.DealsList.setLayoutManager (new GridLayoutManager (getActivity (),2));
-        dealListAdapter=new ItemAdapter (getContext (),productLists);
+        dealListAdapter=new BeautyListAdapter (getContext (),productLists);
         binding.DealsList.setAdapter (dealListAdapter);
     }
 

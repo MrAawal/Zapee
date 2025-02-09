@@ -5,7 +5,7 @@
     android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login"
+    android:background="@color/bg"
     android:orientation="vertical">
 
     <View
@@ -23,7 +23,6 @@
         android:id="@+id/linearLayout10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:background="@drawable/product"
         android:backgroundTint="@color/white"
         android:orientation="horizontal"
@@ -120,13 +119,12 @@
     <FrameLayout
         android:id="@+id/cardView2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:background="@drawable/product"
         android:backgroundTint="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout11"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
@@ -165,13 +163,7 @@
             android:layout_marginStart="1dp"
             android:layout_marginTop="1dp"
             android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            android:layout_marginBottom="1dp" />
     </FrameLayout>
 
 
@@ -183,11 +175,12 @@
         android:layout_marginEnd="5dp"
         android:background="@drawable/product"
         android:backgroundTint="@color/white"
+
         android:gravity="right"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout9"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
         <Button
             android:id="@+id/button8"
@@ -196,14 +189,14 @@
             android:layout_marginEnd="5dp"
             android:backgroundTint="@color/teal_700"
             android:gravity="center"
-            android:text="See all"
+            android:text="See All Orders"
             android:textAllCaps="true" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout9"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@drawable/category"
         android:backgroundTint="@android:color/transparent"
         android:gravity="center"
@@ -211,7 +204,8 @@
         android:padding="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout11">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -230,7 +224,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:drawableLeft="@drawable/baseline_email_24"
-                android:fontFamily="monospace"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="Contact Us"
                 android:textAllCaps="true"
                 android:textColor="@color/teal_700"
@@ -244,7 +238,7 @@
                 android:background="@drawable/baseline_category_24"
                 android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawableTint="@color/black"
-                android:fontFamily="monospace"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="Privacy policy"
                 android:textAllCaps="true"
                 android:textColor="@color/teal_700"
@@ -256,7 +250,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:drawableLeft="@drawable/baseline_delete_24"
-                android:fontFamily="monospace"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="Delete Account"
                 android:textAllCaps="true"
                 android:textColor="@color/teal_700"
@@ -268,7 +262,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:drawableLeft="@drawable/nav_share"
-                android:fontFamily="monospace"
+                android:fontFamily="sans-serif-condensed-medium"
                 android:text="Share App"
                 android:textAllCaps="true"
                 android:textColor="@color/teal_700"

@@ -7,7 +7,7 @@
     android:background="@color/fav"
     android:gravity="bottom"
     android:orientation="vertical"
-    tools:context=".activities.NavHeaderMain"
+    tools:context=".scrab.NavHeaderMain"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
   <TextView

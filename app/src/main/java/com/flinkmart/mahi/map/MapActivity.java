@@ -10,10 +10,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.MainActivity;
 import com.flinkmart.mahi.model.OrderPlaceModel;
@@ -29,8 +32,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.maps.android.SphericalUtil;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -42,10 +50,10 @@ import  static  android.Manifest.permission.*;
 
 
 public class MapActivity extends AppCompatActivity {
-
     SupportMapFragment smf;
     FusedLocationProviderClient client;
     Button button;
+    Double distance;
 
 
 
@@ -107,36 +115,52 @@ public class MapActivity extends AppCompatActivity {
 
                         googleMap.addMarker(markerOptions);
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
-                        button.setOnClickListener (new View.OnClickListener ( ) {
+
+//                        distance = SphericalUtil.computeDistanceBetween (user, store);
+
+
+                        String latitude= String.valueOf (location.getLatitude ());
+                        String longitude=String.valueOf (location.getLongitude ());
+                        String uid=FirebaseAuth.getInstance ( ).getUid ( );
+                        LocationModel orderPlaceModel = new LocationModel(uid,latitude,longitude,Timestamp.now ());
+                        FirebaseFirestore.getInstance ( )
+                                .collection ("Location")
+                                .document ()
+                                .set (orderPlaceModel);
+                        SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
+                        SharedPreferences.Editor editor=sp.edit();
+                        editor.putString("latitude",latitude);
+                        editor.putString("longitude",longitude);
+                        editor.apply();
+                        startActivity(new Intent (getApplicationContext (), MainActivity.class));
+                    }
+                });
+
+                SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
+                if(sp.contains("latitude"))
+                {
+
+//                    Toast.makeText (MapActivity.this, ""+(sp.getString ("latitude","")), Toast.LENGTH_SHORT).show ( );
+                }
+
+                String latitude= String.valueOf (location.getLatitude ());
+                String longitude=String.valueOf (location.getLongitude ());
+                String uid= FirebaseAuth.getInstance ( ).getUid ( );
+
+                LocationModel orderPlaceModel = new LocationModel(uid,latitude,longitude,Timestamp.now ());
+                FirebaseFirestore.getInstance ( )
+                        .collection ("Location")
+                        .document (uid)
+                        .set (orderPlaceModel)
+                        .addOnSuccessListener (new OnSuccessListener<Void> ( ) {
                             @Override
-                            public void onClick(View v) {
-                                String latitude= String.valueOf (location.getLatitude ());
-                                String longitude=String.valueOf (location.getLongitude ());
-                                String uid=FirebaseAuth.getInstance ( ).getUid ( );
-                                LocationModel orderPlaceModel = new LocationModel(uid,latitude,longitude,Timestamp.now ());
-                                FirebaseFirestore.getInstance ( )
-                                        .collection ("Location")
-                                        .document ()
-                                        .set (orderPlaceModel);
-                                SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
-                                SharedPreferences.Editor editor=sp.edit();
-                                editor.putString("latitude",latitude);
-                                editor.putString("longitude",longitude);
-                                editor.apply();
+                            public void onSuccess(Void unused) {
                                 startActivity(new Intent (getApplicationContext (), MainActivity.class));
                             }
                         });
 
-                        SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
-                        if(sp.contains("latitude"))
-                        {
-                            startActivity(new Intent (getApplicationContext (), MainActivity.class));
-                            Toast.makeText (MapActivity.this, ""+(sp.getString ("latitude","")), Toast.LENGTH_SHORT).show ( );
-                        }
 
 
-                    }
-                });
             }
         });
     }

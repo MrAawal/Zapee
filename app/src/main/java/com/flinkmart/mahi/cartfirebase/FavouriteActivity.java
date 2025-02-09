@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.CheckoutActivity;
-import com.flinkmart.mahi.activities.NewCartActivity;
+import com.flinkmart.mahi.scrab.CheckoutActivity;
+import com.flinkmart.mahi.scrab.NewCartActivity;
 import com.flinkmart.mahi.databinding.ActivityFavouriteBinding;
 import com.flinkmart.mahi.model.Favourite;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,7 +48,6 @@ public class FavouriteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 cartItemList=productadaper.getSelectedItems();
-
                 Toast.makeText (FavouriteActivity.this, cartItemList.size ()+"Items Selected", Toast.LENGTH_SHORT).show ( );
                 startActivity (new Intent ( FavouriteActivity.this, CheckoutActivity.class));
             }

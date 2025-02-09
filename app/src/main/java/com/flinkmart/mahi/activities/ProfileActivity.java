@@ -141,9 +141,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
         logout.setOnClickListener (new View.OnClickListener ( ) {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view){
                 FirebaseAuth.getInstance ().signOut ();
-                Intent i=new Intent(getApplicationContext(),LoginActivity.class);
+                Intent i=new Intent(getApplicationContext(),PhoneLoginActivity.class);
                 startActivity(i);
                 finish ();
             }
@@ -151,7 +151,9 @@ public class ProfileActivity extends AppCompatActivity {
         binding.imageView2.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
-                bottomSheet();
+                Intent i = new Intent (getApplicationContext ( ), CompleteProfileActivity.class);
+                startActivity (i);
+//                bottomSheet();3e4gf
             }
         });
 //        create.setOnClickListener (new View.OnClickListener ( ) {
@@ -173,7 +175,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void contactSheet() {
         BottomSheetDialog bottomSheetDialog=new BottomSheetDialog ( this);
-        View view= LayoutInflater.from (ProfileActivity.this).inflate (R.layout.profile,(LinearLayout)findViewById (R.id.mainLayout),false);
+        View view= LayoutInflater.from (ProfileActivity.this).inflate (R.layout.address,(LinearLayout)findViewById (R.id.mainLayout),false);
         bottomSheetDialog.setContentView (view);
         EditText address;
         TextView congrag;
@@ -313,5 +315,4 @@ public class ProfileActivity extends AppCompatActivity {
         finish();
         return super.onSupportNavigateUp();
     }
-
 }

@@ -268,7 +268,7 @@
                     android:fontFamily="monospace"
                     android:maxLines="2"
                     android:text="Tittle"
-                    android:textAllCaps="true"
+                    android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     android:textStyle="bold" />

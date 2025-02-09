@@ -9,13 +9,12 @@
     <item
         android:id="@+id/orders"
         android:iconTint="@color/white"
-        android:icon="@drawable/baseline_shopping_cart_24"
-        android:title="Cart" />
+        android:title="" />
     <item
         android:id="@+id/category"
         android:iconTint="@color/white"
         android:icon="@drawable/baseline_category_24"
-        android:title="Category" />
+        android:title="My Orders" />
 
 
 

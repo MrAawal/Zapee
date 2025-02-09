@@ -8,23 +8,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.adapter.ImageAdapter;
-import com.flinkmart.mahi.adapter.OrderDetailAdapter;
 import com.flinkmart.mahi.databinding.ActivityDeliveryDetailBinding;
-import com.flinkmart.mahi.map.LocationModel;
-import com.flinkmart.mahi.map.MapActivity;
 import com.flinkmart.mahi.model.ImageModel;
-import com.flinkmart.mahi.model.OrderDetails;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.LocationServices;
@@ -32,13 +27,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +47,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class DeliveryDetailActivity extends AppCompatActivity {
 
@@ -66,11 +59,29 @@ public class DeliveryDetailActivity extends AppCompatActivity {
     GeofencingClient geofencingClient;
     DatabaseReference databaseReference;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         binding= ActivityDeliveryDetailBinding.inflate (getLayoutInflater ());
         setContentView (binding.getRoot ());
+
+
+        long duration= TimeUnit.MINUTES.toMillis ( 30);
+        new CountDownTimer (duration, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                binding.textView16.setText (""+millisUntilFinished/60000);
+            }
+
+            @Override
+            public void onFinish() {
+             binding.textView16.setText ("Finished");
+            }
+        }.start ();
+
 
 
         int orderNumber= Integer.parseInt (getIntent ().getStringExtra ("orderNumber"));
@@ -79,7 +90,9 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         String name=getIntent ().getStringExtra ("name");
         String storeLat=getIntent ().getStringExtra ("storeLat");
         String storeLon=getIntent ().getStringExtra ("storeLon");
-        getProduct(orderNumber);
+
+        getProduct (orderNumber);
+
         geofencingClient= LocationServices.getGeofencingClient (this );
         smf = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
         client = LocationServices.getFusedLocationProviderClient(this);
@@ -126,8 +139,8 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         binding.address.setText ("Deliver to -"+name+"-"+address);
-        binding.orderid.setText ("#"+orderNumber);
-        binding.total.setText ("₹"+Totalprice);
+        binding.orderid.setText ("Order number #"+orderNumber);
+        binding.total.setText ("Total payable amount: ₹"+Totalprice);
 
 
         binding.button2.setOnClickListener (new View.OnClickListener ( ) {
@@ -141,31 +154,23 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         });
 
     }
-    public boolean onSupportNavigateUp() {
-        Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);
-        startActivity (intent);
-        finish();
-        return super.onSupportNavigateUp();
-    }
 
-    void getProduct(int orderNumber){
+    void getProduct(Integer orderNumber){
         getAllProduct (orderNumber);
         productadaper=new ImageAdapter (this)  ;
-        binding.orderDetail.setAdapter (productadaper);
-        binding.orderDetail.setLayoutManager (new LinearLayoutManager (this));
-
+        binding.orderList.setAdapter (productadaper);
+        binding.orderList.setLayoutManager (new GridLayoutManager (this,3));;
     }
-    private void getAllProduct(int orderNumber){
+    private void getAllProduct(Integer orderNumber){
         FirebaseFirestore.getInstance ()
                 .collection ("OrderProduct")
-               .whereEqualTo ("pid",orderNumber)
+                .whereEqualTo ("pid",orderNumber)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
-                            binding.progressBar9.setVisibility (View.GONE);
                             ImageModel product=ds.toObject (ImageModel.class);
                             productadaper.addProduct(product);
                         }
@@ -174,6 +179,13 @@ public class DeliveryDetailActivity extends AppCompatActivity {
                     }
                 });
     }
+    public boolean onSupportNavigateUp() {
+        Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);
+        startActivity (intent);
+        finish();
+        return super.onSupportNavigateUp();
+    }
+
 
     public void getmylocation(int orderNumber) {
 
@@ -203,49 +215,23 @@ public class DeliveryDetailActivity extends AppCompatActivity {
                         LatLng latLng=new LatLng(Double.parseDouble (storeLat), Double.parseDouble (storeLon));
                         MarkerOptions markerOptions=new MarkerOptions().position(latLng).title("Store");
 
-                        LatLng latLng2=new LatLng(location.getLatitude(),location.getLongitude());
-                        MarkerOptions markerOptions2=new MarkerOptions().position(latLng2).title("Address");
-
-
-
-
-                        if(googleMap!=null){
-                            googleMap.clear ();
-                        }
-
-                        googleMap.addMarker (markerOptions2);
-
-                        databaseReference= FirebaseDatabase.getInstance ().getReference ("partner/"+orderNumber);
-
-                        databaseReference.addValueEventListener (new ValueEventListener ( ) {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                String value1=snapshot.child ("partnerLat").getValue (String.class);
-                                String value2=snapshot.child ("partnerLon").getValue (String.class);
-
-                                LatLng latLng3=new LatLng(Double.parseDouble (value1), Double.parseDouble (value2));
-                                MarkerOptions markerOptions3=new MarkerOptions().position(latLng3).title("Partner");
-
-                                if(googleMap!=null){
-                                    googleMap.clear ();
-                                }
-                                googleMap.addMarker (markerOptions3);
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,13));
+//                        googleMap.addMarker (markerOptions);
 
                         SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
-                        if(sp.contains("latitude")) {
-//                            Toast.makeText (DeliveryDetailActivity.this, ""+(sp.getString ("latitude","")), Toast.LENGTH_SHORT).show ( );
+
+                        if(sp.contains("latitude")){
+                            Double lat= Double.parseDouble (sp.getString ("latitude",""));
+                            Double lon=Double.parseDouble (sp.getString ("longitude",""));
+                            LatLng latLng2=new LatLng(lat,lon);
+                            MarkerOptions markerOptions2=new MarkerOptions().position(latLng2).title("Your Address");
+                            googleMap.addMarker (markerOptions2);
+                            googleMap.animateCamera (CameraUpdateFactory.newLatLngZoom (latLng2,15));
                         }
+
+//                        deliveryPartner(googleMap,orderNumber);
+//                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,14));
+
+
 
 
 
@@ -255,6 +241,34 @@ public class DeliveryDetailActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void deliveryPartner(GoogleMap googleMap, int orderNumber) {
+                                databaseReference= FirebaseDatabase.getInstance ().getReference ("partner/"+orderNumber);
+
+                        databaseReference.addValueEventListener (new ValueEventListener ( ) {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                String value1=snapshot.child ("partnerLat").getValue (String.class);
+                                String value2=snapshot.child ("partnerLon").getValue (String.class);
+
+                                LatLng latLng3=new LatLng(Double.parseDouble (value1), Double.parseDouble (value2));
+//                                MarkerOptions markerOptions3=new MarkerOptions().position(latLng3).title("Store");
+
+                                if(googleMap!=null){
+                                    googleMap.clear ();
+                                }
+//                                googleMap.addMarker (markerOptions3);
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+    }
+
     public void onBackPressed() {
         super.onBackPressed ( );
         Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);

@@ -2,15 +2,16 @@ package com.flinkmart.mahi.model;
 
 public class Courier {
 
-    String uid,id,longitude,latitude,pickAddress,dropAddress,picContact,dropContact,pickPin,dropPin;
+    String uid,id,longitude,latitude,pickAddress,pickNaame,dropAddress,picContact,dropContact,pickPin,dropPin;
 
 
-    public Courier(String uid, String id, String longitude, String latitude, String pickAddress, String dropAddress, String picContact, String dropContact, String pickPin, String dropPin) {
+    public Courier(String uid, String id, String longitude, String latitude, String pickAddress, String pickNaame, String dropAddress, String picContact, String dropContact, String pickPin, String dropPin) {
         this.uid = uid;
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
         this.pickAddress = pickAddress;
+        this.pickNaame = pickNaame;
         this.dropAddress = dropAddress;
         this.picContact = picContact;
         this.dropContact = dropContact;
@@ -56,6 +57,14 @@ public class Courier {
 
     public void setPickAddress(String pickAddress) {
         this.pickAddress = pickAddress;
+    }
+
+    public String getPickNaame() {
+        return pickNaame;
+    }
+
+    public void setPickNaame(String pickNaame) {
+        this.pickNaame = pickNaame;
     }
 
     public String getDropAddress() {

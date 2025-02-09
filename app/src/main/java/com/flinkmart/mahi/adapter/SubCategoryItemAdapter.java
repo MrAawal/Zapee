@@ -64,6 +64,9 @@ public class SubCategoryItemAdapter extends RecyclerView.Adapter<SubCategoryItem
 
         Glide.with (context).load(productModels.get (position).getImage ())
                 .into (holder.binding.image);
+
+        holder.binding.cart.setVisibility (View.VISIBLE);
+        holder.binding.remove.setVisibility (View.INVISIBLE);
         holder.binding.cart.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
@@ -75,13 +78,14 @@ public class SubCategoryItemAdapter extends RecyclerView.Adapter<SubCategoryItem
 
                 Boolean check=productDao.is_exist(id);
                 if(check==false) {
+
                     productDao.insertrecord (new Product (id,productModels.get (position).getTittle (),productModels.get (position).getImage (),Integer.parseInt (productModels.get (position).getPrice ()),1,productModels.get (position).getDiscount (),productModels.get (position).getDescription ()));
                 }else {
                     Toast.makeText (context, "Item Exist", Toast.LENGTH_SHORT).show ( );
                 }
                 holder.binding.cart.setVisibility (View.INVISIBLE);
                 holder.binding.remove.setVisibility (View.VISIBLE);
-                holder.binding.remove.setBackgroundColor (context.getResources ().getColor (R.color.teal_700));
+
 
             }
         });

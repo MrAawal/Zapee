@@ -1,41 +1,42 @@
 package com.flinkmart.mahi.activities;
 
-import static com.flinkmart.mahi.activities.NewCheckoutActivity.getRandomNumber;
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.SearchView;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
-import com.bumptech.glide.Glide;
-import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.adapter.FilterAdapter;
+import com.flinkmart.mahi.adapter.ColorAdapter;
+import com.flinkmart.mahi.adapter.SizeAdapterProductDetail;
 import com.flinkmart.mahi.databinding.ActivityNewProductDetailBinding;
-import com.flinkmart.mahi.model.CartModel;
-import com.flinkmart.mahi.model.Favourite;
+import com.flinkmart.mahi.homeadapter.LatestProductAdapter;
 import com.flinkmart.mahi.model.Item;
+import com.flinkmart.mahi.model.Size;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.CartActivity;
 import com.flinkmart.mahi.roomdatabase.Product;
 import com.flinkmart.mahi.roomdatabase.ProductDao;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -49,9 +50,11 @@ public class
 NewProductDetailActivity extends AppCompatActivity {
 
     ActivityNewProductDetailBinding binding;
-    FilterAdapter newProductAdapter;
+    LatestProductAdapter newProductAdapter;
 
-    CartModel cartItem;
+   SizeAdapterProductDetail sizeAdapter;
+
+   ColorAdapter colorAdapter;
 
     public boolean is_selected;
 
@@ -74,17 +77,42 @@ NewProductDetailActivity extends AppCompatActivity {
         String subcat =  getIntent().getStringExtra ("subcategory");
         String cat =  getIntent().getStringExtra ("category");
 
-        Glide.with(this)
-                .load(image)
-                .into(binding.productImage);
+
+        final List<SlideModel>imageList=new ArrayList<> ();
+        FirebaseDatabase.getInstance ().getReference ("productimages").child (id).addListenerForSingleValueEvent (new ValueEventListener ( ) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren ( )) {
+                    imageList.add (new SlideModel (ds.child ("link").getValue (  ).toString (), "", ScaleTypes.FIT));
+                    binding.carousel.setImageList (imageList,ScaleTypes.FIT);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         binding.view.setText (discription);
         binding.name.setText (name);
         binding.price.setText ("₹"+price);
+        binding.remove.setVisibility (View.INVISIBLE);
 
 
-        getSupportActionBar().setTitle("Detail");
+        getSupportActionBar().setTitle("Product Details");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+
+
+
+        SharedPreferences sp3=getSharedPreferences("ProductQnty"+id,MODE_PRIVATE);
+
+
+        String quantit=sp3.getString ("qnt","1");
 
 
         binding.cartbtn2.setOnClickListener (new View.OnClickListener ( ) {
@@ -93,27 +121,71 @@ NewProductDetailActivity extends AppCompatActivity {
 
                 AppDatabase db= Room.databaseBuilder(getApplicationContext (),AppDatabase.class,"cart_db").allowMainThreadQueries().build();
                 ProductDao productDao=db.ProductDao();
-                List<Product> products=productDao.getallproduct ();
 
                 int ide= Integer.parseInt (id);
 
                 Boolean check=productDao.is_exist(ide);
-                if(check==false) {
-                    productDao.insertrecord (new Product (ide,name,image,Integer.parseInt (price),1,discount,discription));
-                }else {
-                    Toast.makeText (getApplicationContext (), "Item Exist", Toast.LENGTH_SHORT).show ( );
+
+                if(check==false){
+                    SharedPreferences sp=getSharedPreferences("ProductSize",MODE_PRIVATE);
+                    SharedPreferences sp2=getSharedPreferences("ProductColor",MODE_PRIVATE);
+
+                    String size = sp.getString ("size", "")+"-"+sp2.getString ("color", "");
+
+                    productDao.insertrecord (new Product (ide,name+size,image,Integer.parseInt (price),1,discount,discription));
+                    binding.remove.setVisibility (View.VISIBLE);
+                    binding.cartbtn2.setVisibility (View.INVISIBLE);
+
+                    SharedPreferences.Editor editor=sp.edit ();
+                    SharedPreferences.Editor editor1=sp2.edit ();
+                    SharedPreferences.Editor editor2=sp3.edit ();
+
+                    editor.clear ().commit ();
+                    editor.apply();
+
+                    editor2.clear ().commit ();
+                    editor.apply();
+
+                    editor1.clear ().commit ();
+                    editor.apply();
+
+                    editor1.remove ("color");
+                    editor1.apply ();
+
+                    editor2.remove ("qnt");
+                    editor2.apply ();
+
+
                 }
-                 binding.cartbtn2.setText ("Added");
+
+            }
+        });
+
+
+        binding.remove.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+
+                int ide= Integer.parseInt (id);
+                AppDatabase db = Room.databaseBuilder(getApplicationContext (),
+                        AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+                ProductDao productDao = db.ProductDao();
+
+                productDao.deleteById(ide);
+
+                binding.remove.setVisibility (View.INVISIBLE);
+                binding.cartbtn2.setVisibility (View.VISIBLE);
             }
         });
 
         AppDatabase db= Room.databaseBuilder(getApplicationContext (),AppDatabase.class,"cart_db").allowMainThreadQueries().build();
         ProductDao productDao=db.ProductDao();
-        List<Product> products=productDao.getallproduct ();
         int ide= Integer.parseInt (id);
         Boolean check=productDao.is_exist(ide);
+
         if(check==true){
-            binding.cartbtn2.setText ("Added");
+            binding.cartbtn2.setVisibility (View.INVISIBLE);
+            binding.remove.setVisibility (View.VISIBLE);
         }
          binding.information.setOnClickListener (new View.OnClickListener ( ) {
              @Override
@@ -122,11 +194,11 @@ NewProductDetailActivity extends AppCompatActivity {
 
                  if (isVisible==View.VISIBLE){
                      binding.view.setVisibility (View.GONE);
-                     binding.information.setText ("Product Information            See");
+                     binding.information.setText ("See");
 
                  }else {
                      binding.view.setVisibility (View.VISIBLE);
-                     binding.information.setText ("Product Information           Hide");
+                     binding.information.setText ("Hide");
                  }
 
 
@@ -135,96 +207,50 @@ NewProductDetailActivity extends AppCompatActivity {
          });
 
 
-        binding.fav2.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                String uid= FirebaseAuth.getInstance ( ).getUid ( );
-                if(uid==null){
-                    Toast.makeText (NewProductDetailActivity.this, "Please Login", Toast.LENGTH_SHORT).show ( );
-                } else {
-                    String orderNumber = String.valueOf (getRandomNumber (11111, 99999));
-                    Favourite orderProduct = new Favourite (id,orderNumber,uid,name,image,discount,"",discription,
-                            cat,subcat,"",1,Integer.parseInt (price),true);
-                    FirebaseFirestore.getInstance ( )
-                            .collection ("favourite")
-                            .document (id+uid)
-                            .set (orderProduct);
-                    binding.fav2.setVisibility (View.INVISIBLE);
-                    binding.fav.setVisibility (View.VISIBLE);
-                    Toast.makeText (NewProductDetailActivity.this, "Added in favourite list", Toast.LENGTH_SHORT).show ( );
-                }
 
-            }
-        });
+         initOffer1(subcat);
 
-       binding.fav.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                FirebaseFirestore.getInstance ()
-                        .collection ("favourite")
-                        .document ( id+uid)
-                        .delete ()
-                        .addOnCompleteListener (new OnCompleteListener<Void> ( ) {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful ()){
-                                    binding.fav.setVisibility (View.INVISIBLE);
-                                    binding.fav2.setVisibility (View.VISIBLE);
-                                    Toast.makeText (NewProductDetailActivity.this, "Item Remove", Toast.LENGTH_SHORT).show ( );
-                                }
-                            }
-                        });
+         RecyclerView colorList=binding.colorList;
+         TextView textView=findViewById (R.id.cartbtn2);
+        sizeAdapter=new SizeAdapterProductDetail (this, colorAdapter, colorList,id,textView)  ;
+        LinearLayoutManager layoutManager = new GridLayoutManager (this, 4);
+        binding.sizeList.setLayoutManager (layoutManager);
+        binding.sizeList.setAdapter (sizeAdapter);
 
-            }
-        });
+        colorAdapter=new ColorAdapter (this)  ;
+        LinearLayoutManager layoutManager1 = new GridLayoutManager (this, 4);
+        binding.colorList.setLayoutManager (layoutManager1);
+        binding.colorList.setAdapter (colorAdapter);
 
-        FirebaseUtil.cartDetails (id+uid).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful ( )) {
-                    cartItem = task.getResult ( ).toObject (CartModel.class);
-                    if (cartItem!= null){
-                        binding.cartbtn.setBackgroundColor(getApplication ().getResources ().getColor (R.color.teal_700));
-                    }else{
+        sizeList(id);
 
-                    }
-                }
-            }
-
-        });
-        FirebaseUtil.favdetail (id+uid).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful ( )) {
-                    cartItem = task.getResult ( ).toObject (CartModel.class);
-                    if (cartItem!= null){
-                        binding.fav2.setVisibility (View.INVISIBLE);
-                    }else{
-
-                    }
-                }
-            }
-
-        });
-
-        initOffer1(subcat);
     }
 
-    private void bottomsheet(String discription) {
+    private void sizeList(String id) {
+        FirebaseFirestore.getInstance ()
+                .collection ("productSize")
+                .whereEqualTo ("id",id)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            binding.cartbtn2.setEnabled (false);
+                            binding.cartbtn2.setTextColor (getResources ().getColor (R.color.grey));
+                            Size product=ds.toObject (Size.class);
+                            sizeAdapter.addProduct(product);
+                        }
 
-            BottomSheetDialog bottomSheetDialog=new BottomSheetDialog ( this);
-            View view= LayoutInflater.from (NewProductDetailActivity.this).inflate (R.layout.description,(LinearLayout)findViewById (R.id.mainlayout),false);
-            bottomSheetDialog.setContentView (view);
-            bottomSheetDialog.show ();
 
-            TextView Discription=view.findViewById (R.id.dis);
-            Discription.setText (discription);
-
-
+                    }
+                });
 
 
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -252,7 +278,7 @@ NewProductDetailActivity extends AppCompatActivity {
         for (i = 0; i < products.size ( ); i++)
             qty = qty + (products.get (i).getQnt ( ));
 
-        quantity.setText (""+qty+" Items");
+        quantity.setText (""+qty);
         actionView.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
@@ -279,14 +305,15 @@ NewProductDetailActivity extends AppCompatActivity {
     void initOffer1(String subcat){
         getOffer1(subcat);
         List<Item> modelList=new ArrayList<> ();
-        newProductAdapter=new FilterAdapter (this,modelList)  ;
-        LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
+        newProductAdapter=new LatestProductAdapter (this,modelList)  ;
+        LinearLayoutManager layoutManager = new GridLayoutManager (this, 3);
         binding.productList.setLayoutManager (layoutManager);
         binding.productList.setAdapter (newProductAdapter);
     }
     void getOffer1(String subcat){
         FirebaseFirestore.getInstance ()
                 .collection ("product")
+                .whereEqualTo ("show",true)
                 .whereEqualTo ("subcategory",subcat)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
@@ -303,6 +330,10 @@ NewProductDetailActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+
+
 
     @Override
     public boolean onSupportNavigateUp() {

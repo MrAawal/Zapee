@@ -6,15 +6,30 @@ public class Branch {
     public boolean is_selected;
     public String uid;
 
+    public String pincode;
+
+    public String delivery;
+
+
     public Branch() {
     }
 
-    public Branch(String storename, String storeLat, String storeLon, boolean is_selected, String uid) {
+    public Branch(String delivery) {
+        this.delivery = delivery;
+    }
+
+    public Branch(String storename, String storeLat, String storeLon, boolean is_selected, String uid, String pincode, String delivery) {
         this.storename = storename;
         this.storeLat = storeLat;
         this.storeLon = storeLon;
         this.is_selected = is_selected;
         this.uid = uid;
+        this.pincode = pincode;
+        this.delivery = delivery;
+    }
+
+    public String getDelivery() {
+        return delivery;
     }
 
     public String getStorename() {
@@ -55,5 +70,13 @@ public class Branch {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getPincode() {
+        return pincode;
+    }
+
+    public void setPincode(String pincode) {
+        this.pincode = pincode;
     }
 }

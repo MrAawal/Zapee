@@ -7,6 +7,7 @@
         android:id="@+id/searchicon"
         android:icon="@drawable/baseline_search_24"
         android:title="Search"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item

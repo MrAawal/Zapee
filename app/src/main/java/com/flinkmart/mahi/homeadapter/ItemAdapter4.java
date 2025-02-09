@@ -47,6 +47,10 @@ public class ItemAdapter4 extends RecyclerView.Adapter<ItemAdapter4.holder>{
         holder.binding.Discount.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
         Glide.with (context).load(newProductModel.getImage ())
                 .into (holder.binding.image);
+        int mrp= Integer.parseInt (newProductModel.getDiscount ());
+        int price= Integer.parseInt (newProductModel.getPrice ());
+        String sum= String.valueOf (mrp-price);
+        holder.binding.parcent.setText ("SAVE ₹"+sum);
 //        holder.binding.reduce.setVisibility (View.INVISIBLE);
 //        holder.binding.add.setVisibility (View.INVISIBLE);
 //        holder.binding.quantity.setVisibility (View.INVISIBLE);

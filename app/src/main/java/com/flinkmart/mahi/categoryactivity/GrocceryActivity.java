@@ -5,30 +5,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.FavouriteActivity;
-import com.flinkmart.mahi.activities.NewCartActivity;
-import com.flinkmart.mahi.adapter.FilterAdapter;
-import com.flinkmart.mahi.adapter.ViewPagerAdapter;
+import com.flinkmart.mahi.scrab.FavouriteActivity;
+import com.flinkmart.mahi.scrab.NewCartActivity;
 import com.flinkmart.mahi.adapter.ViewPagerAdapter3;
-import com.flinkmart.mahi.adapter.ViewPagerAdapter4;
-import com.flinkmart.mahi.databinding.ActivityEssantialBinding;
 import com.flinkmart.mahi.databinding.ActivityGrocceryBinding;
-import com.flinkmart.mahi.fragmentgroccery.KidFragment;
-import com.flinkmart.mahi.fragmentgroccery.ManFragment;
-import com.flinkmart.mahi.fragmentgroccery.WomenFragment;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.tabs.TabLayout;
 
 public class GrocceryActivity extends AppCompatActivity {

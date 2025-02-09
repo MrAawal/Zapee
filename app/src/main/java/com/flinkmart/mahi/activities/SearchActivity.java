@@ -42,7 +42,7 @@ public class SearchActivity extends AppCompatActivity {
         itemList=new ArrayList<> (  );
 //        initProduct ();
         binding.SearchInput.requestFocus();
-       binding.SearchInput.setOnQueryTextListener (new SearchView.OnQueryTextListener ( ) {
+        binding.SearchInput.setOnQueryTextListener (new SearchView.OnQueryTextListener ( ) {
            @Override
            public boolean onQueryTextSubmit(String query) {
                String searchTerm = binding.SearchInput.getQuery ().toString();
@@ -55,7 +55,7 @@ public class SearchActivity extends AppCompatActivity {
            @Override
            public boolean onQueryTextChange(String text) {
                String searchTerm = binding.SearchInput.getQuery ( ).toString ( );
-               if (searchTerm.isEmpty ( ) || searchTerm.length ( ) < 1) {
+               if (searchTerm.isEmpty ( ) || searchTerm.length ( ) <1) {
                }
                setupSearchRecyclerView (searchTerm);
                return true;
@@ -77,7 +77,7 @@ public class SearchActivity extends AppCompatActivity {
     void getProduct(){
         FirebaseFirestore.getInstance ()
                 .collection ("product")
-//                .whereEqualTo ("category",category)
+                .whereEqualTo ("show",true)
                 .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override

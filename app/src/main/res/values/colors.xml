@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red">#F10A0A</color>
     <color name="bg">#FDF2F2</color>
+    <color name="catbg">#C5FAC1</color>
 </resources>

@@ -1,45 +1,46 @@
 package com.flinkmart.mahi.Fragment;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.interfaces.ItemClickListener;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
-import com.flinkmart.mahi.activities.CompleteProfileActivity;
 import com.flinkmart.mahi.activities.PickupActivity;
 import com.flinkmart.mahi.activities.ProfileActivity;
 import com.flinkmart.mahi.activities.SearchActivity;
+import com.flinkmart.mahi.activities.SubCatListActivity;
 import com.flinkmart.mahi.adapter.CategoryListAdapter;
+import com.flinkmart.mahi.branchAdapter.RestAdapter;
 import com.flinkmart.mahi.categoryAdapter.CatAdapter1;
 import com.flinkmart.mahi.categoryAdapter.CatAdapter2;
 import com.flinkmart.mahi.categorymodel.CategoryModel1;
 import com.flinkmart.mahi.categorymodel.CategoryModel2;
-import com.flinkmart.mahi.lifestyleadapter.ElectronicAdapter;
-import com.flinkmart.mahi.categoryAdapter.CatAdapter5;
+import com.flinkmart.mahi.categoryAdapter.BeautyCategoryAdapter;
+import com.flinkmart.mahi.categoryAdapter.WeGotYouCoveredCategory;
 import com.flinkmart.mahi.homeadapter.BottomAdapter;
-import com.flinkmart.mahi.adapter.ItemAdapter;
+import com.flinkmart.mahi.adapter.BeautyListAdapter;
 import com.flinkmart.mahi.homeadapter.BundleAdapter;
 import com.flinkmart.mahi.lifestyleadapter.LifstyleAdapter;
 import com.flinkmart.mahi.adapter.SubCategoryItemAdapter;
 import com.flinkmart.mahi.databinding.FragmentHomeBinding;
 import com.flinkmart.mahi.homeadapter.BestSellerAdapter;
-import com.flinkmart.mahi.homeadapter.TrendingAdapter;
+import com.flinkmart.mahi.homeadapter.LatestProductAdapter;
 
 
 
@@ -51,17 +52,22 @@ import com.flinkmart.mahi.homemodel.BottomModel;
 import com.flinkmart.mahi.model.HorizonProductModel;
 import com.flinkmart.mahi.model.Item;
 import com.flinkmart.mahi.lifestylemodel.LifstyleCategory;
+import com.flinkmart.mahi.model.Resturant;
 import com.flinkmart.mahi.model.UserModel;
 import com.flinkmart.mahi.utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,8 +81,16 @@ public class HomeFragment extends Fragment {
     FragmentHomeBinding binding;
     CategoryListAdapter catlistAdapter;
     SubCategoryItemAdapter itemAdapter;
+
+    RestAdapter restuarantAdapter;
+    List<Resturant> branchemodel=new ArrayList<> ();
+
+
+
+
     List<Catlist>catlists= new ArrayList<> ();
-    ItemAdapter dealListAdapter;
+
+    BeautyListAdapter dealListAdapter;
     private List<Item> itemList;
     List<Item>productLists=new ArrayList<> (  );
     BundleAdapter horizonProductAdapter;
@@ -85,7 +99,7 @@ public class HomeFragment extends Fragment {
 
     ///DaillyNeeds
     BestSellerAdapter itemAdapter1;
-    TrendingAdapter itemAdapter2;
+    LatestProductAdapter itemAdapter2;
 
 
     CatAdapter1 catAdapter1;
@@ -95,14 +109,13 @@ public class HomeFragment extends Fragment {
     List<BestSellerModel>item1s=new ArrayList<> (  );
     List<Item>item2s=new ArrayList<> (  );
 
-
     List<CategoryModel1>categoryModel1s=new ArrayList<> (  );
     List<CategoryModel2>categoryModel2s=new ArrayList<> (  );
    //lifestyle
 
     LifstyleAdapter lifstyleAdapter;
-    CatAdapter5 footwearAdapter;
-    ElectronicAdapter electronicAdapter;
+    WeGotYouCoveredCategory footwearAdapter;
+    BeautyCategoryAdapter electronicAdapter;
     BottomAdapter bottomAdapter;
 
     List<LifstyleCategory>lifstyleCategories=new ArrayList<> (  );
@@ -114,9 +127,7 @@ public class HomeFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
@@ -124,18 +135,17 @@ public class HomeFragment extends Fragment {
         binding.shimmer.startShimmer ();
         binding.shimmer.setVisibility (View.VISIBLE);
         binding.home.setVisibility (View.INVISIBLE);
+
+
+
         binding.searchBar.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent (getActivity (), SearchActivity.class));
             }
         });
-        binding.imageView4.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent (getActivity (), ProfileActivity.class));
-            }
-        });
+
+
 
 
 
@@ -160,60 +170,63 @@ public class HomeFragment extends Fragment {
         initsubcat1();
 
 
-        binding.pick.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (getActivity (), PickupActivity.class);
-                startActivity (intent);
-            }
-        });
+
         return  view;
 
     }
 
 
-    private  void banner() {
-        RequestQueue queue = Volley.newRequestQueue (getActivity ());
-        StringRequest request = new StringRequest (Request.Method.GET, Constants.GET_OFFERS_URL, response -> {
-            try {
-//                binding.shimmer.stopShimmer ();
-//                binding.home.setVisibility (View.VISIBLE);
-//                binding.shimmer.setVisibility (View.INVISIBLE);
-                JSONObject object = new JSONObject (response);
-                if (object.getString ("status").equals ("success")) {
-                    JSONArray offerArray = object.getJSONArray ("news_infos");
-                    for (int i = 0; i < offerArray.length ( ); i++) {
-                        JSONObject childObj = offerArray.getJSONObject (i);
-                        binding.carousel.addData (
-                                new CarouselItem (
-                                        Constants.NEWS_IMAGE_URL + childObj.getString ("image"),
-                                        childObj.getString ("title")
-                                )
-                        );
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace ( );
-            }
-        }, error -> {
-        });
-        queue.add (request);
-    }
 
+    private  void banner() {
+        final List<SlideModel>imageList=new ArrayList<> ();
+        FirebaseDatabase.getInstance ().getReference ().child ("banner").addListenerForSingleValueEvent (new ValueEventListener ( ) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot ds : snapshot.getChildren ( )) {
+                    imageList.add (new SlideModel (ds.child ("image").getValue (  ).toString (), ds.child ("tittle").getValue (  ).toString (), ScaleTypes.FIT));
+                    binding.carousel.setImageList (imageList,ScaleTypes.FIT);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                RequestQueue queue = Volley.newRequestQueue (getActivity ());
+                StringRequest request = new StringRequest (Request.Method.GET, Constants.GET_OFFERS_URL, response -> {
+                    try {
+                        JSONObject object = new JSONObject (response);
+                        if (object.getString ("status").equals ("success")) {
+                            JSONArray offerArray = object.getJSONArray ("news_infos");
+                            for (int i = 0; i < offerArray.length ( ); i++) {
+                                JSONObject childObj = offerArray.getJSONObject (i);
+                                imageList.add (new SlideModel (Constants.NEWS_IMAGE_URL + childObj.getString ("image"), "", ScaleTypes.FIT));
+                                binding.carousel.setImageList (imageList,ScaleTypes.FIT);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace ( );
+                    }
+                }, ( error1) -> {
+                });
+                queue.add (request);
+            }
+        });
+
+
+
+
+    }
     private void initBundleProduct(){
         FirebaseFirestore.getInstance ( )
                 .collection ("product")
                 .whereEqualTo ("show",true)
-                .whereEqualTo ("subcategory","1488")
+                .whereEqualTo ("category","package")
                 .get ( )
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
                         for (DocumentSnapshot ds : dsList) {
-                            binding.shimmer.stopShimmer ();
-                            binding.home.setVisibility (View.VISIBLE);
-                            binding.shimmer.setVisibility (View.INVISIBLE);
 
                             HorizonProductModel productList = ds.toObject (HorizonProductModel.class);
                             horizonProductAdapter.addProduct(productList);
@@ -230,12 +243,15 @@ public class HomeFragment extends Fragment {
                     .collection ("category")
                     .whereEqualTo ("tag","1")
                     .whereEqualTo ("show",true)
-                    .get ( )
+                    .get ()
                     .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
                             for (DocumentSnapshot ds : dsList) {
+                                binding.shimmer.stopShimmer ();
+                                binding.home.setVisibility (View.VISIBLE);
+                                binding.shimmer.setVisibility (View.INVISIBLE);
                                 Catlist catlist = ds.toObject (Catlist.class);
                                 catlistAdapter.addProduct(catlist);
                             }
@@ -244,7 +260,47 @@ public class HomeFragment extends Fragment {
 
 
     }
+
+   private void  restuarant(String pin){
+        FirebaseFirestore.getInstance ()
+                .collection ("Restaurant")
+                .whereEqualTo ("pincode",pin)
+                .whereEqualTo ("category","restaurant")
+                .whereEqualTo ("show",true)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            Resturant resturants=ds.toObject (Resturant.class);
+                            restuarantAdapter.addProduct (resturants);
+                        }
+
+                    }
+                });
+    }
+    private void  store(String pin){
+        FirebaseFirestore.getInstance ()
+                .collection ("Restaurant")
+                .whereEqualTo ("category","store")
+                .whereEqualTo ("show",true)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            Resturant resturants=ds.toObject (Resturant.class);
+                            restuarantAdapter.addProduct (resturants);
+                        }
+
+                    }
+                });
+    }
+
     private void initTryCategory() {
+        final List<SlideModel>imageList=new ArrayList<> ();
         FirebaseFirestore.getInstance ( )
                 .collection ("category")
                 .whereEqualTo ("show",true)
@@ -257,6 +313,21 @@ public class HomeFragment extends Fragment {
                         for (DocumentSnapshot ds : dsList) {
                             CategoryModel1 catlist = ds.toObject (CategoryModel1.class);
                             catAdapter1.addProduct(catlist);
+                            imageList.add (new SlideModel(catlist.getImage ().toString (), catlist.getId (), ScaleTypes.FIT));
+                            binding.carousel2.setImageList (imageList,ScaleTypes.FIT);
+
+
+
+                            binding.carousel2.setItemClickListener (new ItemClickListener ( ) {
+                                @Override
+                                public void onItemSelected(int i) {
+                                    Intent intent = new Intent(getActivity (), SubCatListActivity.class);
+                                    intent.putExtra("category",imageList.get (i).getTitle ());
+                                    intent.putExtra("categoryName","Back");
+                                    startActivity(intent);
+                                }
+                            });
+
                         }
 
                     }
@@ -280,12 +351,11 @@ public class HomeFragment extends Fragment {
                     }
                 });
     }
-
     private void initBestsellerProduct() {
         FirebaseFirestore.getInstance ( )
                 .collection ("product")
                 .whereEqualTo ("show",true)
-                .whereEqualTo ("subcategory","6523")
+                .whereEqualTo ("category","latest")
                 .get ( )
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
@@ -297,13 +367,13 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 });
+
     }
     private void initTrendingProduct() {
         FirebaseFirestore.getInstance ( )
                 .collection ("product")
-                .limit (24)
                 .whereEqualTo ("show",true)
-                .whereEqualTo ("subcategory","2973")
+                .whereEqualTo ("category","trending")
                 .get ( )
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
@@ -320,7 +390,6 @@ public class HomeFragment extends Fragment {
     private void initwegotcovered() {
         FirebaseFirestore.getInstance ( )
                 .collection ("product")
-                .limit (24)
                 .whereEqualTo ("category","1759")
                 .get ( )
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
@@ -357,6 +426,7 @@ public class HomeFragment extends Fragment {
 
 
     private void initsubcat1(){
+        final List<SlideModel>imageList=new ArrayList<> ();
         FirebaseFirestore.getInstance ( )
                 .collection ("subcategory")
                 .limit (12)
@@ -370,6 +440,8 @@ public class HomeFragment extends Fragment {
                         for (DocumentSnapshot ds : dsList) {
                             ElectronicCategory catlist = ds.toObject (ElectronicCategory.class);
                             electronicAdapter.addProduct(catlist);
+
+
                         }
 
                     }
@@ -378,6 +450,7 @@ public class HomeFragment extends Fragment {
 
 
     private void initsubcat2(){
+        final List<SlideModel>imageList=new ArrayList<> ();
         FirebaseFirestore.getInstance ( )
                 .collection ("subcategory")
                 .whereEqualTo ("show",true)
@@ -422,15 +495,19 @@ public class HomeFragment extends Fragment {
 
                     userModel=  task.getResult ().toObject (UserModel.class);
                     if(userModel!=null){
-                        binding.textView4.setText ("Hi "+userModel.getUsername ());
-                        binding.textView11.setText (userModel.getAddress ());
+//                        binding.textView4.setText ("Hi "+userModel.getUsername ());
+//                        binding.textView11.setText (userModel.getAddress ());
+                        String pin=userModel.getPin ();
+
+                        restuarant (pin);
+                        store (pin);
 
                     }
                 }
             }
         });
-    }
 
+    }
 
     private void setUpRecyclerView() {
 
@@ -452,43 +529,40 @@ public class HomeFragment extends Fragment {
         itemAdapter1=new BestSellerAdapter (getContext (),item1s);
         binding.grocceryList.setAdapter (itemAdapter1);
 
-        //essantial
-        binding.essantials.setLayoutManager (new GridLayoutManager (getActivity (),3));
-        catAdapter2=new CatAdapter2 (getContext (),categoryModel2s);
-        binding.essantials.setAdapter (catAdapter2);
 
-        binding.essantialsList.setLayoutManager (new GridLayoutManager (getActivity (),2));
-        itemAdapter2=new TrendingAdapter (getContext (),item2s);
-        binding.essantialsList.setAdapter (itemAdapter2);
+
+
+        //leatest Product
+        binding.LatestProduct.setLayoutManager (new GridLayoutManager (getActivity (),3));
+        itemAdapter2=new LatestProductAdapter (getContext (),item2s);
+        binding.LatestProduct.setAdapter (itemAdapter2);
 
 
         //Electronics
-        binding.electronic.setLayoutManager (new GridLayoutManager (getContext (),4));
-        electronicAdapter=new ElectronicAdapter (getContext (),electronicCategories);
-        binding.electronic.setAdapter (electronicAdapter);
+        binding.beautySubcategory.setLayoutManager (new GridLayoutManager (getContext (),4));
+        electronicAdapter=new BeautyCategoryAdapter (getContext (),electronicCategories);
+        binding.beautySubcategory.setAdapter (electronicAdapter);
         //electronicsList
 
 
-        /////fashion
-        binding.fashionList.setLayoutManager (new LinearLayoutManager (getActivity (),LinearLayoutManager.HORIZONTAL,false));
-        lifstyleAdapter=new LifstyleAdapter (getContext (),lifstyleCategories);
-        binding.fashionList.setAdapter (lifstyleAdapter);
-
-        //FashionList-------------------
-        binding.DealsList.setLayoutManager (new GridLayoutManager (getActivity (),2));
-        dealListAdapter=new ItemAdapter (getContext (),productLists);
-        binding.DealsList.setAdapter (dealListAdapter);
+        //Beauty Product-------------------
+        binding.beautyList.setLayoutManager (new GridLayoutManager (getActivity (),3));
+        dealListAdapter=new BeautyListAdapter (getContext (),productLists);
+        binding.beautyList.setAdapter (dealListAdapter);
 
         //We got you covered
-        binding.footwearList.setLayoutManager (new  LinearLayoutManager (getActivity (),LinearLayoutManager.HORIZONTAL,false));
-        footwearAdapter=new CatAdapter5 (getContext (),footwearCategories);
-        binding.footwearList.setAdapter (footwearAdapter);
+        binding.weGotYouCovered.setLayoutManager (new  LinearLayoutManager (getActivity (),LinearLayoutManager.HORIZONTAL,false));
+        footwearAdapter=new WeGotYouCoveredCategory (getContext (),footwearCategories);
+        binding.weGotYouCovered.setAdapter (footwearAdapter);
 
-        binding.footwear.setLayoutManager (new GridLayoutManager (getActivity (),2));
-        bottomAdapter=new BottomAdapter (getContext (),footwearItems);
-        binding.footwear.setAdapter (bottomAdapter);
+
+        binding.restuarant.setLayoutManager (new GridLayoutManager (getActivity (),3));
+        restuarantAdapter=new RestAdapter (getContext (),branchemodel);
+        binding.restuarant.setAdapter (restuarantAdapter);
 
     }
+
+
 
 
 }
