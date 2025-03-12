@@ -32,6 +32,7 @@ import com.flinkmart.mahi.databinding.ActivityCompleteProfileBinding;
 import com.flinkmart.mahi.databinding.StoreDialogBinding;
 import com.flinkmart.mahi.map.LocationModel;
 import com.flinkmart.mahi.model.Branch;
+import com.flinkmart.mahi.model.BranchModel;
 import com.flinkmart.mahi.model.UserModel;
 import com.flinkmart.mahi.model.UserModel1;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -122,6 +123,7 @@ public class CompleteProfileActivity extends AppCompatActivity{
                 }).check();
 
                 getUsers();
+                getmylocation();
 
 
 
@@ -166,52 +168,44 @@ public class CompleteProfileActivity extends AppCompatActivity{
                 smf.getMapAsync(new OnMapReadyCallback () {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
-
-                        try{
-
-                            LatLng latLng=new LatLng(location.getLatitude(),location.getLongitude());
-                            MarkerOptions markerOptions=new MarkerOptions()
-                                    .position(latLng)
-                                    .title("You are here...!!")
-                                    .draggable (true);
+                        LatLng latLng=new LatLng(location.getLatitude(),location.getLongitude());
+                        MarkerOptions markerOptions=new MarkerOptions()
+                                .position(latLng)
+                                .title("You are here...!!")
+                                .draggable (true);
 
 
-                            if (googleMap != null) {
-                                googleMap.clear ();
-                            }
-
-                            googleMap.addMarker(markerOptions);
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
-
-
-
-                            googleMap.setOnMarkerDragListener (new GoogleMap.OnMarkerDragListener ( ) {
-                                @Override
-                                public void onMarkerDrag(@NonNull Marker marker) {
-
-
-                                }
-                                @Override
-                                public void onMarkerDragEnd(@NonNull Marker marker) {
-
-                                }
-
-                                @Override
-                                public void onMarkerDragStart(@NonNull Marker marker) {
-
-                                }
-                            });
-
-                            getAddressFromLatLong(location,googleMap);
-                            circle(googleMap,latLng);
-                            completeProfile(location);
-
-                        }catch (Exception exception){
-                                binding.createProfile.setEnabled (false);
-                                binding.createProfile.setText ("GPS NOT FOUND");
-                                binding.autoAddress.setText ("Refresh location on google map");
+                        if (googleMap != null) {
+                            googleMap.clear ();
                         }
 
+                        googleMap.addMarker(markerOptions);
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+
+
+
+                         googleMap.setOnMarkerDragListener (new GoogleMap.OnMarkerDragListener ( ) {
+                             @Override
+                             public void onMarkerDrag(@NonNull Marker marker) {
+
+                             }
+
+                             @Override
+                             public void onMarkerDragEnd(@NonNull Marker marker) {
+
+                             }
+
+                             @Override
+                             public void onMarkerDragStart(@NonNull Marker marker) {
+
+                             }
+                         });
+
+
+                         getAddressFromLatLong(location,googleMap);
+                         circle(googleMap,latLng);
+
+                        completeProfile(location);
 
                     }
                 });
@@ -365,7 +359,7 @@ public class CompleteProfileActivity extends AppCompatActivity{
                         for (DocumentSnapshot ds:dsList){
                             binding.progressBar10.setVisibility (View.GONE);
                             binding.createProfile.setVisibility (View.VISIBLE);
-                            Branch resturants=ds.toObject (Branch.class);
+                            BranchModel resturants=ds.toObject (BranchModel.class);
                             branchAdapter.addProduct (resturants);
                         }
 

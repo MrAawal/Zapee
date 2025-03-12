@@ -7,28 +7,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.room.Room;
 
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.adapter.ImageAdapter;
-import com.flinkmart.mahi.adapter.OrderDetailAdapter;
 import com.flinkmart.mahi.databinding.ActivityOrderDetailBinding;
-import com.flinkmart.mahi.model.Branch;
 import com.flinkmart.mahi.model.Coupon;
 import com.flinkmart.mahi.model.ImageModel;
-import com.flinkmart.mahi.model.OrderDetails;
-import com.flinkmart.mahi.roomdatabase.AppDatabase;
-import com.flinkmart.mahi.roomdatabase.CartActivity;
-import com.flinkmart.mahi.roomdatabase.Product;
-import com.flinkmart.mahi.roomdatabase.ProductDao;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -144,7 +135,7 @@ public class OrderDetailActivity extends AppCompatActivity {
         getAllProduct (orderNumber);
         productadaper=new ImageAdapter (this)  ;
         binding.orderDetail.setAdapter (productadaper);
-        binding.orderDetail.setLayoutManager (new GridLayoutManager (this,4));
+        binding.orderDetail.setLayoutManager (new LinearLayoutManager (this));
     }
     private void getAllProduct(Integer orderNumber){
         FirebaseFirestore.getInstance ()

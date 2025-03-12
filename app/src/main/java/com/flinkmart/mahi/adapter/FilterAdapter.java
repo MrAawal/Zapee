@@ -203,7 +203,6 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyHolder> 
                 intent.putExtra("subcategory",productModel.getSubcategory());
                 intent.putExtra("discount",productModel.getDiscount ());
                 intent.putExtra("category",productModel.getCategory());
-
                 context.startActivity(intent);
             }
         });

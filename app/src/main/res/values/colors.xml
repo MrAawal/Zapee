@@ -8,6 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#F10A0A</color>
-    <color name="bg">#FDF2F2</color>
+    <color name="bg">#EAE9E9</color>
     <color name="catbg">#C5FAC1</color>
 </resources>

@@ -55,22 +55,11 @@ public class SubCatListActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     int total=0;
 
-    CartAdapter cartAdapter;
-    List<CartModel>cartList=new ArrayList<> ();
-
     FilterAdapter2 filterAdapter;
     ArrayList<Item>itemList;
     ArrayList<Catlist> categoryItems;
-
-    DynamicRvAdapter dynamicRvAdapter;
-
     CatListAdapter categoryListAdapter;
 
-
-
-
-
-    String uid= FirebaseAuth.getInstance ( ).getUid ( );
 
 
         @Override
@@ -262,7 +251,6 @@ public class SubCatListActivity extends AppCompatActivity {
         SearchView searchView= (SearchView) searchItem.getActionView ();
         searchView.setMaxWidth (Integer.MAX_VALUE);
         searchView.setOnQueryTextListener (new SearchView.OnQueryTextListener ( ){
-
 
             @Override
             public boolean onQueryTextSubmit(String query) {

@@ -136,15 +136,17 @@ public class RestaurantCartActivity extends AppCompatActivity {
         myadapter adapter=new myadapter (products, rateview,quantity,text,banner,cardView,imageView);
         recview.setAdapter(adapter);
 
+
         int sum=0,i;
         for(i=0;i< products.size();i++)
             sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
-        total=10000-sum;
+        total=500-sum;
 
-        if(sum<10000){
-            banner.setVisibility (View.GONE);
+        if(sum<500){
+            banner.setText("Add More ₹" +total+ " For Get Free Delivery & Free Bag");
+            banner.setTextColor (getColor (R.color.red));
         }else {
-            banner.setText("Congratulations You Got gift pack");
+            banner.setText("Congratulations You Got Free Delivery & Free Bag");
             banner.setTextColor (getColor (R.color.purple_500));
         }
 

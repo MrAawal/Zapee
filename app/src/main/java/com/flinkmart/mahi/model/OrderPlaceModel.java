@@ -9,6 +9,7 @@ public class OrderPlaceModel {
     private String customerNumber;
     private String customerAddress;
     private String customerStore;
+    private String customerStoreUid;
     private String totalPrice;
     private String deliveryCharge;
     private Timestamp orderPlaceDate;
@@ -22,13 +23,14 @@ public class OrderPlaceModel {
     public OrderPlaceModel() {
     }
 
-    public OrderPlaceModel(String orderNumber, String uid, String customerName, String customerNumber, String customerAddress, String customerStore, String totalPrice, String deliveryCharge, Timestamp orderPlaceDate, String lattitude, String longitude, String status, String payment,String partner) {
+    public OrderPlaceModel(String orderNumber, String uid, String customerName, String customerNumber, String customerAddress, String customerStore, String customerStoreUid, String totalPrice, String deliveryCharge, Timestamp orderPlaceDate, String lattitude, String longitude, String status, String payment, String partner) {
         this.orderNumber = orderNumber;
         this.uid = uid;
         this.customerName = customerName;
         this.customerNumber = customerNumber;
         this.customerAddress = customerAddress;
         this.customerStore = customerStore;
+        this.customerStoreUid = customerStoreUid;
         this.totalPrice = totalPrice;
         this.deliveryCharge = deliveryCharge;
         this.orderPlaceDate = orderPlaceDate;
@@ -36,7 +38,7 @@ public class OrderPlaceModel {
         this.longitude = longitude;
         this.status = status;
         this.payment = payment;
-        this.partner=partner;
+        this.partner = partner;
     }
 
     public String getOrderNumber() {
@@ -85,6 +87,14 @@ public class OrderPlaceModel {
 
     public void setCustomerStore(String customerStore) {
         this.customerStore = customerStore;
+    }
+
+    public String getCustomerStoreUid() {
+        return customerStoreUid;
+    }
+
+    public void setCustomerStoreUid(String customerStoreUid) {
+        this.customerStoreUid = customerStoreUid;
     }
 
     public String getTotalPrice() {

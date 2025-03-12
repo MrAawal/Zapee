@@ -17,7 +17,10 @@ public class FirebaseUtil{
     }
 
     public static DocumentReference currentUserStore(){
-        return FirebaseFirestore.getInstance ( ).collection ("userstore").document (currentUserId ());
+        return FirebaseFirestore.getInstance ( ).collection ("userStore").document (currentUserId());
+    }
+    public static DocumentReference currentUserRestaurant(){
+        return FirebaseFirestore.getInstance ( ).collection ("userRestaurant").document (currentUserId());
     }
 
 

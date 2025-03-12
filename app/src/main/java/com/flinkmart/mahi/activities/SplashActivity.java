@@ -1,63 +1,38 @@
 package com.flinkmart.mahi.activities;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.widget.Button;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.cardview.widget.CardView;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.branchAdapter.BranchGrocceryActivity;
-import com.flinkmart.mahi.map.LocationModel;
+import com.flinkmart.mahi.activitylogin.PhoneLoginActivity;
 import com.flinkmart.mahi.map.MapActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -68,10 +43,29 @@ public class SplashActivity extends AppCompatActivity {
 
     LocationManager locationManager;
 
+    CardView img1;
+    TextView text;
+    Animation top,bottom;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        requestWindowFeature (Window.FEATURE_NO_TITLE);
+//        this.getWindow ().setFlags (WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
+
+
+
+        img1=(CardView) findViewById(R.id.cardView8);
+        text=(TextView) findViewById(R.id.sublogo);
+
+        top= AnimationUtils.loadAnimation(getApplicationContext(),R.animator.logo);
+        bottom= AnimationUtils.loadAnimation(getApplicationContext(),R.animator.text);
+
+        img1.setAnimation(top);
+        text.setAnimation(bottom);
+
+
         locationManager= (LocationManager) getSystemService (Context.LOCATION_SERVICE);
         if(locationManager.isProviderEnabled (LocationManager.GPS_PROVIDER)){
             new Handler ().postDelayed(new Runnable() {
@@ -79,11 +73,11 @@ public class SplashActivity extends AppCompatActivity {
                 public void run() {
                     user=FirebaseAuth.getInstance ( ).getUid ( );
                     if (user!=null){
-                        Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
+                        Intent i = new Intent (getApplicationContext ( ), MapActivity.class);
                         startActivity (i);
                         finish ();
                     }else{
-                        startActivity(new Intent (getApplicationContext (),PhoneLoginActivity.class));
+                        startActivity(new Intent (getApplicationContext (), PhoneLoginActivity.class));
                         finish ();
                     }
                 }

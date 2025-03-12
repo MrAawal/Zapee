@@ -77,6 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
         binding.cont.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
+
                 contactSheet();
             }
         });
@@ -141,9 +142,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
         logout.setOnClickListener (new View.OnClickListener ( ) {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 FirebaseAuth.getInstance ().signOut ();
-                Intent i=new Intent(getApplicationContext(),PhoneLoginActivity.class);
+                Intent i=new Intent(getApplicationContext(),LoginActivity.class);
                 startActivity(i);
                 finish ();
             }
@@ -153,7 +154,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent (getApplicationContext ( ), CompleteProfileActivity.class);
                 startActivity (i);
-//                bottomSheet();3e4gf
+//                bottomSheet();
             }
         });
 //        create.setOnClickListener (new View.OnClickListener ( ) {

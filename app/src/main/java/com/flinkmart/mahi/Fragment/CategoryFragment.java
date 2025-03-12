@@ -19,7 +19,7 @@ import com.android.volley.toolbox.Volley;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
-import com.flinkmart.mahi.activities.ProfileActivity;
+import com.flinkmart.mahi.activitylogin.ProfileActivity;
 import com.flinkmart.mahi.activities.SearchActivity;
 import com.flinkmart.mahi.scrapadaper.FragmentCategoryListAdapter;
 import com.flinkmart.mahi.databinding.FragmentCategoryBinding;

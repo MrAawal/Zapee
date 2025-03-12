@@ -2,8 +2,6 @@ package com.flinkmart.mahi.activities;
 
 import static android.content.ContentValues.TAG;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -103,18 +101,8 @@ public class SignUpActivity extends AppCompatActivity {
                                         progressBar.setVisibility (View.INVISIBLE);
                                         signupButton.setVisibility (View.VISIBLE);
 
-                                        AlertDialog.Builder builder=new AlertDialog.Builder (SignUpActivity.this);
-                                        builder.setMessage ("Email format error or user already exist!");
-
-                                        builder.setPositiveButton ("Ok", new DialogInterface.OnClickListener ( ) {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                builder.setCancelable (true);
-                                            }
-                                        });
-
-                                        builder.show ();
-
+                                        Toast.makeText(SignUpActivity.this, "Email format error or User Already Exist",
+                                                Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });

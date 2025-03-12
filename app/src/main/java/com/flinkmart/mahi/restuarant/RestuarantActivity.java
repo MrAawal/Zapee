@@ -11,10 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.android.volley.Request;
@@ -27,10 +25,8 @@ import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.MainActivity;
 import com.flinkmart.mahi.activities.ProfileActivity;
-import com.flinkmart.mahi.adapter.FilterAdapter2;
 import com.flinkmart.mahi.branchAdapter.BranchAdapter;
-import com.flinkmart.mahi.branchAdapter.FashionAdapter;
-import com.flinkmart.mahi.branchAdapter.RestuarantAdapter;
+import com.flinkmart.mahi.branchAdapter.FashionAdapter;;
 import com.flinkmart.mahi.databinding.ActivityRestuarantBinding;
 import com.flinkmart.mahi.model.Branch;
 import com.flinkmart.mahi.model.Catlist;
@@ -41,7 +37,6 @@ import com.flinkmart.mahi.model.UserModel1;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.Product;
 import com.flinkmart.mahi.roomdatabase.ProductDao;
-import com.flinkmart.mahi.roomdatabase.myadapter2;
 import com.flinkmart.mahi.utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,7 +61,7 @@ import java.util.List;
 public class RestuarantActivity extends AppCompatActivity {
     ActivityRestuarantBinding binding;
     BranchAdapter branchAdapter;
-    FilterAdapter2 filterAdapter2;
+    RestaurantHomeProductAdapter itemAdapter1;
     RestaurantCategoryAdapter catlistAdapter;
 
     RestaurantSubCategoryAdapter subcatList;
@@ -75,7 +70,6 @@ public class RestuarantActivity extends AppCompatActivity {
     List<SubCatlistModel> subCatlistModels = new ArrayList<> ();
     List<Item> item1s = new ArrayList<> ();
     FashionAdapter fashionAdapter;
-    RestuarantAdapter restuarantAdapter;
     private static List<Branch> branchemodel;
     private static List<Fashion> fashions;
     private static List<Resturant> resturants;
@@ -92,9 +86,10 @@ public class RestuarantActivity extends AppCompatActivity {
         setContentView (binding.getRoot ( ));
 
         TextView warning = findViewById (R.id.textView29);
+
         binding.scroll.setVisibility (View.INVISIBLE);
+
         getUsername ( );
-        upadecartLayout();
 
         String pin = getIntent ( ).getStringExtra ("restId");
         String name = getIntent ( ).getStringExtra ("restName");
@@ -132,13 +127,11 @@ public class RestuarantActivity extends AppCompatActivity {
         if(binding.searchView==null){
             binding.banner.setVisibility (View.VISIBLE);
         }
+//        getRestuarentSubCategory (pin);
 
+        initTrendingProduct (pin);
 
-        TextView quantity=findViewById (R.id.cartQnt);
-        CardView layout=findViewById (R.id.cartlayout);
-
-        initTrendingProduct (pin,quantity,layout);
-
+//        getRestuarentSubCategory (pin);
         binding.searchView.setBackgroundResource (R.drawable.product);
         binding.searchView.setOnQueryTextListener (new SearchView.OnQueryTextListener ( ) {
             @Override
@@ -148,7 +141,7 @@ public class RestuarantActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterAdapter2.getFilter( ).filter (newText);
+                itemAdapter1.getFilter ( ).filter (newText);
                 binding.banner.setVisibility (View.GONE);
                 return true;
             }
@@ -163,17 +156,17 @@ public class RestuarantActivity extends AppCompatActivity {
 
         ProgressBar progressBar=binding.progressBar16;
         progressBar.setVisibility (View.INVISIBLE);
-        catlistAdapter = new RestaurantCategoryAdapter (this, catlists,binding.subcat,subcatList, subCatlistModels,progressBar);
+        catlistAdapter = new RestaurantCategoryAdapter (this, catlists,binding.branchList,subcatList, subCatlistModels,progressBar);
         binding.branchList.setAdapter (catlistAdapter);
         binding.branchList.setLayoutManager (new LinearLayoutManager (this, LinearLayoutManager.HORIZONTAL, false));
 
 
         subcatList = new RestaurantSubCategoryAdapter (this);
-        binding.subcat.setAdapter (subcatList);
-        binding.subcat.setLayoutManager (new GridLayoutManager (this,5));
+        binding.branchList.setAdapter (subcatList);
+        binding.branchList.setLayoutManager (new GridLayoutManager (this,5));
 
-        filterAdapter2 = new FilterAdapter2 (this, item1s,quantity,layout);
-        binding.DealsList.setAdapter (filterAdapter2);
+        itemAdapter1 = new RestaurantHomeProductAdapter (this, item1s);
+        binding.DealsList.setAdapter (itemAdapter1);
         binding.DealsList.setLayoutManager (new GridLayoutManager (this, 2));
 
         fashionAdapter = new FashionAdapter (this, warning);
@@ -181,8 +174,6 @@ public class RestuarantActivity extends AppCompatActivity {
         binding.fashionList.setLayoutManager (new LinearLayoutManager (this));
 
     }
-
-
 
     private void banner(String pin) {
         final List<SlideModel> imageList = new ArrayList<> ( );
@@ -221,6 +212,7 @@ public class RestuarantActivity extends AppCompatActivity {
 
 
     }
+
     void getRestuarentCategory(String pin) {
         FirebaseFirestore.getInstance ( )
                 .collection ("category")
@@ -238,7 +230,24 @@ public class RestuarantActivity extends AppCompatActivity {
                     }
                 });
     }
-    private void initTrendingProduct(String pin, TextView quantity, CardView layout) {
+    void getRestuarentSubCategory(String pin) {
+        FirebaseFirestore.getInstance ( )
+                .collection ("subcategory")
+//                .whereEqualTo ("branch", pin)
+                .get ( )
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments ( );
+                        for (DocumentSnapshot ds : dsList) {
+                            SubCatlistModel catlist = ds.toObject (SubCatlistModel.class);
+                            subcatList.addProduct (catlist);
+                        }
+
+                    }
+                });
+    }
+    private void initTrendingProduct(String pin) {
         FirebaseFirestore.getInstance ( )
                 .collection ("product")
                 .whereEqualTo ("show", true)
@@ -252,12 +261,13 @@ public class RestuarantActivity extends AppCompatActivity {
                             binding.scroll.setVisibility (View.VISIBLE);
                             binding.progressBar8.setVisibility (View.INVISIBLE);
                             Item productList = ds.toObject (Item.class);
-                            filterAdapter2.addProduct (productList);
+                            itemAdapter1.addProduct (productList);
                         }
 
                     }
                 });
     }
+
     void getUsername(){
         FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
             @Override
@@ -266,7 +276,7 @@ public class RestuarantActivity extends AppCompatActivity {
 
                     userModel = task.getResult ( ).toObject (UserModel1.class);
                     if (userModel != null) {
-                        binding.textView4.setText ("Hi " + userModel.getUsername( ));
+                        binding.textView4.setText ("Hi " + userModel.getUsername ( ));
                         binding.textView11.setText (userModel.getAddress ( ));
 
                     }
@@ -274,59 +284,7 @@ public class RestuarantActivity extends AppCompatActivity {
             }
         });
     }
-    private void upadecartLayout() {
 
-        TextView quantity=findViewById (R.id.cartQnt);
-        TextView Subtotal=findViewById (R.id.Subtotal);
-        TextView text=findViewById (R.id.text);
-        TextView banner=findViewById (R.id.congrage);
-        CardView layout=findViewById (R.id.cartlayout);
-        RecyclerView recyclerView=findViewById (R.id.productList);
-
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
-        ProductDao productDao = db.ProductDao();
-
-        List<Product> products=productDao.getallproduct ();
-
-        binding.cartList.setLayoutManager (new LinearLayoutManager (this));
-        myadapter2 adapter=new myadapter2(products,quantity,Subtotal, text, banner);
-        binding.cartList.setAdapter(adapter);
-
-
-        int sum=0,i;
-        for(i=0;i< products.size();i++)
-            sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
-
-        Subtotal.setText("₹"+sum);
-
-        int qty = 0;
-        for (i = 0; i < products.size ( ); i++)
-            qty = qty + (products.get (i).getQnt ( ));
-
-
-        if (qty>1){
-            quantity.setText (""+qty+" ITEMS IN CART |"+"₹"+sum);
-            layout.setVisibility (View.VISIBLE);
-        }else {
-            quantity.setText (""+qty+" ITEM IN CART |"+"₹"+sum);
-        }
-        if(products.size ()==0){
-            binding.cartlayout.setVisibility (View.GONE);
-        }
-        binding.continues.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent (getApplicationContext (), RestaurantCartActivity.class));
-
-            }
-        });
-
-        binding.imageButton3.setVisibility (View.GONE);
-        binding.continues.setText ("Go to cart");
-
-    }
     @Override
     public void onBackPressed(){
         AppDatabase db = Room.databaseBuilder (getApplicationContext ( ),
@@ -371,8 +329,5 @@ public class RestuarantActivity extends AppCompatActivity {
 
 
         }
-
-
     }
-
 }

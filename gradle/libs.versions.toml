@@ -41,7 +41,9 @@ androidmapsutils="0.4+"
 playservicesauth = "21.3.0"
     firebaseBom ="33.8.0"
     googleFirebaseAppdistribution = "5.1.0"
-
+    places="3.5.0"
+    library="1.0.1"
+    geofire-android="3.2.0"
     [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -91,9 +93,9 @@ shimmer={group="com.facebook.shimmer",name="shimmer",version.ref="shimmer"}
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 maps-utils={group="com.google.maps.android",name="android-maps-utils",version.ref="androidmapsutils"}
 play-services-auth={group = "com.google.android.gms", name = "play-services-auth", version.ref = "playservicesauth"}
-
-
-
+places={group="com.google.android.libraries.places",name="places",version.ref="places"}
+library={group="com.skyfishjy.ripplebackground",name="library",version.ref="library"}
+geofire-android={group="com.firebase",name="geofire-android",version.ref="geofire-android"}
 
 
 [plugins]

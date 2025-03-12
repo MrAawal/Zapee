@@ -52,7 +52,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.LoanModelVie
     @Override
     public void onBindViewHolder(@NonNull LoanModelViewholder holder, int position) {
         ImageModel favourite=favouriteModels.get (position);
-        holder.binding.textView22.setText (""+favourite.getQnt ());
+        holder.binding.price.setText ("₹"+favourite.getPrice ()+" *"+favourite.getQnt ()+" Quantity");
+        holder.binding.label.setText (""+favourite.getPname ());
         Glide.with (context).load(favourite.getImage())
                 .into (holder.binding.image);
 

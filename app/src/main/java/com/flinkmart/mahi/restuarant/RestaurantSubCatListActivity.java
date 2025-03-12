@@ -153,8 +153,9 @@ public class RestaurantSubCatListActivity extends AppCompatActivity {
     }
 
 
-    void initProduct(String category,TextView quantity, CardView layout){
+    void initProduct(String category, TextView quantity, CardView layout){
           getProduct (category);
+
           itemList = new ArrayList<> ();
 
         LinearLayoutManager layoutManager = new GridLayoutManager (this, 2);
@@ -163,6 +164,7 @@ public class RestaurantSubCatListActivity extends AppCompatActivity {
         binding.productList.setAdapter(filterAdapter);
     }
     void getProduct(String category){
+
         ProgressBar progressBar=new ProgressBar (this);
         progressBar.setVisibility (View.VISIBLE);
 
@@ -186,6 +188,7 @@ public class RestaurantSubCatListActivity extends AppCompatActivity {
                 });
 
     }
+
     void initCat(String categoryId){
         getCat (categoryId);
         categoryItems = new ArrayList<> ();
@@ -225,6 +228,109 @@ public class RestaurantSubCatListActivity extends AppCompatActivity {
                 });
 
     }
+
+    private void bottomSheet() {
+        BottomSheetDialog bottomSheetDialog=new BottomSheetDialog ( this);
+        View view= LayoutInflater.from (RestaurantSubCatListActivity.this).inflate (R.layout.bottomsheet,(LinearLayout)findViewById (R.id.mainlayout),false);
+        bottomSheetDialog.setContentView (view);
+        bottomSheetDialog.show ();
+
+
+        RecyclerView cart=view.findViewById (R.id.cartList);
+        Button check=view.findViewById (R.id.continueBtn);
+
+        CardView cardView=view.findViewById (R.id.bottomPrice);
+
+        TextView Subtotal=view.findViewById (R.id.subtotal);
+        TextView quantity=view.findViewById (R.id.qty);
+        TextView banner=view.findViewById (R.id.congrage);
+        TextView text=view.findViewById (R.id.empty);
+        Button shop=view.findViewById (R.id.shop);
+
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+
+        List<Product> products=productDao.getallproduct ();
+
+
+        int sum=0,i;
+        for(i=0;i< products.size();i++)
+            sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+        total=500-sum;
+
+         if(sum<500){
+            banner.setText("Add More ₹" +total+ " For Get Free Delivery & Free Bag");
+            banner.setTextColor (getColor (R.color.red));
+        }else {
+            banner.setText("Congragulation You Got Free Delivery & Free Bag");
+            banner.setTextColor (getColor (R.color.purple_500));
+        }
+
+
+
+        if(products.size ()==0){
+            text.setVisibility (View.VISIBLE);
+            check.setVisibility (View.GONE);
+            cardView.setVisibility (View.GONE);
+            shop.setVisibility (View.VISIBLE);
+            banner.setVisibility (View.GONE);
+
+            shop.setOnClickListener (new View.OnClickListener ( ) {
+                @Override
+                public void onClick(View v) {
+                    Intent i=new Intent(getApplicationContext (), MainActivity.class);
+                    startActivity(i);
+                }
+            });
+
+        }else {
+
+        }
+
+                    check.setOnClickListener (new View.OnClickListener ( ) {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i=new Intent(getApplicationContext (), NewCheckoutActivity.class);
+                            startActivity(i);
+                        }
+                    });
+
+        getAllProduct(Subtotal,quantity,cart,text,banner,cardView);
+    }
+
+    private void getAllProduct(TextView Subtotal, TextView quantity, RecyclerView cart, TextView text, TextView banner, CardView cardView){
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
+        ProductDao productDao = db.ProductDao();
+
+
+
+        cart.setLayoutManager(new LinearLayoutManager (this));
+        List<Product> products=productDao.getallproduct();
+
+        ImageView imageView=findViewById (R.id.imageView7);
+
+
+        myadapter adapter=new myadapter(products, Subtotal,quantity, text,banner,cardView, imageView);
+        cart.setAdapter(adapter);
+
+
+
+        int sum=0,i;
+        for(i=0;i< products.size();i++)
+            sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+
+        Subtotal.setText("₹"+sum);
+        int qty = 0;
+        for (i = 0; i < products.size ( ); i++)
+            qty = qty + (products.get (i).getQnt ( ));
+        quantity.setText (""+qty+" Items");
+
+    }
+
     protected void onResume() {
         super.onResume();
 

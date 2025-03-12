@@ -16,17 +16,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.interfaces.ItemClickListener;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
-import com.flinkmart.mahi.activities.PickupActivity;
-import com.flinkmart.mahi.activities.ProfileActivity;
 import com.flinkmart.mahi.activities.SearchActivity;
 import com.flinkmart.mahi.activities.SubCatListActivity;
 import com.flinkmart.mahi.adapter.CategoryListAdapter;
-import com.flinkmart.mahi.branchAdapter.RestAdapter;
+import com.flinkmart.mahi.storeadapter.StoreAdapter;
 import com.flinkmart.mahi.categoryAdapter.CatAdapter1;
 import com.flinkmart.mahi.categoryAdapter.CatAdapter2;
 import com.flinkmart.mahi.categorymodel.CategoryModel1;
@@ -52,7 +49,7 @@ import com.flinkmart.mahi.homemodel.BottomModel;
 import com.flinkmart.mahi.model.HorizonProductModel;
 import com.flinkmart.mahi.model.Item;
 import com.flinkmart.mahi.lifestylemodel.LifstyleCategory;
-import com.flinkmart.mahi.model.Resturant;
+import com.flinkmart.mahi.storemodel.StoreModel;
 import com.flinkmart.mahi.model.UserModel;
 import com.flinkmart.mahi.utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -60,7 +57,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -82,11 +78,8 @@ public class HomeFragment extends Fragment {
     CategoryListAdapter catlistAdapter;
     SubCategoryItemAdapter itemAdapter;
 
-    RestAdapter restuarantAdapter;
-    List<Resturant> branchemodel=new ArrayList<> ();
-
-
-
+    StoreAdapter restuarantAdapter;
+    List<StoreModel> branchemodel=new ArrayList<> ();
 
     List<Catlist>catlists= new ArrayList<> ();
 
@@ -123,9 +116,6 @@ public class HomeFragment extends Fragment {
     List<ElectronicCategory>electronicCategories=new ArrayList<> (  );
     List<BottomModel>footwearItems=new ArrayList<> (  );
 
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -146,10 +136,6 @@ public class HomeFragment extends Fragment {
         });
 
 
-
-
-
-
         itemList=new ArrayList<> ();
         setUpRecyclerView ();
         getUsername();
@@ -166,10 +152,7 @@ public class HomeFragment extends Fragment {
 
         initClothing();
         initsubcat2();
-
         initsubcat1();
-
-
 
         return  view;
 
@@ -236,9 +219,7 @@ public class HomeFragment extends Fragment {
                 });
 
     }
-
-    private void initCategory() {
-
+    private void initCategory(){
             FirebaseFirestore.getInstance ( )
                     .collection ("category")
                     .whereEqualTo ("tag","1")
@@ -273,7 +254,7 @@ public class HomeFragment extends Fragment {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
-                            Resturant resturants=ds.toObject (Resturant.class);
+                            StoreModel resturants=ds.toObject (StoreModel.class);
                             restuarantAdapter.addProduct (resturants);
                         }
 
@@ -291,7 +272,7 @@ public class HomeFragment extends Fragment {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
-                            Resturant resturants=ds.toObject (Resturant.class);
+                            StoreModel resturants=ds.toObject (StoreModel.class);
                             restuarantAdapter.addProduct (resturants);
                         }
 
@@ -557,7 +538,7 @@ public class HomeFragment extends Fragment {
 
 
         binding.restuarant.setLayoutManager (new GridLayoutManager (getActivity (),3));
-        restuarantAdapter=new RestAdapter (getContext (),branchemodel);
+        restuarantAdapter=new StoreAdapter (getContext (),branchemodel);
         binding.restuarant.setAdapter (restuarantAdapter);
 
     }

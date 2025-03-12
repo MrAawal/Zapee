@@ -1,40 +1,26 @@
 package com.flinkmart.mahi.activities;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.databinding.ActivityManageOtpBinding;
-import com.flinkmart.mahi.databinding.ActivityPhoneLoginBinding;
-import com.flinkmart.mahi.model.UserModel;
-import com.flinkmart.mahi.utils.AndroidUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class ManageOtpActivity extends AppCompatActivity {
@@ -44,23 +30,25 @@ public class ManageOtpActivity extends AppCompatActivity {
     String phonenumber;
     String otpid;
     FirebaseAuth mAuth;
-
-    UserModel userModel;
-
-    ActivityManageOtpBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        binding= ActivityManageOtpBinding.inflate (getLayoutInflater ());
-        setContentView (binding.getRoot ());
-
+        setContentView(R.layout.activity_manage_otp);
 
         phonenumber=getIntent().getStringExtra("mobile").toString();
-        t2=(EditText)findViewById(R.id.login_otp);
-        b2=(Button)findViewById(R.id.login_next_btn);
-        mAuth=FirebaseAuth.getInstance();
 
+        t2=(EditText)findViewById(R.id.t2);
+        b2=(Button)findViewById(R.id.b2);
+
+
+        mAuth=FirebaseAuth.getInstance();
+        back.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                onBackPressed ();
+            }
+        });
 
 
         initiateotp();
@@ -78,17 +66,14 @@ public class ManageOtpActivity extends AppCompatActivity {
                 {
                     PhoneAuthCredential credential= PhoneAuthProvider.getCredential(otpid,t2.getText().toString());
                     signInWithPhoneAuthCredential(credential);
-
-                    binding.loginProgressBar.setVisibility (View.VISIBLE);
-
-
                 }
 
             }
         });
     }
 
-    private void initiateotp() {
+    private void initiateotp()
+    {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phonenumber,        // Phone number to verify
                 60,                 // Timeout duration
@@ -97,24 +82,24 @@ public class ManageOtpActivity extends AppCompatActivity {
                 new PhoneAuthProvider.OnVerificationStateChangedCallbacks()
                 {
                     @Override
-                    public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken){
+                    public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken)
+                    {
                         otpid=s;
-                        binding.loginProgressBar.setVisibility (View.GONE);
-                        binding.resendOtpTextview.setText ("OTP successfully send");
                     }
 
                     @Override
                     public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential)
                     {
                         signInWithPhoneAuthCredential(phoneAuthCredential);
+
+
                     }
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
-                        binding.resendOtpTextview.setText (""+e.getMessage());
-
+                        Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
                     }
-                });
+                });        // OnVerificationStateChangedCallbacks
 
     }
 
@@ -126,33 +111,21 @@ public class ManageOtpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful())
                         {
-                            binding.loginProgressBar.setVisibility (View.GONE);
-                            getCurrenuUser();
-                        } else {
-                            binding.resendOtpTextview.setText ("Signin Code Error");
-                            binding.loginProgressBar.setVisibility (View.GONE);
 
+                            String uid=FirebaseAuth.getInstance ( ).getUid ( );
+                            FirebaseFirestore.getInstance ( )
+                                    .collection ("users")
+                                    .document (uid)
+                                    .update ("phone",phonenumber);
+
+                            startActivity(new Intent (ManageOtpActivity.this,CompleteProfileActivity.class));
+                            finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(),"Signin Code Error",Toast.LENGTH_LONG).show();
                         }
                     }
                 });
-    }
-    private void getCurrenuUser() {
-        FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful ( )) {
-                    userModel = task.getResult ( ).toObject (UserModel.class);
-                    if (userModel != null) {
-                        startActivity(new Intent (ManageOtpActivity.this,MainActivity.class));
-                        finish();
-                    } else {
-                        startActivity(new Intent (ManageOtpActivity.this, CompleteProfileActivity.class));
-                        finish();
-                    }
-                }
-            }
-        });
-
     }
 
 

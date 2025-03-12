@@ -28,7 +28,7 @@
             <ImageView
                 android:id="@+id/imageView6"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="150dp"
                 android:scaleType="fitXY"
                 app:srcCompat="@drawable/placeholder" />
 
@@ -63,6 +63,7 @@
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-condensed-medium"
                 android:gravity="center"
+                android:letterSpacing="0.1"
                 android:maxLines="2"
                 android:text="TextView"
                 android:textColor="@color/black"

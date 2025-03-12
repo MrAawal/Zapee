@@ -34,6 +34,7 @@ import com.flinkmart.mahi.databinding.ActivityNewCheckoutBinding;
 import com.flinkmart.mahi.databinding.OrderProgressBinding;
 import com.flinkmart.mahi.databinding.StoreDialogBinding;
 import com.flinkmart.mahi.model.Branch;
+import com.flinkmart.mahi.model.BranchModel;
 import com.flinkmart.mahi.model.Coupon;
 import com.flinkmart.mahi.model.Online;
 import com.flinkmart.mahi.model.OrderPlaceModel;
@@ -119,14 +120,8 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
         super.onCreate (savedInstanceState);
         binding = ActivityNewCheckoutBinding.inflate (getLayoutInflater ( ));
         setContentView (binding.getRoot ( ));
-
-        binding.couponLayout.setVisibility (View.GONE);
-        binding.view.setVisibility (View.GONE);
-        binding.textView32.setVisibility (View.GONE);
-        binding.textView35.setVisibility (View.GONE);
-
-        auth = FirebaseAuth.getInstance ();
-        user = auth.getCurrentUser ();
+        auth = FirebaseAuth.getInstance ( );
+        user = auth.getCurrentUser ( );
 
         progressBar=new ProgressDialog (this);
         progressBar.setMessage ("Calculating...");
@@ -221,7 +216,7 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
                                         branch = task.getResult ( ).toObject (Branch.class);
                                         if (branch!=null){
                                             getStoreStatus(userModel.getPin ());
-                                            binding.address.setText ("Zone:" + branch.getPincode ());
+
                                         }else{
                                             binding.checkoutBtn.setEnabled (false);
                                             String pin= userModel.getPin ( );
@@ -256,13 +251,7 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
             }
         });
 
-        binding.imageButton.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                String pin =userModel.getPin ();
-                selectStore (pin);
-            }
-        });
+
 
         getSupportActionBar ( ).setDisplayHomeAsUpEnabled (true);
 
@@ -317,7 +306,39 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
                             binding.checkoutBtn.setEnabled (true);
-                            Branch resturants=ds.toObject (Branch.class);
+                            BranchModel resturants=ds.toObject (BranchModel.class);
+                            branchAdapter.addProduct (resturants);
+                        }
+
+                    }
+                });
+        dialog.show ();
+    }
+    public  void UpdateStore(String pin){
+        StoreDialogBinding storeDialogBinding = StoreDialogBinding.inflate(LayoutInflater.from(this));
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(storeDialogBinding.getRoot())
+                .setCancelable (false)
+                .create();
+
+        RecyclerView recyclerView=storeDialogBinding.storeList;
+
+        TextView warning=storeDialogBinding.productName;
+        branchAdapter=new BranchAdapter (this,warning);
+        recyclerView.setLayoutManager (new LinearLayoutManager (this));
+        recyclerView.setAdapter (branchAdapter);
+
+        FirebaseFirestore.getInstance ()
+                .collection ("Restaurant")
+                .whereEqualTo ("pincode",pin)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            binding.checkoutBtn.setEnabled (true);
+                            BranchModel resturants=ds.toObject (BranchModel.class);
                             branchAdapter.addProduct (resturants);
                         }
 
@@ -327,6 +348,8 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
     }
 
     public void getmylocation() {
+
+
         FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -377,8 +400,12 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
                                                         googleMap.addMarker(markerOptions);
 
 
+
+
+
                                                         SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
                                                         if(sp.contains("latitude")){
+
                                                            String userlat = sp.getString ("latitude", "");
                                                            String userlon = sp.getString ("longitude", "");
 
@@ -386,13 +413,16 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
                                                             MarkerOptions markerOptions3=new MarkerOptions().position(latLng).title("Your Address");
                                                             googleMap.addMarker(markerOptions3);
 
-                                                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(user,14));
+                                                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(user,11));
 
                                                             LatLng store=new LatLng(Double.parseDouble (branch.getStoreLat ()),Double.parseDouble (branch.getStoreLon ()));
                                                             MarkerOptions markerOptions2=new MarkerOptions().position(store).title("Store");
                                                             googleMap.addMarker(markerOptions2);
 
                                                             distance = SphericalUtil.computeDistanceBetween (user, store);
+
+                                                            binding.textView32.setText ("Estimate delivery time: "+distance/1000*4);
+
 
                                                             calculation(distance,delivery);
 
@@ -423,22 +453,25 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
 
     }
     void calculation(Double distance, Double delivery) {
-        binding.view.setVisibility (View.GONE);
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "cart_db").allowMainThreadQueries().build();
         ProductDao productDao = db.ProductDao();
+
         List<Product> products=productDao.getallproduct();
         super.onStart ( );
         for (int i=0;i<products.size ();i++){
             Product favourite=products.get(i);
+
             int pric=favourite.getPrice ();
             int quan=favourite.getQnt ();
             int total=pric*quan;
             int discount = Integer.parseInt (favourite.getDiscount ( ))*quan;
             maintotal+=total;
-            del=20+distance/1000*delivery;
+            del=distance/1000*delivery;
             Total=maintotal+del+gst;
-            more=10000-maintotal;
+
+            more=500-maintotal;
+
             DiscountTotal+=discount;
             Discount=DiscountTotal-maintotal;
         }
@@ -447,29 +480,82 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
         binding.subtotal.setText (String.valueOf ("Sub total: ₹"+maintotal));
         binding.saveMrp.setText ("You save:₹"+Discount);
         binding.Del.setText ("₹"+del);
-        binding.total.setText ("₹"+Total);
-        binding.MaxTotal.setText (String.valueOf ("₹"+Total));
-        binding.view.setText("Add More ₹" +more+ " For Get Free Delivery");
-        binding.view.setTextColor (getColor (R.color.red));
-
         if(distance/1000>7){
-            del=99;
-            Total=maintotal+del+gst;
-            binding.Del.setText ("99");
-            binding.MaxTotal.setText (String.valueOf ("₹"+Total));
+            binding.checkoutBtn.setEnabled (false);
+            binding.checkoutBtn.setText("Out of zone");
             MaterialAlertDialogBuilder alertDialog=new MaterialAlertDialogBuilder (this);
-              alertDialog.setTitle ("Order may be delay");
-              alertDialog.setMessage ("Your Address so far from pickup point");
+              alertDialog.setMessage ("Your location is out of your selected zone.We deliver 7km radius from store of your selected zone.We are sorry for the inconvenience caused to you.");
               alertDialog.setCancelable (false);
               alertDialog.create ();
-              alertDialog.setPositiveButton ("ok", new DialogInterface.OnClickListener ( ) {
+
+              alertDialog.setPositiveButton ("Update zone", new DialogInterface.OnClickListener ( ) {
                   @Override
                   public void onClick(DialogInterface dialog, int which) {
-                      alertDialog.setCancelable (true);
+                      UpdateStore(userModel.pin);
                   }
               });
               alertDialog.show ();
+
         }
+
+        if(maintotal>500){
+            Total=maintotal;
+            binding.MaxTotal.setText(String.valueOf ("₹"+maintotal));
+            binding.Del.setText ("FREE");
+            binding.tax.setText ("FREE");
+            binding.tax.setTextColor (getColor (R.color.teal_700));
+            binding.Del.setTextColor (getColor (R.color.teal_700));
+            binding.view.setText ("Congratulations You Got Free Delivery");
+            binding.view.setTextColor (getColor (R.color.purple_500));
+        }else {
+            binding.total.setText ("₹"+Total);
+            binding.MaxTotal.setText (String.valueOf ("₹"+Total));
+            binding.view.setText("Add More ₹" +more+ " For Get Free Delivery");
+            binding.view.setTextColor (getColor (R.color.red));
+        }
+
+        FirebaseUtil
+                .coupon ( )
+                .get ( )
+                .addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful ( )) {
+                            coupon = task.getResult ( ).toObject (Coupon.class);
+                            if (coupon!= null) {
+                                couponInput = findViewById (R.id.nameBox);
+                                String match = couponInput.getText ( ).toString ( );
+                                String coupouns= coupon.getCode ().toUpperCase ();
+                                couponInput.setText (coupouns);
+
+                                binding.button5.setOnClickListener (new View.OnClickListener ( ) {
+                                    @Override
+                                    public void onClick(View v) {
+                                        couponTarget=coupon.getTarget ();
+                                        if(maintotal>couponTarget) {
+                                            int couponDiscount = 0;
+                                            couponDiscount = coupon.getValue ( );
+                                            binding.button5.setText ("Applied");
+                                            binding.nameBox.setTextColor (getColor (R.color.teal_700));
+                                            Total = Total - couponDiscount;
+                                            binding.MaxTotal.setText ("₹" + Total);
+                                            binding.warn.setVisibility (View.GONE);
+                                            binding.button5.setEnabled (false);
+                                        }else {
+                                            binding.textView3.setText ("Please add morethan ₹" +couponTarget+" of Order value");
+                                            binding.warn.setVisibility (View.VISIBLE);
+                                        }
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                });
+
+
+
+
 
     }
     void getProduct(TextView rateview){
@@ -489,21 +575,26 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
         int sum=0,i;
         for(i=0;i< products.size();i++)
             sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+
+
+
     }
     void processOrder(String orderNumber, androidx.appcompat.app.AlertDialog dialog){
 
         SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
-        if(sp.contains("latitude")){
+        if(sp.contains("latitude")) {
+
             String lat=sp.getString ("latitude","");
             String lon=sp.getString ("longitude","");
 
-            OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid,userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress( ),branch.getStorename(), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), lat, lon, "Pending", "cod","pending");
+            OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid,userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress( ),branch.getStorename (), branch.getStorename (),String.valueOf (Total) , String.valueOf (del), Timestamp.now ( ), lon, "Pending", "cod","pending","");
             FirebaseFirestore.getInstance ( )
                     .collection ("orders")
                     .document (orderNumber)
                     .set (orderPlaceModel).addOnSuccessListener (new OnSuccessListener<Void> ( ) {
                         @Override
                         public void onSuccess(Void unused) {
+
 
                             new AlertDialog.Builder(RestaurantCheckoutActivity.this)
                                     .setTitle("Order Successful")
@@ -576,6 +667,8 @@ public class RestaurantCheckoutActivity extends AppCompatActivity {
 
         };
     }
+
+
     public static int getRandomNumber(int min, int max) {
         return (new Random ( )).nextInt ((max - min) + 1) + min;
     }

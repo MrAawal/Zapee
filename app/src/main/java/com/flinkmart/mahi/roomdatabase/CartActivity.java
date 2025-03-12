@@ -1,29 +1,40 @@
 package com.flinkmart.mahi.roomdatabase;
 
+import static com.flinkmart.mahi.R.color.purple_500;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
+import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.MainActivity;
 import com.flinkmart.mahi.activities.NewCheckoutActivity;
-import com.flinkmart.mahi.adapter.FilterAdapter;
+import com.flinkmart.mahi.branchAdapter.BranchAdapter;
+import com.flinkmart.mahi.databinding.StoreDialogBinding;
 import com.flinkmart.mahi.homeadapter.BundleAdapter;
-import com.flinkmart.mahi.model.CartModel;
+import com.flinkmart.mahi.model.BranchModel;
 import com.flinkmart.mahi.model.HorizonProductModel;
-import com.flinkmart.mahi.model.Item;
+import com.flinkmart.mahi.model.UserModel;
+import com.flinkmart.mahi.model.UserModel1;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -37,10 +48,19 @@ public class CartActivity extends AppCompatActivity {
     Button check,shop;
     CardView layout;
 
+    int minAmount=0;
+
+    BranchModel branch;
+
     BundleAdapter newProductAdapter;
 
     int total=0;
 
+    UserModel userModel;
+
+    BranchAdapter branchAdapter;
+
+    DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +79,53 @@ public class CartActivity extends AppCompatActivity {
                 onBackPressed ();
             }
         });
-        getroomdata();
+
+        FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful ( )) {
+                    userModel =task.getResult ( ).toObject (UserModel.class);
+                    if (userModel != null) {
+                        FirebaseUtil.currentUserStore( ).get().addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful ( )) {
+                                    branch = task.getResult ( ).toObject (BranchModel.class);
+                                    if (branch!=null){
+
+                                        databaseReference= FirebaseDatabase.getInstance ().getReference ("store/"+branch.getStoreuid ());
+                                        databaseReference.addListenerForSingleValueEvent (new ValueEventListener ( ) {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                int minAmount=snapshot.child ("minimum").getValue (Integer.class);
+                                                getroomdata (minAmount);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
+
+
+
+
+                                    }else{
+                                        String pin= userModel.getPin( );
+                                        selectStore(pin);
+                                    }
+                                }
+                            }
+                        });
+                    }else{
 //
-//        getProduct();
+                    }
+
+                }
+            }
+        });
+
 
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "cart_db").allowMainThreadQueries().build();
@@ -84,41 +148,10 @@ public class CartActivity extends AppCompatActivity {
 
     }
 
-     void getProduct() {
-        initProduct ();
-        RecyclerView productList=findViewById (R.id.productList);
-        List<HorizonProductModel> modelList=new ArrayList<> ();
-        newProductAdapter=new BundleAdapter (this,modelList)  ;
-        LinearLayoutManager layoutManager = new LinearLayoutManager (getApplicationContext (),LinearLayoutManager.HORIZONTAL,false);
-        productList.setLayoutManager (layoutManager);
-        productList.setAdapter (newProductAdapter);
-
-    }
-
-    void initProduct(){
-        FirebaseFirestore.getInstance ()
-                .collection ("product")
-//                .whereEqualTo ("show",true)
-                .whereEqualTo ("category","8309")
-                .get ()
-                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
-                        for (DocumentSnapshot ds:dsList){
-                            HorizonProductModel product=ds.toObject (HorizonProductModel.class);
-                            newProductAdapter.addProduct(product);
-                        }
-
-
-                    }
-                });
-    }
 
 
 
-    public void getroomdata()
-    {
+    public void getroomdata(int minAmount) {
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "cart_db").allowMainThreadQueries().build();
         ProductDao productDao = db.ProductDao();
@@ -138,17 +171,20 @@ public class CartActivity extends AppCompatActivity {
         recview.setAdapter(adapter);
 
 
+
+
+
         int sum=0,i;
         for(i=0;i< products.size();i++)
             sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
-        total=1000-sum;
+        total= minAmount -sum;
 
-        if(sum<1000){
-            banner.setText("Add More ₹" +total+ " For Get Free Delivery & Free Bag");
-            banner.setTextColor (getColor (R.color.red));
+        if(sum<minAmount){
+            banner.setText ("Add More ₹"+total+"For Get Free Delivery");
+            banner.setTextColor (banner.getContext ().getResources ().getColor (R.color.red));
         }else {
-            banner.setText("Congratulations You Got Free Delivery & Free Bag");
-            banner.setTextColor (getColor (R.color.purple_500));
+            banner.setText("Congratulations You Got Free Delivery");
+            banner.setTextColor (banner.getContext ().getResources ().getColor (purple_500));
         }
 
         if(products.size ()==0){
@@ -193,6 +229,38 @@ public class CartActivity extends AppCompatActivity {
         return super.onSupportNavigateUp();
     }
 
+
+    public  void selectStore(String pin){
+        StoreDialogBinding storeDialogBinding = StoreDialogBinding.inflate(LayoutInflater.from(this));
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(storeDialogBinding.getRoot())
+                .setCancelable (false)
+                .create();
+
+        RecyclerView recyclerView=storeDialogBinding.storeList;
+
+        TextView warning=storeDialogBinding.productName;
+        branchAdapter=new BranchAdapter (this,warning);
+        recyclerView.setLayoutManager (new LinearLayoutManager (this));
+        recyclerView.setAdapter (branchAdapter);
+
+        FirebaseFirestore.getInstance ()
+                .collection ("branch")
+                .whereEqualTo ("pincode",pin)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            BranchModel resturants=ds.toObject (BranchModel.class);
+                            branchAdapter.addProduct (resturants);
+                        }
+
+                    }
+                });
+        dialog.show ();
+    }
 
 
 }

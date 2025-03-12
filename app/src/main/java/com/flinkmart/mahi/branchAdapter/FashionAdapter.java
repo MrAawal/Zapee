@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.MainActivity;
 import com.flinkmart.mahi.databinding.ItemBranchHorizontalBinding;
-import com.flinkmart.mahi.model.Branch;
+import com.flinkmart.mahi.model.BranchModel;
 import com.flinkmart.mahi.model.Fashion;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,7 +65,7 @@ public class FashionAdapter extends RecyclerView.Adapter<FashionAdapter.branchVi
             public void onClick(View v) {
                 String uid=FirebaseAuth.getInstance ( ).getUid ( );
 
-                Branch branch=new Branch (brance.getUid (),brance.getStoreLat (),brance.getStoreLon (),true,uid ,brance.storename,"");
+                BranchModel branch=new BranchModel ();
                 FirebaseFirestore.getInstance ( )
                         .collection ("userstore")
                         .document (uid)

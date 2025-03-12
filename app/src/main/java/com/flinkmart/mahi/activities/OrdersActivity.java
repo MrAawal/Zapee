@@ -62,7 +62,7 @@ public class OrdersActivity extends AppCompatActivity {
                 .collection ("orders")
                 .whereEqualTo ("uid",uid)
                 .orderBy ("orderPlaceDate", Query.Direction.DESCENDING)
-                .get ( )
+                .get ()
                 .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

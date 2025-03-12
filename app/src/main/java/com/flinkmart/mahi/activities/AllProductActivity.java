@@ -25,7 +25,7 @@ import com.flinkmart.mahi.adapter.FilterAdapter2;
 import com.flinkmart.mahi.databinding.ActivityAllProductBinding;
 import com.flinkmart.mahi.model.CartModel;
 import com.flinkmart.mahi.model.Item;
-import com.flinkmart.mahi.restuarant.RestaurantCartActivity;
+import com.flinkmart.mahi.storeactivity.RestaurantCartActivity;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.CartActivity;
 import com.flinkmart.mahi.roomdatabase.Product;
@@ -70,8 +70,6 @@ public class AllProductActivity extends AppCompatActivity {
         TextView quantity=findViewById (R.id.cartQnt);
 
         List<Product> products=productDao.getallproduct ();
-
-
 
         int sum=0,i;
         for(i=0;i< products.size();i++)

@@ -7,18 +7,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.adapter.ImageAdapter;
 import com.flinkmart.mahi.databinding.ActivityDeliveryDetailBinding;
+import com.flinkmart.mahi.model.Coupon;
 import com.flinkmart.mahi.model.ImageModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.GeofencingClient;
@@ -29,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -59,6 +65,8 @@ public class DeliveryDetailActivity extends AppCompatActivity {
     GeofencingClient geofencingClient;
     DatabaseReference databaseReference;
 
+    Coupon coupon;
+
 
 
 
@@ -81,7 +89,12 @@ public class DeliveryDetailActivity extends AppCompatActivity {
              binding.textView16.setText ("Finished");
             }
         }.start ();
-
+        binding.help.setOnClickListener (new View.OnClickListener ( ) {
+            @Override
+            public void onClick(View v) {
+                help();
+            }
+        });
 
 
         int orderNumber= Integer.parseInt (getIntent ().getStringExtra ("orderNumber"));
@@ -149,17 +162,51 @@ public class DeliveryDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);
                 startActivity (intent);
                 finish();
-
             }
         });
 
+    }
+
+    private void help() {
+        FirebaseUtil.coupon ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful ( )) {
+                    coupon = task.getResult ( ).toObject (Coupon.class);
+
+                    String agent=coupon.getContact ();
+
+
+                    if (coupon!= null) {
+                        String url = "https://api.whatsapp.com/send?phone= " + agent;
+                        try {
+                            PackageManager pm = getApplicationContext().getPackageManager();
+                            pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(url));
+                            startActivity(i);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        }
+
+
+
+
+
+                    } else {
+
+                        Toast.makeText (DeliveryDetailActivity.this, "No Agent Active", Toast.LENGTH_SHORT).show ( );
+                    }
+                }
+            }
+        });
     }
 
     void getProduct(Integer orderNumber){
         getAllProduct (orderNumber);
         productadaper=new ImageAdapter (this)  ;
         binding.orderList.setAdapter (productadaper);
-        binding.orderList.setLayoutManager (new GridLayoutManager (this,3));;
+        binding.orderList.setLayoutManager (new LinearLayoutManager (this));;
     }
     private void getAllProduct(Integer orderNumber){
         FirebaseFirestore.getInstance ()
@@ -273,6 +320,5 @@ public class DeliveryDetailActivity extends AppCompatActivity {
         super.onBackPressed ( );
         Intent intent = new Intent (DeliveryDetailActivity.this, MainActivity.class);
         startActivity (intent);
-
     }
 }
