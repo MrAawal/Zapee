@@ -15,13 +15,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.BranchActivity;
-import com.flinkmart.mahi.activities.CompleteProfileActivity;
+import com.flinkmart.mahi.activitylogin.CompleteProfileActivity;
 import com.flinkmart.mahi.activities.DeliveryDetailActivity;
-import com.flinkmart.mahi.activities.LoginActivity;
+import com.flinkmart.mahi.activitylogin.LoginActivity;
 import com.flinkmart.mahi.adapter.CheckItemAdapter;
 import com.flinkmart.mahi.databinding.ActivityCheckoutBinding;
-import com.flinkmart.mahi.model.Branch;
+import com.flinkmart.mahi.model.BranchModel;
 import com.flinkmart.mahi.model.Favourite;
 import com.flinkmart.mahi.model.OrderPlaceModel;
 import com.flinkmart.mahi.model.UserModel1;
@@ -48,7 +47,7 @@ public class CheckoutActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser user;
     UserModel1 userModel;
-    Branch branch;
+    BranchModel branch;
     CheckItemAdapter checkItemAdapter;
     int maintotal=0;
     int Total;
@@ -93,7 +92,7 @@ public class CheckoutActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful ( )) {
-                    branch = task.getResult ( ).toObject (Branch.class);
+                    branch = task.getResult ( ).toObject (BranchModel.class);
                     if (branch != null) {
                         binding.address.setText ("Order Pick-up From " + branch.getStorename ( ));
                     }else{
@@ -126,9 +125,7 @@ public class CheckoutActivity extends AppCompatActivity {
         binding.imageButton.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent (CheckoutActivity.this, BranchActivity.class);
-                intent.putExtra ("pincode", userModel.getPin ( ));
-                startActivity (intent);
+
             }
         });
 
@@ -193,7 +190,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 });
     }
     void processOrder(String orderNumber){
-        OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid, userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ), branch.getStorename ( ), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), null, null, "Pending", "cod","pending");
+        OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid, userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ), branch.getStorename ( ),branch.getStoreuid (), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), null, null, "Pending", "cod","pending");
         FirebaseFirestore.getInstance ( )
                 .collection ("orders")
                 .document (orderNumber)

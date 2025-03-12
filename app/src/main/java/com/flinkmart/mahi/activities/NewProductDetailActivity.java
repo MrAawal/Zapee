@@ -130,7 +130,7 @@ NewProductDetailActivity extends AppCompatActivity {
                     SharedPreferences sp=getSharedPreferences("ProductSize",MODE_PRIVATE);
                     SharedPreferences sp2=getSharedPreferences("ProductColor",MODE_PRIVATE);
 
-                    String size = sp.getString ("size", "")+"-"+sp2.getString ("color", "");
+                    String size = sp.getString ("size", "")+" "+sp2.getString ("color", "");
 
                     productDao.insertrecord (new Product (ide,name+size,image,Integer.parseInt (price),1,discount,discription));
                     binding.remove.setVisibility (View.VISIBLE);
@@ -249,59 +249,6 @@ NewProductDetailActivity extends AppCompatActivity {
 
 
     }
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.category, menu);
-
-
-        MenuItem cart=menu.findItem (R.id.cart);
-        View actionView=cart.getActionView ();
-
-        TextView quantity=actionView.findViewById (R.id.cart_badge_textview);
-
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "cart_db").allowMainThreadQueries().build();
-        ProductDao productDao = db.ProductDao();
-
-        List<Product> products=productDao.getallproduct ();
-
-
-
-        if(products.size ()==0){
-            quantity.setVisibility (View.GONE);
-        }
-
-        int qty = 0,i;
-        for (i = 0; i < products.size ( ); i++)
-            qty = qty + (products.get (i).getQnt ( ));
-
-        quantity.setText (""+qty);
-        actionView.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                onOptionsItemSelected (cart);
-            }
-        });
-
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.cart) {
-            startActivity(new Intent (this, CartActivity.class));
-        } else if (item.getItemId() == R.id.fav) {
-            startActivity(new Intent (this, FavouriteActivity.class));
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
     void initOffer1(String subcat){
         getOffer1(subcat);
         List<Item> modelList=new ArrayList<> ();

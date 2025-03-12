@@ -57,8 +57,6 @@ public class RestAdapter extends RecyclerView.Adapter<RestAdapter.holder> {
         holder.itemView.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
-                holder.binding.progressBar9.setVisibility (View.VISIBLE);
-                holder.binding.imageView6.setEnabled (false);
                 String uid= FirebaseAuth.getInstance ( ).getUid ( );
                 Branch branch=new Branch (brance.getUid (),brance.getStoreLat (),brance.getStoreLon (),true,uid,brance.storename ,"");
                 FirebaseFirestore.getInstance ()
@@ -73,7 +71,6 @@ public class RestAdapter extends RecyclerView.Adapter<RestAdapter.holder> {
                         .addOnSuccessListener (new OnSuccessListener<Void> ( ) {
                             @Override
                             public void onSuccess(Void unused) {
-
 
                                 SharedPreferences sp=context.getSharedPreferences("userRestaurant",MODE_PRIVATE);
                                 SharedPreferences.Editor editor=sp.edit();

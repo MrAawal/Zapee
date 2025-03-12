@@ -13,26 +13,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.activitylogin.LoginActivity;
 import com.flinkmart.mahi.databinding.ActivityPickupBinding;
-import com.flinkmart.mahi.databinding.ActivityProfileBinding;
-import com.flinkmart.mahi.map.LocationModel;
 import com.flinkmart.mahi.model.Courier;
-import com.flinkmart.mahi.model.OrderPlaceModel;
 import com.flinkmart.mahi.model.UserModel;
-import com.flinkmart.mahi.model.UserModel1;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,7 +36,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -86,7 +77,7 @@ public class PickupActivity extends AppCompatActivity {
         user=auth.getCurrentUser();
 
         if(user==null) {
-            Intent i = new Intent (getApplicationContext ( ),LoginActivity.class);
+            Intent i = new Intent (getApplicationContext ( ), LoginActivity.class);
             startActivity (i);
             finish ( );
         }else{

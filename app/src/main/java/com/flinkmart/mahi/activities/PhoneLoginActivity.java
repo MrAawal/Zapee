@@ -5,79 +5,80 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.databinding.ActivityPhoneLoginBinding;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.hbb20.CountryCodePicker;
 
 
-
 public class PhoneLoginActivity extends AppCompatActivity {
-    CountryCodePicker ccp;
-    EditText t1;
-    Button b1,EmailLogin;
-    FirebaseAuth auth;
-    FirebaseUser user;
-    ActivityPhoneLoginBinding binding;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding=ActivityPhoneLoginBinding.inflate (getLayoutInflater ());
-        setContentView (binding.getRoot ( ));
+        CountryCodePicker ccp;
+        EditText t1;
+        Button b1;
 
-        t1=(EditText)findViewById(R.id.code);
-        ccp=(CountryCodePicker)findViewById(R.id.ccp);
-        ccp.registerCarrierNumberEditText(t1);
-        b1=(Button)findViewById(R.id.send);
-        EmailLogin=(Button) findViewById (R.id.EmailLogin);
-
-        auth=FirebaseAuth.getInstance ();
-        user=auth.getCurrentUser();
+        TextView EmailLogin;
+        FirebaseAuth auth;
+       FirebaseUser user;
 
 
-        if(user!=null){
-            Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
-            startActivity (i);
-            finish ( );
-        }
 
-        EmailLogin.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(PhoneLoginActivity.this,LoginActivity.class);
-                startActivity(intent);
+
+
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_phone_login);
+
+            t1=(EditText)findViewById(R.id.code);
+            ccp=(CountryCodePicker)findViewById(R.id.ccp);
+            ccp.registerCarrierNumberEditText(t1);
+            b1=(Button)findViewById(R.id.send);
+            EmailLogin=(TextView) findViewById (R.id.EmailLogin);
+
+
+
+
+            auth=FirebaseAuth.getInstance ();
+            user=auth.getCurrentUser();
+
+            if(user!=null){
+                Intent i = new Intent (getApplicationContext ( ), MainActivity.class);
+                startActivity (i);
+                finish ( );
             }
-        });
 
-        b1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String phone=t1.getText ().toString ();
-
-                if(phone.isEmpty ()||phone.length ()<10||phone.length ()>10){
-                    t1.setError ("Phone number should be 10 digit");
-                    return;
-                }else {
-                    Intent intent=new Intent(PhoneLoginActivity.this,ManageOtpActivity.class);
-                    intent.putExtra("mobile",ccp.getFullNumberWithPlus().replace(" ",""));
+            EmailLogin.setOnClickListener (new View.OnClickListener ( ) {
+                @Override
+                public void onClick(View view) {
+                    Intent intent=new Intent(PhoneLoginActivity.this,LoginActivity.class);
                     startActivity(intent);
+
                 }
+            });
 
-            }
-        });
 
+            b1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String phone=t1.getText ().toString ();
+
+                    if(phone.isEmpty ()||phone.length ()<10||phone.length ()>10){
+                        t1.setError ("Phone number should be 10 digit");
+                        return;
+                    }else {
+                        Intent intent=new Intent(PhoneLoginActivity.this,ManageOtpActivity.class);
+                        intent.putExtra("mobile",ccp.getFullNumberWithPlus().replace(" ",""));
+                        startActivity(intent);
+                    }
+
+                }
+            });
+
+        }
     }
-}

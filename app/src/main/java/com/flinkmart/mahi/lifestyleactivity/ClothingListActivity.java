@@ -35,18 +35,12 @@ public class ClothingListActivity extends AppCompatActivity{
         binding=ActivityProductListBinding.inflate(getLayoutInflater ());
         setContentView (binding.getRoot ());
 
-
 //        tabLayout = findViewById(R.id.tab);
 //        viewPager2 =findViewById(R.id.viewpager);
 //        myViewPagerAdapter = new ViewPagerAdapter (this);
 //        viewPager2.setAdapter(myViewPagerAdapter);
 
         String catt=getIntent ().getStringExtra ("category").toUpperCase ();
-
-
-
-
-
 
 //        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 //            @Override
@@ -71,6 +65,7 @@ public class ClothingListActivity extends AppCompatActivity{
 //                tabLayout.getTabAt(position).select();
 //            }
 //        });
+
         loadFragment(new KidFragment());
         binding.bottomNavigation.setOnItemSelectedListener (new NavigationBarView.OnItemSelectedListener ( ) {
             @Override

@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.activities.MainActivity;
-import com.flinkmart.mahi.databinding.ItemBranchHorizontalBinding;
 import com.flinkmart.mahi.databinding.ItemStoreBinding;
-import com.flinkmart.mahi.model.Branch;
+import com.flinkmart.mahi.model.BranchModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,9 +37,9 @@ public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchView
 
     DatabaseReference databaseReference;
 
-    List<Branch> branchemodel;
+    List<BranchModel> branchemodel;
 
-    List<Branch> modelListFilter;
+    List<BranchModel> modelListFilter;
 
 
     public BranchAdapter(Context context, TextView warning) {
@@ -50,48 +49,44 @@ public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchView
         this.modelListFilter = branchemodel;
     }
 
-    public void addProduct(Branch branch){
+    public void addProduct(BranchModel branch){
         modelListFilter.add (branch);
         notifyDataSetChanged ();
     }
 
 
     public void onBindViewHolder(@NonNull branchViewholder holder, int position) {
-        Branch brance=branchemodel.get (position);
+        BranchModel brance=branchemodel.get (position);
 
         holder.binding.branch.setText (brance.getStorename());
-        holder.binding.Pincode.setText (brance.getPincode ());
         holder.itemView.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
                 String uid=FirebaseAuth.getInstance ( ).getUid ( );
 
-
-
                 holder.binding.lin.setBackgroundColor (context.getResources ().getColor (R.color.fav));
-
-                Branch branch=new Branch (brance.getUid (),brance.getStoreLat (),brance.getStoreLon (),true,uid,brance.storename,"" );
+                BranchModel branch=new BranchModel (brance.getStorename (),brance.getStoreuid (),brance.getStoreLat (),brance.getStoreLon (),brance.getDelivery (),brance.getPincode (),uid,brance.getStorecate (),brance.minAmount,brance.getPolicy(),brance.getRadius (),brance.getAnnouncement (),brance.getKmcharge(),brance.getPacking (),true);
                 FirebaseFirestore.getInstance ( )
-                        .collection ("userstore")
+                        .collection ("userStore")
                         .document (uid)
                         .set (branch);
 
                 FirebaseFirestore.getInstance ( )
                         .collection ("users")
                         .document (uid)
-                        .update ("store",brance.getUid ())
+                        .update ("store",brance.getStoreuid())
                         .addOnSuccessListener (new OnSuccessListener<Void> ( ) {
                             @Override
                             public void onSuccess(Void unused) {
 
-                                SharedPreferences sp=context.getSharedPreferences("store",MODE_PRIVATE);
-                                SharedPreferences.Editor editor=sp.edit();
-
-                                editor.putString("StoreId",brance.getUid ());
-                                editor.putString ("storeName",brance.getStorename ());
-                                editor.putString ("storeLat",brance.getStoreLat ());
-                                editor.putString ("storeLon",brance.getStoreLat ());
-                                editor.apply();
+//                                SharedPreferences sp=context.getSharedPreferences("store",MODE_PRIVATE);
+//                                SharedPreferences.Editor editor=sp.edit();
+//
+//                                editor.putString("StoreId",brance.getStoreuid ());
+//                                editor.putString ("storeName",brance.getStorename ());
+//                                editor.putString ("storeLat",brance.getStoreLat ());
+//                                editor.putString ("storeLon",brance.getStoreLat ());
+//                                editor.apply();
 
                                 Intent intent = new Intent (context, MainActivity.class);
                                     context.startActivity (intent);
@@ -169,8 +164,8 @@ public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchView
                 if (charcater.isEmpty()){
                     modelListFilter = branchemodel ;
                 }else{
-                    List<Branch> filterList = new ArrayList<>();
-                    for (Branch row: branchemodel){
+                    List<BranchModel> filterList = new ArrayList<>();
+                    for (BranchModel row: branchemodel){
                         if (row.getStorename ().toLowerCase().contains(charcater.toLowerCase())){
                             filterList.add(row);
                         }
@@ -184,7 +179,7 @@ public class BranchAdapter extends RecyclerView.Adapter<BranchAdapter.branchView
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                modelListFilter = (ArrayList<Branch>) results.values ;
+                modelListFilter = (ArrayList<BranchModel>) results.values ;
                 notifyDataSetChanged();
             }
         };

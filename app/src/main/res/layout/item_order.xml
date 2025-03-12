@@ -5,7 +5,7 @@
     android:id="@+id/b1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".activities.ProfileActivity">
+    tools:context=".activitylogin.ProfileActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

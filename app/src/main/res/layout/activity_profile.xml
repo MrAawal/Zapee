@@ -212,6 +212,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
             android:layout_weight="1"
             android:background="@drawable/product"
             android:backgroundTint="@color/white"
@@ -270,17 +271,38 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/logout"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:gravity="center"
-            android:text="Logout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView47"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:gravity="bottom|center"
+                android:paddingBottom="20dp"
+                android:text="TextView" />
+
+            <Button
+                android:id="@+id/logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="Logout"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

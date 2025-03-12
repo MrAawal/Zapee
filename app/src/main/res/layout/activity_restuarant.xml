@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login"
-    tools:context=".restuarant.RestuarantActivity">
+    tools:context=".storeactivity.RestuarantActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout4"
@@ -179,6 +179,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#ECECEC"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/cartlayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -235,6 +236,7 @@
                         android:id="@+id/banner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
                         android:background="@color/white"
                         android:orientation="horizontal"
                         android:paddingBottom="5dp"
@@ -244,8 +246,9 @@
                             android:id="@+id/carousel"
                             android:layout_width="match_parent"
                             android:layout_height="250dp"
-                            android:visibility="visible"
+                            android:layout_margin="5dp"
 
+                            android:visibility="visible"
                             app:iss_auto_cycle="true"
                             app:iss_corner_radius="10"
                             app:iss_delay="1500"
@@ -257,22 +260,23 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:background="@drawable/product"
                         android:backgroundTint="@color/white"
                         android:orientation="vertical">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/branchList"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="2dp" />
-
                         <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="-3dp"
                             android:padding="5dp">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/branchList"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="2dp" />
 
                             <ProgressBar
                                 android:id="@+id/progressBar16"
@@ -282,12 +286,6 @@
                                 android:layout_gravity="center"
                                 android:visibility="gone" />
 
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/subcat"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="-3dp"
-                                android:padding="5dp" />
                         </FrameLayout>
 
                     </LinearLayout>
@@ -297,7 +295,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginLeft="5dp"
                         android:layout_marginTop="5dp"
+                        android:layout_marginRight="5dp"
                         android:background="@drawable/product"
                         android:backgroundTint="@color/white"
                         android:fontFamily="sans-serif-medium"
@@ -309,7 +309,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#F6F5F5"
+                        android:layout_marginLeft="5dp"
+                        android:background="@color/white"
                         android:orientation="horizontal">
 
                         <LinearLayout
@@ -321,8 +322,7 @@
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/DealsList"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1" />
+                                android:layout_height="match_parent" />
 
                         </LinearLayout>
 
@@ -344,6 +344,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@color/white"
                     android:orientation="vertical"
                     android:padding="10dp">
 

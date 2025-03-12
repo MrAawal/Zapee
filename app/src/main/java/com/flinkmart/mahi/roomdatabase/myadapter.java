@@ -3,6 +3,7 @@ package com.flinkmart.mahi.roomdatabase;
 import static com.flinkmart.mahi.R.color.*;
 
 import android.graphics.Paint;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
+import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
 import com.flinkmart.mahi.databinding.ItemCartBinding;
+import com.flinkmart.mahi.model.BranchModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +41,12 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
     CardView cardView;
 
     ImageView imageView;
+
+    int minAmount=0;
+
+    BranchModel branch;
+
+    DatabaseReference databaseReference;
 
 
     public myadapter(List<Product> products, TextView rateview, TextView quantity, TextView text, TextView banner, CardView cardView, ImageView imageView) {
@@ -138,27 +155,60 @@ public class myadapter  extends RecyclerView.Adapter<myadapter.myviewholder>{
 
     public void updateprice()
     {
-        int sum=0,add=0,i;
-        for(i=0;i< products.size();i++)
-            sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
+        FirebaseUtil.currentUserStore( ).get().addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful ( )) {
+                    branch = task.getResult ( ).toObject (BranchModel.class);
+                    if(branch!=null){
+                            databaseReference= FirebaseDatabase.getInstance ().getReference ("store/"+branch.getStoreuid ());
+                            databaseReference.addListenerForSingleValueEvent (new ValueEventListener ( ) {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    int minAmount=snapshot.child ("minimum").getValue (Integer.class);
 
-        rateview.setText("₹"+sum);
 
-        add=1000-sum;
+                                    int sum=0,add=0,i;
+                                    for(i=0;i< products.size();i++)
+                                        sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
 
-        if(sum<1000){
-            banner.setText ("Add More ₹"+add+"For Get Free Delivery");
-            banner.setTextColor (banner.getContext ().getResources ().getColor (R.color.red));
-        }else{
-            banner.setText("Congratulations You Got Free Delivery");
-            banner.setTextColor (banner.getContext ().getResources ().getColor (purple_500));
-        }
-        if(sum==0){
-            banner.setVisibility (View.GONE);
-            text.setVisibility (View.VISIBLE);
-            imageView.setVisibility (View.VISIBLE);
-            cardView.setVisibility (View.GONE);
-        }
+                                    rateview.setText("₹"+sum);
+
+                                    add=minAmount-sum;
+
+                                    if(sum<minAmount){
+                                        banner.setText ("Add More ₹"+add+"For Get Free Delivery");
+                                        banner.setTextColor (banner.getContext ().getResources ().getColor (R.color.red));
+                                    } else {
+
+                                        banner.setText("Congratulations You Got Free Delivery");
+                                        banner.setTextColor (banner.getContext ().getResources ().getColor (purple_500));
+                                    }
+                                    if(sum==0){
+                                        banner.setVisibility (View.GONE);
+                                        text.setVisibility (View.VISIBLE);
+                                        imageView.setVisibility (View.VISIBLE);
+                                        cardView.setVisibility (View.GONE);
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+
+
+
+
+
+                    }
+                }
+            }
+        });
+
     }
     public void updateQuantity() {
         int qty = 0, i;

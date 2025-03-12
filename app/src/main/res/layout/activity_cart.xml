@@ -77,7 +77,6 @@
         android:backgroundTint="#C5FAC1"
         android:fontFamily="monospace"
         android:padding="5dp"
-        android:text="Congragulation"
         android:textColor="@color/red"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/bottomPrice"
@@ -129,7 +128,6 @@
                 android:fontFamily="monospace"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="PKR 0.0"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />

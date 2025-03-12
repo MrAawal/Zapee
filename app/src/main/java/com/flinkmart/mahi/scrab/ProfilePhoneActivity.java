@@ -9,9 +9,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.flinkmart.mahi.R;
-import com.flinkmart.mahi.activities.LoginActivity;
+import com.flinkmart.mahi.activitylogin.LoginActivity;
 import com.flinkmart.mahi.activities.MainActivity;
-import com.flinkmart.mahi.activities.PhoneLoginActivity;
+import com.flinkmart.mahi.activitylogin.PhoneLoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

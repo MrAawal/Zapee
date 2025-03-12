@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,15 +25,17 @@ import androidx.room.Room;
 
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.activitylogin.LoginActivity;
 import com.flinkmart.mahi.branchAdapter.BranchAdapter;
 import com.flinkmart.mahi.adapter.CheckItemAdapter;
 import com.flinkmart.mahi.databinding.ActivityNewCheckoutBinding;
 import com.flinkmart.mahi.databinding.OrderProgressBinding;
 import com.flinkmart.mahi.databinding.StoreDialogBinding;
-import com.flinkmart.mahi.model.Branch;
+import com.flinkmart.mahi.model.BranchModel;
 import com.flinkmart.mahi.model.Coupon;
 import com.flinkmart.mahi.model.Online;
 import com.flinkmart.mahi.model.OrderPlaceModel;
+import com.flinkmart.mahi.model.UserModel;
 import com.flinkmart.mahi.model.UserModel1;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.Product;
@@ -71,7 +72,6 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-
 import java.util.List;
 import java.util.Random;
 
@@ -89,10 +89,14 @@ public class NewCheckoutActivity extends AppCompatActivity {
     TextView couponInput;
     int couponTarget=0;
     FirebaseUser user;
-    UserModel1 userModel;
+    UserModel userModel;
     Online online;
-    Branch branch;
+    BranchModel branch;
     CheckItemAdapter checkItemAdapter;
+    int baseDeliveryCharge=0;
+    int minAmount=0;
+    int radius=0;
+    int packing=0;
     int maintotal=0;
     int more=0;
     double Total;
@@ -110,7 +114,6 @@ public class NewCheckoutActivity extends AppCompatActivity {
         setContentView (binding.getRoot ( ));
         auth = FirebaseAuth.getInstance ( );
         user = auth.getCurrentUser ( );
-
         progressBar=new ProgressDialog (this);
         progressBar.setMessage ("Calculating...");
         progressBar.setCancelable (false);
@@ -123,10 +126,6 @@ public class NewCheckoutActivity extends AppCompatActivity {
                 .setView (orderProgress.getRoot ( ))
                 .setCancelable (false)
                 .create ( );
-
-
-
-
 
         smf = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
         client = LocationServices.getFusedLocationProviderClient(this);
@@ -177,50 +176,12 @@ public class NewCheckoutActivity extends AppCompatActivity {
                    });
         }
 
-        if (user == null) {
-            Intent i = new Intent (getApplicationContext ( ),LoginActivity.class);
+        if (user ==null) {
+            Intent i = new Intent (getApplicationContext ( ), LoginActivity.class);
             startActivity (i);
             finish ( );
-        } else {
-            binding.checkoutBtn.setEnabled (false);
-            FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful ( )) {
-                        binding.checkoutBtn.setEnabled (true);
-                        userModel = task.getResult ( ).toObject (UserModel1.class);
-                        if (userModel != null) {
-                            binding.phoneBox.setText (userModel.getPhone ( ));
-                            binding.addressBox.setText (userModel.getAddress ( ));
-                            binding.Name.setText (userModel.getUsername ( ));
-                            binding.Contact.setText (userModel.getPhone ( ));
-                            binding.Email.setText (userModel.getPin ( ));
-                            binding.pinnumber.setText (userModel.getAddress ( ));
-//
-                            FirebaseUtil.currentUserStore ( ).get( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful ( )) {
-                                        branch = task.getResult ( ).toObject (Branch.class);
-                                        if (branch!=null){
-                                            getStoreStatus(userModel.getPin ());
-                                            binding.address.setText ("Zone:" + branch.getPincode ());
+        }else{
 
-                                        }else{
-                                            binding.checkoutBtn.setEnabled (false);
-                                            String pin= userModel.getPin ( );
-                                            selectStore (pin);
-                                        }
-                                    }
-                                }
-                            });
-                        }else{
-//                            completeProfile();
-                        }
-
-                    }
-                }
-            });
         }
 
         progressDialog = new ProgressDialog (this);
@@ -240,44 +201,11 @@ public class NewCheckoutActivity extends AppCompatActivity {
             }
         });
 
-        binding.imageButton.setOnClickListener (new View.OnClickListener ( ) {
-            @Override
-            public void onClick(View v) {
-                String pin =userModel.getPin ();
-                selectStore (pin);
-            }
-        });
 
         getSupportActionBar ( ).setDisplayHomeAsUpEnabled (true);
 
     }
 
-    private void getStoreStatus(String pin) {
-
-        databaseReference= FirebaseDatabase.getInstance ().getReference ("store/"+pin);
-        databaseReference.addListenerForSingleValueEvent (new ValueEventListener ( ) {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean value=snapshot.child ("online").getValue (boolean.class);
-                if(value!=true){
-
-                    binding.view.setText ("We are unavailable right now");
-                    binding.checkoutBtn.setEnabled (false);
-                    binding.checkoutBtn.setText ("Store closed");
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-
-    }
     public  void selectStore(String pin){
         StoreDialogBinding storeDialogBinding = StoreDialogBinding.inflate(LayoutInflater.from(this));
         androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
@@ -302,39 +230,7 @@ public class NewCheckoutActivity extends AppCompatActivity {
                         List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
                         for (DocumentSnapshot ds:dsList){
                             binding.checkoutBtn.setEnabled (true);
-                            Branch resturants=ds.toObject (Branch.class);
-                            branchAdapter.addProduct (resturants);
-                        }
-
-                    }
-                });
-        dialog.show ();
-    }
-    public  void UpdateStore(String pin){
-        StoreDialogBinding storeDialogBinding = StoreDialogBinding.inflate(LayoutInflater.from(this));
-        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setView(storeDialogBinding.getRoot())
-                .setCancelable (false)
-                .create();
-
-        RecyclerView recyclerView=storeDialogBinding.storeList;
-
-        TextView warning=storeDialogBinding.productName;
-        branchAdapter=new BranchAdapter (this,warning);
-        recyclerView.setLayoutManager (new LinearLayoutManager (this));
-        recyclerView.setAdapter (branchAdapter);
-
-        FirebaseFirestore.getInstance ()
-                .collection ("branch")
-                .whereEqualTo ("pincode",pin)
-                .get ()
-                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
-                        for (DocumentSnapshot ds:dsList){
-                            binding.checkoutBtn.setEnabled (true);
-                            Branch resturants=ds.toObject (Branch.class);
+                            BranchModel resturants=ds.toObject (BranchModel.class);
                             branchAdapter.addProduct (resturants);
                         }
 
@@ -344,28 +240,26 @@ public class NewCheckoutActivity extends AppCompatActivity {
     }
 
     public void getmylocation() {
-
         FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful ( )) {
                     binding.checkoutBtn.setEnabled (true);
-                    userModel = task.getResult ( ).toObject (UserModel1.class);
+                    userModel = task.getResult ( ).toObject (UserModel.class);
                     if (userModel != null) {
+                        binding.phoneBox.setText (userModel.getPhone ( ));
+                        binding.addressBox.setText (userModel.getAddress ( ));
+                        binding.Name.setText (userModel.getUsername ( ));
+                        binding.Contact.setText (userModel.getPhone ( ));
+                        binding.Email.setText (userModel.getPin ( ));
+                        binding.pinnumber.setText (userModel.getAddress ( ));
                         FirebaseUtil.currentUserStore ( ).get( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
                                 if (task2.isSuccessful ( )) {
-                                    branch = task2.getResult ( ).toObject (Branch.class);
+                                    branch = task2.getResult ( ).toObject (BranchModel.class);
                                     if (branch!=null){
-                                        databaseReference= FirebaseDatabase.getInstance ().getReference ("deliverycharge/");
-                                        databaseReference.addListenerForSingleValueEvent (new ValueEventListener ( ) {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                int value=snapshot.child (branch.getStorename ()).getValue (Integer.class);
 
-
-                                        double delivery=value;
                                         double lat=Double.parseDouble (branch.getStoreLat ());
                                         double lon=Double.parseDouble (branch.getStoreLon ());
 
@@ -395,14 +289,11 @@ public class NewCheckoutActivity extends AppCompatActivity {
 //                                                        googleMap.addMarker(markerOptions);
 
 
+//                                                           String userlat = sp.getString ("latitude", "");
+//                                                           String userlon = sp.getString ("longitude", "");
 
-
-
-                                                        SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
-                                                        if(sp.contains("latitude")){
-
-                                                           String userlat = sp.getString ("latitude", "");
-                                                           String userlon = sp.getString ("longitude", "");
+                                                            String userlat = userModel.getLat ();
+                                                            String userlon = userModel.getLon ();
 
                                                             LatLng userAddress=new LatLng(Double.parseDouble (userlat),Double.parseDouble (userlon));
                                                             MarkerOptions markerOptions3=new MarkerOptions().position(userAddress).title("Delivery Address");
@@ -419,22 +310,17 @@ public class NewCheckoutActivity extends AppCompatActivity {
                                                             deliverytime= (int) (distance/1000*2+20);
                                                             binding.textView32.setText ("Estimate delivery time : "+deliverytime);
 
-                                                            calculation(distance,delivery);
+                                                            calculation(distance);
 
-                                                        }
 
                                                     }
                                                 });
                                             }
                                         });
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                            }
-                                        });
+                                    }else {
+                                        binding.checkoutBtn.setEnabled (false);
+                                        String pin= userModel.getPin ( );
+                                        selectStore(pin);
                                     }
                                 }
                             }
@@ -447,13 +333,46 @@ public class NewCheckoutActivity extends AppCompatActivity {
 
 
     }
-    void calculation(Double distance, Double delivery) {
+    void calculation(Double distance){
+
+        databaseReference= FirebaseDatabase.getInstance ().getReference ("store/"+branch.getStoreuid ());
+        databaseReference.addListenerForSingleValueEvent (new ValueEventListener ( ) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                boolean onduty=snapshot.child ("online").getValue (boolean.class);
+                if(onduty!=true){
+                    binding.checkoutBtn.setEnabled (false);
+                    binding.checkoutBtn.setText ("Unavailable now");
+                    binding.view.setText ("Currently we are not taking order");
+                }else{
+
+                }
+
+
+
+
+
+                int base=snapshot.child ("base").getValue (Integer.class);
+                int km=snapshot.child ("kmCharge").getValue (Integer.class);
+                int min=snapshot.child ("minimum").getValue (Integer.class);
+                int circle=snapshot.child ("radius").getValue (Integer.class);
+                int pack=snapshot.child ("paking").getValue (Integer.class);
+
+                String policy=snapshot.child ("policy").getValue (String.class);
+                String announce=snapshot.child ("announce").getValue (String.class);
+
+                binding.policy.setText (""+policy);
+                binding.textView43.setText (""+announce);
+
+
+
+
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "cart_db").allowMainThreadQueries().build();
         ProductDao productDao = db.ProductDao();
 
         List<Product> products=productDao.getallproduct();
-        super.onStart ( );
         for (int i=0;i<products.size ();i++){
             Product favourite=products.get(i);
 
@@ -461,40 +380,50 @@ public class NewCheckoutActivity extends AppCompatActivity {
             int quan=favourite.getQnt ();
             int total=pric*quan;
             int discount = Integer.parseInt (favourite.getDiscount ( ))*quan;
-            maintotal+=total;
-            del=20+distance/1000*delivery;
-            Total=maintotal+del+gst;
+            int value= km;
 
-            more=1000-maintotal;
+            double delivery=value;
+            radius= circle;
+
+            maintotal+=total;
+
+            minAmount= min;
+
+            del=base+distance/1000*delivery;
+            Total=maintotal+del+pack;
+            more=minAmount-maintotal;
 
             DiscountTotal+=discount;
             Discount=DiscountTotal-maintotal;
         }
-        binding.mrptotal.setText ("Mrp:₹"+DiscountTotal);
-//        binding.mrptotal.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
-        binding.subtotal.setText (String.valueOf ("Sub total:₹"+maintotal));
+        binding.mrptotal.setText ("₹"+DiscountTotal);
+        binding.mrptotal.setPaintFlags (Paint.STRIKE_THRU_TEXT_FLAG);
+        binding.subtotal.setText (String.valueOf ("₹"+maintotal));
 
-        binding.saveMrp.setText ("Save:₹"+Discount);
+        binding.saveMrp.setText ("₹"+Discount);
         binding.Del.setText ("₹"+del);
-        if(distance/1000>7){
+        binding.tax.setText (""+pack);
+
+        if(distance/1000>radius){
             binding.checkoutBtn.setEnabled (false);
             binding.checkoutBtn.setText("Out of zone");
-            MaterialAlertDialogBuilder alertDialog=new MaterialAlertDialogBuilder (this);
-              alertDialog.setMessage ("Your location is out of your selected zone.We deliver 7km radius from store of your selected zone.We are sorry for the inconvenience caused to you.");
-              alertDialog.setCancelable (false);
-              alertDialog.create ();
+            MaterialAlertDialogBuilder alertDialog=new MaterialAlertDialogBuilder (NewCheckoutActivity.this);
+            alertDialog.setMessage ("We are sorry service not available in your location at this time.");
+            alertDialog.setCancelable (false);
+            alertDialog.create ();
 
-              alertDialog.setPositiveButton ("Update zone", new DialogInterface.OnClickListener ( ) {
-                  @Override
-                  public void onClick(DialogInterface dialog, int which) {
-                      UpdateStore(userModel.pin);
-                  }
-              });
-              alertDialog.show ();
-
+            alertDialog.setPositiveButton ("Ok", new DialogInterface.OnClickListener ( ) {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss ();
+                    onBackPressed ();
+                    binding.checkoutBtn.setEnabled (true);
+                }
+            });
+            alertDialog.show ();
         }
 
-        if(maintotal>1000){
+        if(maintotal>minAmount){
             Total=maintotal;
             binding.MaxTotal.setText(String.valueOf ("₹"+maintotal));
             binding.Del.setText ("FREE");
@@ -503,7 +432,6 @@ public class NewCheckoutActivity extends AppCompatActivity {
             binding.Del.setTextColor (getColor (R.color.teal_700));
             binding.view.setText ("Congratulations You Got Free Delivery");
             binding.view.setTextColor (getColor (R.color.purple_500));
-            binding.couponLayout.setVisibility (View.GONE);
         }else {
             binding.total.setText ("₹"+Total);
             binding.MaxTotal.setText (String.valueOf ("₹"+Total));
@@ -511,15 +439,24 @@ public class NewCheckoutActivity extends AppCompatActivity {
             binding.view.setTextColor (getColor (R.color.red));
         }
 
-        FirebaseUtil
-                .coupon ( )
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+        FirebaseUtil.coupon( )
                 .get ( )
                 .addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful ( )) {
                             coupon = task.getResult ( ).toObject (Coupon.class);
-                            if (coupon!= null) {
+                            if (coupon!=null){
                                 couponInput = findViewById (R.id.nameBox);
                                 String match = couponInput.getText ( ).toString ( );
                                 String coupouns= coupon.getCode ().toUpperCase ();
@@ -573,26 +510,19 @@ public class NewCheckoutActivity extends AppCompatActivity {
         for(i=0;i< products.size();i++)
             sum=sum+(products.get(i).getPrice()*products.get(i).getQnt());
 
-
-
     }
     void processOrder(String orderNumber, androidx.appcompat.app.AlertDialog dialog){
+            String lat=userModel.getLat ();
+            String lon=userModel.getLon ();
 
-        SharedPreferences sp=getSharedPreferences("location",MODE_PRIVATE);
-        if(sp.contains("latitude")) {
+            OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid,userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ),branch.getStorename (),branch.getStoreuid (), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), lat, lon, "Pending", "cod","pending");
 
-            String lat=sp.getString ("latitude","");
-            String lon=sp.getString ("longitude","");
-
-            OrderPlaceModel orderPlaceModel = new OrderPlaceModel (orderNumber, uid,userModel.getUsername ( ), userModel.getPhone ( ), userModel.getAddress ( ),branch.getStorename (), String.valueOf (Total), String.valueOf (del), Timestamp.now ( ), lat, lon, "Pending", "cod","pending");
             FirebaseFirestore.getInstance ( )
                     .collection ("orders")
                     .document (orderNumber)
                     .set (orderPlaceModel).addOnSuccessListener (new OnSuccessListener<Void> ( ) {
                         @Override
                         public void onSuccess(Void unused) {
-
-
                             new AlertDialog.Builder(NewCheckoutActivity.this)
                                     .setTitle("Order Successful")
                                     .setCancelable(false)
@@ -623,7 +553,6 @@ public class NewCheckoutActivity extends AppCompatActivity {
             databaseReference.child ("partnerLon").setValue(branch.getStoreLon ());
             databaseReference.child ("storeLat").setValue (branch.getStoreLat ());
             databaseReference.child ("storeLon").setValue (branch.getStoreLon ());
-        }
 
 
         AppDatabase db = Room.databaseBuilder (getApplicationContext ( ),
@@ -644,8 +573,6 @@ public class NewCheckoutActivity extends AppCompatActivity {
                         public void onSuccess(Void unused) {
                            dialog.cancel ();
                            db.clearAllTables ();
-
-
                         }
                     }).addOnFailureListener (new OnFailureListener ( ) {
                         @Override
@@ -664,19 +591,14 @@ public class NewCheckoutActivity extends AppCompatActivity {
 
         };
     }
-
-
     public static int getRandomNumber(int min, int max) {
         return (new Random ( )).nextInt ((max - min) + 1) + min;
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
+    public boolean onSupportNavigateUp(){
         finish ( );
-        return super.onSupportNavigateUp ( );
+        return super.onSupportNavigateUp ();
     }
-
-
-
 
 }

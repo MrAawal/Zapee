@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/favItem"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="5dp">
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -20,7 +20,7 @@
 
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
             android:background="@color/bg"
             android:orientation="horizontal">
@@ -31,21 +31,8 @@
                 android:layout_height="120sp"
                 android:layout_margin="3dp"
                 android:background="@color/bg"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/placeholder" />
-
-            <TextView
-                android:id="@+id/textView22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/product"
-                android:backgroundTint="@color/bg"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="TextView"
-                android:textColor="@color/red"
-                android:textSize="20sp" />
 
         </FrameLayout>
 
@@ -54,33 +41,13 @@
             android:layout_height="119dp"
             android:orientation="vertical"
             android:padding="5dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/Discount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="monospace"
-                    android:text="1pc"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/price"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="monospace"
-                    android:text="₹ 1"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/label"
@@ -92,7 +59,28 @@
                     android:maxLines="3"
                     android:text="Tittle"
                     android:textAllCaps="true"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/Discount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="monospace"
+                    android:text="1pc"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.2"
+                    android:text="₹ 1"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 

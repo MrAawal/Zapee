@@ -3,13 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:paddingBottom="30dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +57,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/sizeList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="5dp" />
 
             <androidx.recyclerview.widget.RecyclerView

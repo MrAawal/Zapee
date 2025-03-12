@@ -9,55 +9,6 @@
     android:orientation="vertical"
     tools:context=".scrab.CheckoutActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout17"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="#FAF3CF"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/mrptotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-            android:padding="3dp"
-            android:text="₹0.0"
-            android:textColor="@color/teal_700"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/saveMrp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-            android:padding="3dp"
-            android:text="₹0.0"
-            android:textColor="@color/red"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/subtotal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-            android:padding="3dp"
-            android:text="₹ 0.0"
-            android:textColor="@color/teal_700"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
     <TextView
         android:id="@+id/view"
         android:layout_width="match_parent"
@@ -125,7 +76,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout17"
+        app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -166,7 +117,6 @@
 
             </FrameLayout>
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -206,6 +156,18 @@
                         android:text=" minutes"
                         android:textColor="@color/teal_700"
                         android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView43"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -317,49 +279,7 @@
                         android:textSize="18sp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="1dp"
-                    android:orientation="horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:visibility="gone">
-
-
-                    <TextView
-                        android:id="@+id/address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="monospace"
-                        android:text="store"
-                        android:textAlignment="viewStart"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-
-
-                    <TextView
-                        android:id="@+id/imageButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/product"
-                        android:gravity="center"
-                        android:paddingStart="2dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingBottom="2dp"
-                        android:text="Change zone"
-                        android:textColor="@color/teal_700"
-                        android:tint="@color/fav"
-                        android:visibility="gone"
-                        app:srcCompat="@drawable/baseline_edit_24" />
-
-                </LinearLayout>
-
             </LinearLayout>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -475,7 +395,6 @@
 
             </LinearLayout>
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -575,7 +494,6 @@
 
             </LinearLayout>
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -586,12 +504,6 @@
                 android:orientation="vertical"
                 android:paddingTop="5dp">
 
-                <View
-                    android:id="@+id/view3"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/white" />
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/cartList"
                     android:layout_width="match_parent"
@@ -599,10 +511,138 @@
                     android:padding="5dp" />
 
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayout17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableTint="@color/black"
+                        android:fontFamily="monospace"
+                        android:padding="5dp"
+                        android:text="Total Price"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/mrptotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:gravity="right"
+                        android:padding="5dp"
+                        android:text="₹5"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:padding="5dp"
+                        android:text="Total save"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/saveMrp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:gravity="right"
+                        android:padding="5dp"
+                        android:text="₹ 49"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableTint="@color/black"
+                        android:fontFamily="monospace"
+                        android:padding="5dp"
+                        android:text="Subtotal"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/subtotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:gravity="right"
+                        android:padding="5dp"
+                        android:text="₹5"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:padding="5dp"
+                    android:text="Cancellation Policy"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/policy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="policy"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
     <LinearLayout
         android:id="@+id/linearLayout7"
         android:layout_width="match_parent"

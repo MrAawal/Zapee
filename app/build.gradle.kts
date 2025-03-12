@@ -18,8 +18,8 @@ android {
         applicationId = "com.flinkmart.mahi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 37
-        versionName = "4.7"
+        versionCode = 45
+        versionName = "5.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -67,9 +67,9 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.ccp)
     implementation(libs.maps.utils)
-
-
-
+    implementation(libs.places)
+    implementation(libs.library)
+    implementation(libs.geofire.android)
     annotationProcessor(libs.room.compiler)
     implementation(libs.room.runtime)
     implementation(libs.circleimageview)

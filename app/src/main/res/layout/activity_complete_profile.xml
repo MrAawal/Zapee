@@ -8,7 +8,7 @@
     android:backgroundTint="@color/white"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activities.CompleteProfileActivity">
+    tools:context=".activitylogin.CompleteProfileActivity">
 
     <FrameLayout
         android:id="@+id/frameLayout"

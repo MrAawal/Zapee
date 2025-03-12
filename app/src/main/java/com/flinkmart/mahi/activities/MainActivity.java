@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,16 +29,21 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.flinkmart.mahi.FirebaseUtil.FirebaseUtil;
 import com.flinkmart.mahi.Fragment.HomeFragment;
 import com.flinkmart.mahi.Fragment.OrdersFragment;
 import com.flinkmart.mahi.R;
+import com.flinkmart.mahi.activitylogin.ProfileActivity;
 import com.flinkmart.mahi.branchAdapter.BranchAdapter;
 import com.flinkmart.mahi.databinding.ActivityMainBinding;
 import com.flinkmart.mahi.databinding.QuantityDialogBinding;
+import com.flinkmart.mahi.databinding.StoreDialogBinding;
 import com.flinkmart.mahi.map.LocationModel;
+import com.flinkmart.mahi.model.BranchModel;
 import com.flinkmart.mahi.model.UserModel;
 import com.flinkmart.mahi.roomdatabase.AppDatabase;
 import com.flinkmart.mahi.roomdatabase.CartActivity;
@@ -60,8 +66,14 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -83,13 +95,11 @@ public class MainActivity extends AppCompatActivity {
 
     BranchAdapter branchAdapter;
 
+    BranchModel branch;
 
     String[] permission = {"android.permission.POST_NOTIFICATIONS"};
 
     UserModel userModel;
-    FirebaseAuth auth;
-    FirebaseUser user;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,17 +107,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate (getLayoutInflater ( ));
         setContentView (binding.getRoot ( ));
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions (permission, 34);
         }
-
-        getCurrenuUser ();
+        getCurrenuUser();
 
         binding.flot.setOnClickListener (new View.OnClickListener ( ) {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent (getApplicationContext (), CartActivity.class));
+                startActivity(new Intent (getApplicationContext (),CartActivity.class));
             }
         });
 
@@ -225,15 +233,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getCurrenuUser() {
-
         FirebaseUtil.currentUserDetails ( ).get ( ).addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful ( )) {
                     userModel = task.getResult ( ).toObject (UserModel.class);
-                    if (userModel != null) {
-
-                    } else {
+                    if (userModel!=null) {
+                        FirebaseUtil.currentUserStore( ).get().addOnCompleteListener (new OnCompleteListener<DocumentSnapshot> ( ) {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful ( )) {
+                                    branch = task.getResult ( ).toObject (BranchModel.class);
+                                    if (branch!=null){
+                                        getStoreStatus(userModel.getPin ());
+                                    }else{
+                                        selectStore(userModel.getPin ());
+                                    }
+                                }
+                            }
+                        });
+                    } else{
                         completeProfile ( );
                     }
                 }
@@ -248,26 +267,101 @@ public class MainActivity extends AppCompatActivity {
         return connectivityManager.getActiveNetworkInfo ( ) != null && connectivityManager.getActiveNetworkInfo ( ).isConnectedOrConnecting ( );
     }
 
-    public void onBackPressed() {
-        super.onBackPressed ( );
-        androidx.appcompat.app.AlertDialog.Builder alertDialog = new androidx.appcompat.app.AlertDialog.Builder (MainActivity.this);
-        alertDialog.setTitle ("Exit");
-        alertDialog.setMessage ("Do you want to exit");
+    private void getStoreStatus(String pin) {
 
-        alertDialog.setPositiveButton ("No", new DialogInterface.OnClickListener ( ) {
+
+        if(branch.isIs_selected ()==true){
+
+        }else {
+
+        }
+
+
+        DatabaseReference databaseReference;
+
+        databaseReference= FirebaseDatabase.getInstance ().getReference ("store/"+pin);
+        databaseReference.addListenerForSingleValueEvent (new ValueEventListener ( ) {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish ( );
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean value=snapshot.child ("online").getValue (boolean.class);
+                if(value!=true){
+
+                }else{
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-        alertDialog.setNegativeButton ("Yes", new DialogInterface.OnClickListener ( ) {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss ( );
-                finish ( );
-            }
-        });
 
+
+
+    }
+    public  void selectStore(String pin){
+        StoreDialogBinding storeDialogBinding = StoreDialogBinding.inflate(LayoutInflater.from(this));
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(storeDialogBinding.getRoot())
+                .setCancelable (false)
+                .create();
+
+        RecyclerView recyclerView=storeDialogBinding.storeList;
+
+        TextView warning=storeDialogBinding.productName;
+        branchAdapter=new BranchAdapter (this,warning);
+        recyclerView.setLayoutManager (new LinearLayoutManager (this));
+        recyclerView.setAdapter (branchAdapter);
+
+        FirebaseFirestore.getInstance ()
+                .collection ("branch")
+                .whereEqualTo ("pincode",pin)
+                .get ()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            BranchModel resturants=ds.toObject (BranchModel.class);
+                            branchAdapter.addProduct (resturants);
+                        }
+
+                    }
+                });
+        dialog.show ();
+    }
+    public  void UpdateStore(String pin){
+        StoreDialogBinding storeDialogBinding = StoreDialogBinding.inflate(LayoutInflater.from(this));
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(storeDialogBinding.getRoot())
+                .setCancelable (false)
+                .create();
+
+        RecyclerView recyclerView=storeDialogBinding.storeList;
+
+        TextView warning=storeDialogBinding.productName;
+        branchAdapter=new BranchAdapter (this,warning);
+        recyclerView.setLayoutManager (new LinearLayoutManager (this));
+        recyclerView.setAdapter (branchAdapter);
+
+        FirebaseFirestore.getInstance ()
+                .collection ("branch")
+                .whereEqualTo ("pincode",pin)
+                .get()
+                .addOnSuccessListener (new OnSuccessListener<QuerySnapshot> ( ) {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<DocumentSnapshot> dsList=queryDocumentSnapshots.getDocuments ();
+                        for (DocumentSnapshot ds:dsList){
+                            BranchModel resturants=ds.toObject (BranchModel.class);
+                            branchAdapter.addProduct (resturants);
+                        }
+
+                    }
+                });
+        dialog.show ();
     }
 
     public void completeProfile() {

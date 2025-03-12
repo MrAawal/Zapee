@@ -30,7 +30,7 @@
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".restuarant.RestuarantActivity"
+            android:name=".storeactivity.RestuarantActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
@@ -140,7 +140,7 @@
             android:name=".scrab.NavHeaderMain"
             android:exported="false" />
         <activity
-            android:name=".activities.ForgotPasswordActivity"
+            android:name=".activitylogin.ForgotPasswordActivity"
             android:exported="false"
             android:label="Forgot Password"
             android:screenOrientation="portrait"
@@ -176,30 +176,30 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".activities.ManageOtpActivity"
+            android:name=".activitylogin.ManageOtpActivity"
             android:label="Verify OTP"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.PhoneLoginActivity"
+            android:name=".activitylogin.PhoneLoginActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.CompleteProfileActivity"
+            android:name=".activitylogin.CompleteProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.ProfileActivity"
+            android:name=".activitylogin.ProfileActivity"
             android:exported="false"
             android:label="My Profile"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activitylogin.LoginActivity"
             android:exported="false"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.SignUpActivity"
+            android:name=".activitylogin.SignUpActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -238,31 +238,31 @@
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".restuarant.RestaurantCartActivity"
+            android:name=".storeactivity.RestaurantCartActivity"
             android:exported="false"
             android:label="Cart"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".restuarant.RestaurantCheckoutActivity"
+            android:name=".storeactivity.RestaurantCheckoutActivity"
             android:exported="false"
             android:label="Checkout"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".restuarant.RestaurantSubCatListActivity"
+            android:name=".storeactivity.RestaurantSubCatListActivity"
             android:exported="false"
             android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".restuarant.RestaurantProductDetailActivity"
+            android:name=".storeactivity.RestaurantProductDetailActivity"
             android:exported="false"
             android:label="Product Detail"
             android:screenOrientation="portrait"
             android:theme="@style/Base.Theme.Mahi.Actionbar" />
         <activity
-            android:name=".restuarant.RestaurantAllProductActivity"
+            android:name=".storeactivity.RestaurantAllProductActivity"
             android:exported="false"
             android:label="Product Detail"
             android:screenOrientation="portrait"
